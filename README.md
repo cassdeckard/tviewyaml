@@ -41,16 +41,24 @@ go get github.com/cassdeckard/tviewyaml
 
 ## Quick Start
 
-### 1. Create a Root Configuration (`root.yaml`)
+### 1. Create an Application Configuration (`app.yaml`)
 
 ```yaml
-root:
-  type: pages
-  pages:
-    - name: main
-      ref: main.yaml
-    - name: settings
-      ref: settings.yaml
+application:
+  name: "My TView App"
+  enableMouse: true
+  globalKeyBindings:
+    - key: "Escape"
+      action: '{{ switchToPage "main" }}'
+    - key: "Ctrl+Q"
+      action: '{{ stopApp }}'
+  root:
+    type: pages
+    pages:
+      - name: main
+        ref: main.yaml
+      - name: settings
+        ref: settings.yaml
 ```
 
 ### 2. Create a Page Configuration (`main.yaml`)
@@ -100,6 +108,20 @@ func main() {
     }
 }
 ```
+
+## Configuration Structure
+
+The root configuration file defines application-level settings and the root view:
+
+- **`application`**: Top-level application configuration
+  - **`name`**: Application name (optional)
+  - **`enableMouse`**: Enable mouse support (optional, defaults to true)
+  - **`globalKeyBindings`**: Array of global keyboard shortcuts
+    - **`key`**: Key string (e.g., "Escape", "Ctrl+Q", "F1")
+    - **`action`**: Template expression to execute
+  - **`root`**: The root view definition (currently must be type "pages")
+    - **`type`**: View type (currently only "pages" supported)
+    - **`pages`**: Array of page references
 
 ## Examples
 
@@ -154,10 +176,13 @@ github.com/cassdeckard/tviewyaml/
 │   ├── loader.go
 │   ├── types.go
 │   └── validator.go
+├── keys/            # Key binding parsing
+│   └── keys.go      # ParseKey for key string parsing
 └── template/        # Template execution
     ├── context.go
     ├── executor.go
-    └── functions.go
+    ├── functions.go
+    └── keybinding.go  # MatchesKeyBinding for key event matching
 ```
 
 ## Requirements

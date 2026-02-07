@@ -18,17 +18,17 @@ func NewLoader(basePath string) *Loader {
 	return &Loader{basePath: basePath}
 }
 
-// LoadRoot loads the root configuration file
-func (l *Loader) LoadRoot(filename string) (*RootConfig, error) {
+// LoadApp loads the application configuration file
+func (l *Loader) LoadApp(filename string) (*AppConfig, error) {
 	path := filepath.Join(l.basePath, filename)
 	data, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read root config %s: %w", path, err)
+		return nil, fmt.Errorf("failed to read app config %s: %w", path, err)
 	}
 
-	var config RootConfig
+	var config AppConfig
 	if err := yaml.Unmarshal(data, &config); err != nil {
-		return nil, fmt.Errorf("failed to parse root config %s: %w", path, err)
+		return nil, fmt.Errorf("failed to parse app config %s: %w", path, err)
 	}
 
 	return &config, nil

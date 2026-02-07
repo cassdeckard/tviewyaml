@@ -3,11 +3,11 @@ package tviewyaml
 import (
 	"log"
 
-	"github.com/gdamore/tcell/v2"
-	"github.com/rivo/tview"
 	"github.com/cassdeckard/tviewyaml/builder"
 	"github.com/cassdeckard/tviewyaml/config"
 	"github.com/cassdeckard/tviewyaml/template"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 // CreateApp creates and configures a tview application from YAML configuration files
@@ -21,14 +21,14 @@ func CreateApp(configDir string) (*tview.Application, error) {
 
 	// Load configuration
 	loader := config.NewLoader(configDir)
-	rootConfig, err := loader.LoadRoot("root.yaml")
+	appConfig, err := loader.LoadApp("app.yaml")
 	if err != nil {
 		return nil, err
 	}
 
-	// Validate root config
+	// Validate app config
 	validator := config.NewValidator()
-	if err := validator.ValidateRoot(rootConfig); err != nil {
+	if err := validator.ValidateApp(appConfig); err != nil {
 		return nil, err
 	}
 
@@ -36,7 +36,7 @@ func CreateApp(configDir string) (*tview.Application, error) {
 	uiBuilder := builder.NewBuilder(ctx)
 
 	// Build all pages from config
-	for _, pageRef := range rootConfig.Root.Pages {
+	for _, pageRef := range appConfig.Application.Root.Pages {
 		pageConfig, err := loader.LoadPage(pageRef.Ref)
 		if err != nil {
 			log.Printf("Error loading page %s: %v", pageRef.Name, err)
@@ -60,14 +60,28 @@ func CreateApp(configDir string) (*tview.Application, error) {
 		pages.AddPage(pageRef.Name, pagePrimitive, true, visible)
 	}
 
-	// Global keyboard shortcuts
-	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyEscape {
-			pages.SwitchToPage("main")
-			return nil
-		}
-		return event
-	})
+	// Apply global keyboard shortcuts from YAML
+	if len(appConfig.Application.GlobalKeyBindings) > 0 {
+		executor := template.NewExecutor(ctx)
+		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			for _, binding := range appConfig.Application.GlobalKeyBindings {
+				if template.MatchesKeyBinding(event, binding) {
+					callback, err := executor.ExecuteCallback(binding.Action)
+					if err == nil {
+						callback()
+						return nil
+					}
+				}
+			}
+			return event
+		})
+	}
 
-	return app.SetRoot(pages, true).EnableMouse(true), nil
+	// Apply mouse setting (default to true if not specified)
+	enableMouse := true
+	if appConfig.Application.EnableMouse {
+		enableMouse = appConfig.Application.EnableMouse
+	}
+
+	return app.SetRoot(pages, true).EnableMouse(enableMouse), nil
 }

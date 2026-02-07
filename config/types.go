@@ -1,11 +1,25 @@
 package config
 
-// RootConfig represents the root configuration file that references all pages
-type RootConfig struct {
-	Root RootElement `yaml:"root"`
+// AppConfig represents the top-level application configuration
+type AppConfig struct {
+	Application ApplicationElement `yaml:"application"`
 }
 
-// RootElement contains the list of pages
+// ApplicationElement contains application-level settings
+type ApplicationElement struct {
+	Name              string        `yaml:"name,omitempty"`
+	EnableMouse       bool          `yaml:"enableMouse,omitempty"`
+	GlobalKeyBindings []KeyBinding  `yaml:"globalKeyBindings,omitempty"`
+	Root              RootElement   `yaml:"root"`
+}
+
+// KeyBinding represents a global keyboard shortcut
+type KeyBinding struct {
+	Key    string `yaml:"key"`    // "Escape", "Ctrl+Q", "F1", etc.
+	Action string `yaml:"action"` // Template expression
+}
+
+// RootElement contains the list of pages (or can be any view type in the future)
 type RootElement struct {
 	Type  string    `yaml:"type"` // "pages"
 	Pages []PageRef `yaml:"pages"`

@@ -2,6 +2,8 @@ package config
 
 import (
 	"fmt"
+
+	"github.com/cassdeckard/tviewyaml/keys"
 )
 
 // Validator validates configuration structures
@@ -12,22 +14,37 @@ func NewValidator() *Validator {
 	return &Validator{}
 }
 
-// ValidateRoot validates a root configuration
-func (v *Validator) ValidateRoot(config *RootConfig) error {
-	if config.Root.Type != "pages" {
-		return fmt.Errorf("root type must be 'pages', got: %s", config.Root.Type)
+// ValidateApp validates an application configuration
+func (v *Validator) ValidateApp(config *AppConfig) error {
+	// Root element validation (currently only supports "pages" type)
+	if config.Application.Root.Type != "pages" {
+		return fmt.Errorf("application root type must be 'pages', got: %s", config.Application.Root.Type)
 	}
 
-	if len(config.Root.Pages) == 0 {
-		return fmt.Errorf("root must contain at least one page")
+	if len(config.Application.Root.Pages) == 0 {
+		return fmt.Errorf("application root must contain at least one page")
 	}
 
-	for i, page := range config.Root.Pages {
+	// Validate page references
+	for i, page := range config.Application.Root.Pages {
 		if page.Name == "" {
 			return fmt.Errorf("page %d is missing name", i)
 		}
 		if page.Ref == "" {
 			return fmt.Errorf("page %s is missing ref", page.Name)
+		}
+	}
+
+	// Validate key bindings
+	for i, binding := range config.Application.GlobalKeyBindings {
+		if binding.Key == "" {
+			return fmt.Errorf("key binding %d is missing key", i)
+		}
+		if _, _, _, err := keys.ParseKey(binding.Key); err != nil {
+			return fmt.Errorf("key binding %d has invalid key %q: %w", i, binding.Key, err)
+		}
+		if binding.Action == "" {
+			return fmt.Errorf("key binding %d is missing action", i)
 		}
 	}
 
