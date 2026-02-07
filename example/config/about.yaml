@@ -1,0 +1,26 @@
+type: flex
+direction: row
+border: true
+title: About tviewyaml
+items:
+  - primitive:
+      type: textView
+      text: |
+        [yellow]tviewyaml[-]
+        
+        A Go package for building tview terminal
+        UIs from YAML configuration files.
+        
+        Features:
+        • Declarative UI design
+        • Rich widget support
+        • Template functions
+        • Color support
+        
+        Press ESC to return to main menu
+      border: true
+      title: Information
+      dynamicColors: true
+    fixedSize: 0
+    proportion: 1
+    focus: true

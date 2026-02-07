@@ -1,0 +1,7 @@
+root:
+  type: pages
+  pages:
+    - name: main
+      ref: main.yaml
+    - name: about
+      ref: about.yaml

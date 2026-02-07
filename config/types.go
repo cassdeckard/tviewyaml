@@ -1,0 +1,131 @@
+package config
+
+// RootConfig represents the root configuration file that references all pages
+type RootConfig struct {
+	Root RootElement `yaml:"root"`
+}
+
+// RootElement contains the list of pages
+type RootElement struct {
+	Type  string    `yaml:"type"` // "pages"
+	Pages []PageRef `yaml:"pages"`
+}
+
+// PageRef references a page configuration file
+type PageRef struct {
+	Name string `yaml:"name"`
+	Ref  string `yaml:"ref"` // Path to YAML file
+}
+
+// PageConfig represents a single page/screen configuration
+type PageConfig struct {
+	Type       string                 `yaml:"type"` // "list", "flex", "form", etc.
+	Direction  string                 `yaml:"direction,omitempty"`
+	Border     bool                   `yaml:"border,omitempty"`
+	Title      string                 `yaml:"title,omitempty"`
+	TitleAlign string                 `yaml:"titleAlign,omitempty"`
+	Items      []FlexItem             `yaml:"items,omitempty"`
+	ListItems  []ListItem             `yaml:"listItems,omitempty"`
+	FormItems  []FormItem             `yaml:"formItems,omitempty"`
+	TableData  *TableData             `yaml:"tableData,omitempty"`
+	Properties map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+}
+
+// FlexItem represents an item in a flex container
+type FlexItem struct {
+	Primitive  *Primitive `yaml:"primitive"`
+	FixedSize  int        `yaml:"fixedSize,omitempty"`
+	Proportion int        `yaml:"proportion,omitempty"`
+	Focus      bool       `yaml:"focus,omitempty"`
+}
+
+// Primitive represents a tview primitive configuration
+type Primitive struct {
+	Name       string `yaml:"name,omitempty"`
+	Type       string `yaml:"type"`
+	Border     bool   `yaml:"border,omitempty"`
+	Title      string `yaml:"title,omitempty"`
+	TitleAlign string `yaml:"titleAlign,omitempty"`
+	Text       string `yaml:"text,omitempty"`
+	TextAlign  string `yaml:"textAlign,omitempty"`
+	TextColor  string `yaml:"textColor,omitempty"`
+	// TextView-specific properties
+	DynamicColors bool       `yaml:"dynamicColors,omitempty"` // Enable color tags in text
+	Regions       bool       `yaml:"regions,omitempty"`       // Enable region tags in text
+	Label         string     `yaml:"label,omitempty"`
+	Checked       bool       `yaml:"checked,omitempty"`
+	OnSelected    string     `yaml:"onSelected,omitempty"` // Template expression
+	OnChanged     string     `yaml:"onChanged,omitempty"`  // Template expression
+	Items         []FlexItem `yaml:"items,omitempty"`
+	ListItems     []ListItem `yaml:"listItems,omitempty"`
+	Direction     string     `yaml:"direction,omitempty"`
+	Columns       []string   `yaml:"columns,omitempty"`
+	Rows          [][]string `yaml:"rows,omitempty"`
+	Options       []string   `yaml:"options,omitempty"`
+	FormItems     []FormItem `yaml:"formItems,omitempty"`
+	// Table-specific properties
+	Borders      bool `yaml:"borders,omitempty"`      // Show borders between cells
+	FixedRows    int  `yaml:"fixedRows,omitempty"`    // Number of fixed rows
+	FixedColumns int  `yaml:"fixedColumns,omitempty"` // Number of fixed columns
+	// TreeView-specific properties
+	RootNode    string     `yaml:"rootNode,omitempty"`    // Name of the root node
+	CurrentNode string     `yaml:"currentNode,omitempty"` // Name of the initial current node
+	Nodes       []TreeNode `yaml:"nodes,omitempty"`       // List of tree nodes
+	// Grid-specific properties
+	GridRows    []int        `yaml:"gridRows,omitempty"`    // Row heights (0 = flexible)
+	GridColumns []int        `yaml:"gridColumns,omitempty"` // Column widths (0 = flexible)
+	GridBorders bool         `yaml:"gridBorders,omitempty"` // Show borders between grid cells
+	GridItems   []GridItem   `yaml:"gridItems,omitempty"`   // Items to place in grid
+	Properties  map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+}
+
+// TreeNode represents a node in a tree view
+type TreeNode struct {
+	Name       string   `yaml:"name"`                 // Unique identifier for the node
+	Text       string   `yaml:"text"`                 // Display text
+	Color      string   `yaml:"color,omitempty"`      // Text color
+	Selectable bool     `yaml:"selectable,omitempty"` // Whether the node can be selected
+	Children   []string `yaml:"children,omitempty"`   // Names of child nodes
+}
+
+// GridItem represents an item in a grid layout
+type GridItem struct {
+	Primitive *Primitive `yaml:"primitive"`           // The primitive to place in the grid
+	Row       int        `yaml:"row"`                 // Starting row (0-based)
+	Column    int        `yaml:"column"`              // Starting column (0-based)
+	RowSpan   int        `yaml:"rowSpan,omitempty"`   // Number of rows to span (default 1)
+	ColSpan   int        `yaml:"colSpan,omitempty"`   // Number of columns to span (default 1)
+	MinHeight int        `yaml:"minHeight,omitempty"` // Minimum height
+	MinWidth  int        `yaml:"minWidth,omitempty"`  // Minimum width
+	Focus     bool       `yaml:"focus,omitempty"`     // Whether this item should receive focus
+}
+
+// ListItem represents an item in a list
+type ListItem struct {
+	MainText      string `yaml:"mainText"`
+	SecondaryText string `yaml:"secondaryText,omitempty"`
+	Shortcut      string `yaml:"shortcut,omitempty"`
+	OnSelected    string `yaml:"onSelected,omitempty"` // Template expression
+}
+
+// FormItem represents an item in a form
+type FormItem struct {
+	Type           string   `yaml:"type"` // "inputfield", "button", "checkbox", "dropdown"
+	Label          string   `yaml:"label"`
+	Value          string   `yaml:"value,omitempty"`
+	Options        []string `yaml:"options,omitempty"`
+	Checked        bool     `yaml:"checked,omitempty"`
+	OnSelected     string   `yaml:"onSelected,omitempty"` // Template expression
+	OnChanged      string   `yaml:"onChanged,omitempty"`  // Template expression
+	FieldWidth     int      `yaml:"fieldWidth,omitempty"`
+	PasswordMode   bool     `yaml:"passwordMode,omitempty"`
+	AcceptanceFunc string   `yaml:"acceptanceFunc,omitempty"` // "integer", "float", etc.
+	MaxLength      int      `yaml:"maxLength,omitempty"`
+	Placeholder    string   `yaml:"placeholder,omitempty"`
+}
+
+// TableData represents data for a table
+type TableData struct {
+	Headers []string   `yaml:"headers"`
+	Rows    [][]string `yaml:"rows"`
+}

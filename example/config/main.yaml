@@ -1,0 +1,19 @@
+type: list
+title: Main Menu
+border: true
+titleAlign: center
+listItems:
+  - mainText: Welcome
+    secondaryText: View welcome message
+    shortcut: "w"
+    onSelected: "{{ showSimpleModal \"Welcome to tviewyaml!\" \"OK\" }}"
+  
+  - mainText: About
+    secondaryText: Learn more about this library
+    shortcut: "a"
+    onSelected: "{{ switchToPage \"about\" }}"
+  
+  - mainText: Exit
+    secondaryText: Quit the application
+    shortcut: "q"
+    onSelected: "{{ stopApp }}"
