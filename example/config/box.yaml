@@ -1,0 +1,48 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Box Demo
+        
+        A box is the most basic primitive. All other primitives are based on Box.
+        Boxes can have borders and titles.
+        
+        Press ESC to return to the main menu.
+    fixedSize: 5
+    proportion: 1
+    focus: false
+  - primitive:
+      type: flex
+      direction: column
+      items:
+        - primitive:
+            type: box
+            border: true
+            title: "Simple Box"
+            titleAlign: center
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        - primitive:
+            type: box
+            border: true
+            title: "Left-Aligned Title"
+            titleAlign: left
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        - primitive:
+            type: box
+            border: true
+            title: "Right-Aligned Title"
+            titleAlign: right
+          fixedSize: 0
+          proportion: 1
+          focus: false
+    fixedSize: 0
+    proportion: 2
+    focus: false

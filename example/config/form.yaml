@@ -1,0 +1,51 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Form Demo
+        
+        Forms with various input types.
+        Use Tab to navigate between fields.
+        Press Enter on buttons to activate.
+        
+        Press ESC to return to the main menu.
+    fixedSize: 6
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "User Registration"
+      formItems:
+        - type: inputfield
+          label: "Username:"
+          value: ""
+          fieldWidth: 20
+        - type: inputfield
+          label: "Password:"
+          value: ""
+          fieldWidth: 20
+          passwordMode: true
+        - type: inputfield
+          label: "Email:"
+          value: ""
+          fieldWidth: 30
+        - type: checkbox
+          label: "Subscribe to newsletter"
+          checked: false
+        - type: dropdown
+          label: "Country:"
+          options: ["USA", "UK", "Canada", "Australia", "Other"]
+        - type: button
+          label: "Submit"
+          onSelected: '{{ showSimpleModal "Form submitted!" }}'
+        - type: button
+          label: "Cancel"
+          onSelected: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 2
+    focus: true

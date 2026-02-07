@@ -1,0 +1,54 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        InputField Demo
+        
+        Text input fields with validation and acceptance functions
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "Input Fields"
+      formItems:
+        - type: inputfield
+          label: "Name: "
+          value: ""
+          fieldWidth: 20
+          placeholder: "Enter your name"
+        - type: inputfield
+          label: "Age (numbers only): "
+          value: ""
+          fieldWidth: 10
+          acceptanceFunc: "integer"
+          placeholder: "Enter age"
+        - type: inputfield
+          label: "Price (decimal): "
+          value: ""
+          fieldWidth: 15
+          acceptanceFunc: "float"
+          placeholder: "0.00"
+        - type: inputfield
+          label: "Code (max 5 chars): "
+          value: ""
+          fieldWidth: 10
+          acceptanceFunc: "maxlength"
+          maxLength: 5
+          placeholder: "ABC12"
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Use Tab/Backtab to navigate, Enter when done, ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false

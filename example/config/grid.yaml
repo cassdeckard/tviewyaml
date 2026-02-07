@@ -1,0 +1,101 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Grid Demo
+        
+        Grid layout with responsive design and borders
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: grid
+      gridRows: [3, 0, 3]          # Top row: 3, Middle: flexible, Bottom row: 3
+      gridColumns: [30, 0, 30]     # Left: 30, Center: flexible, Right: 30
+      gridBorders: true
+      gridItems:
+        # Header spans all columns (row 0, cols 0-2)
+        - primitive:
+            type: textView
+            border: true
+            textAlign: center
+            text: "Header"
+          row: 0
+          column: 0
+          rowSpan: 1
+          colSpan: 3
+          minHeight: 0
+          minWidth: 0
+          focus: false
+        # Footer spans all columns (row 2, cols 0-2)
+        - primitive:
+            type: textView
+            border: true
+            textAlign: center
+            text: "Footer"
+          row: 2
+          column: 0
+          rowSpan: 1
+          colSpan: 3
+          minHeight: 0
+          minWidth: 0
+          focus: false
+        # Menu (left column, row 1)
+        - primitive:
+            type: textView
+            border: true
+            textAlign: center
+            text: "Menu"
+          row: 1
+          column: 0
+          rowSpan: 1
+          colSpan: 1
+          minHeight: 0
+          minWidth: 100
+          focus: false
+        # Main content (center column, row 1)
+        - primitive:
+            type: textView
+            border: true
+            textAlign: center
+            text: |
+              Main Content
+              
+              This is the main content area.
+              
+              Grid layouts are responsive and can hide/show items based on screen size.
+          row: 1
+          column: 1
+          rowSpan: 1
+          colSpan: 1
+          minHeight: 0
+          minWidth: 100
+          focus: true
+        # Sidebar (right column, row 1)
+        - primitive:
+            type: textView
+            border: true
+            textAlign: center
+            text: "Side Bar"
+          row: 1
+          column: 2
+          rowSpan: 1
+          colSpan: 1
+          minHeight: 0
+          minWidth: 100
+          focus: false
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Grid layouts adapt to screen size. Resize terminal to see responsive behavior. ESC to return"
+    fixedSize: 2
+    proportion: 1
+    focus: false

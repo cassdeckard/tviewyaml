@@ -1,0 +1,39 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Checkbox Demo
+
+        Checkboxes with state management. Press Space to toggle.
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "Checkbox Options"
+      formItems:
+        - type: checkbox
+          label: "Option 1: "
+          checked: false
+        - type: checkbox
+          label: "Option 2: "
+          checked: false
+        - type: checkbox
+          label: "Option 3 (pre-checked): "
+          checked: true
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Use Tab/Backtab to navigate, Space to toggle, ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false

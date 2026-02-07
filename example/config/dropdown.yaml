@@ -1,0 +1,43 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        DropDown Demo
+        
+        Dropdown selection menus.
+        Press Enter to expand options.
+        Use arrow keys to select.
+        
+        Press ESC to return to the main menu.
+    fixedSize: 6
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "Dropdown Selections"
+      formItems:
+        - type: dropdown
+          label: "Select an option: "
+          options: ["First", "Second", "Third", "Fourth", "Fifth"]
+        - type: dropdown
+          label: "Choose a color: "
+          options: ["Red", "Green", "Blue", "Yellow", "Purple"]
+        - type: dropdown
+          label: "Pick a number: "
+          options: ["One", "Two", "Three", "Four", "Five"]
+    fixedSize: 0
+    proportion: 2
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Use Tab/Backtab to navigate, Enter to open/select, ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false

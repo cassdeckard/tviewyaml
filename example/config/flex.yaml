@@ -1,0 +1,71 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Flex Demo
+        
+        Flexbox layout with horizontal and vertical directions
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: flex
+      direction: column
+      items:
+        - primitive:
+            type: box
+            border: true
+            title: "Left (1/2 x width of Top)"
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        - primitive:
+            type: flex
+            direction: row
+            items:
+              - primitive:
+                  type: box
+                  border: true
+                  title: "Top"
+                fixedSize: 0
+                proportion: 1
+                focus: false
+              - primitive:
+                  type: box
+                  border: true
+                  title: "Middle (3 x height of Top)"
+                fixedSize: 0
+                proportion: 3
+                focus: false
+              - primitive:
+                  type: box
+                  border: true
+                  title: "Bottom (5 rows)"
+                fixedSize: 5
+                proportion: 1
+                focus: false
+          fixedSize: 0
+          proportion: 2
+          focus: false
+        - primitive:
+            type: box
+            border: true
+            title: "Right (20 cols)"
+          fixedSize: 20
+          proportion: 1
+          focus: false
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Flex layouts automatically resize. ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false

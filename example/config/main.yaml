@@ -1,19 +1,61 @@
 type: list
-title: Main Menu
 border: true
+title: "Tview Feature Demos - Select a feature to explore"
 titleAlign: center
 listItems:
-  - mainText: Welcome
-    secondaryText: View welcome message
-    shortcut: "w"
-    onSelected: "{{ showSimpleModal \"Welcome to tviewyaml!\" \"OK\" }}"
-  
-  - mainText: About
-    secondaryText: Learn more about this library
-    shortcut: "a"
-    onSelected: "{{ switchToPage \"about\" }}"
-  
-  - mainText: Exit
-    secondaryText: Quit the application
+  - mainText: "Box"
+    secondaryText: "Basic container with borders and titles"
+    shortcut: "b"
+    onSelected: '{{ switchToPage "box" }}'
+  - mainText: "Button"
+    secondaryText: "Interactive buttons with callbacks"
+    shortcut: "u"
+    onSelected: '{{ switchToPage "button" }}'
+  - mainText: "Checkbox"
+    secondaryText: "Checkboxes with state management"
+    shortcut: "c"
+    onSelected: '{{ switchToPage "checkbox" }}'
+  - mainText: "InputField"
+    secondaryText: "Text input with validation"
+    shortcut: "i"
+    onSelected: '{{ switchToPage "inputfield" }}'
+  - mainText: "Form"
+    secondaryText: "Complete form with all input types"
+    shortcut: "f"
+    onSelected: '{{ switchToPage "form" }}'
+  - mainText: "List"
+    secondaryText: "Selectable list with items and shortcuts"
+    shortcut: "l"
+    onSelected: '{{ switchToPage "list" }}'
+  - mainText: "Table"
+    secondaryText: "Navigable table with borders and colors"
+    shortcut: "t"
+    onSelected: '{{ switchToPage "table" }}'
+  - mainText: "TextView"
+    secondaryText: "Text display with colors and regions"
+    shortcut: "v"
+    onSelected: '{{ switchToPage "textview" }}'
+  - mainText: "TreeView"
+    secondaryText: "Hierarchical tree view"
+    shortcut: "r"
+    onSelected: '{{ switchToPage "treeview" }}'
+  - mainText: "DropDown"
+    secondaryText: "Dropdown menu with options"
+    shortcut: "d"
+    onSelected: '{{ switchToPage "dropdown" }}'
+  - mainText: "Modal"
+    secondaryText: "Modal dialogs with buttons"
+    shortcut: "m"
+    onSelected: '{{ switchToPage "modal" }}'
+  - mainText: "Flex"
+    secondaryText: "Flexbox layout (horizontal and vertical)"
+    shortcut: "x"
+    onSelected: '{{ switchToPage "flex" }}'
+  - mainText: "Grid"
+    secondaryText: "Grid layout with responsive design"
+    shortcut: "g"
+    onSelected: '{{ switchToPage "grid" }}'
+  - mainText: "Quit"
+    secondaryText: "Exit the application"
     shortcut: "q"
-    onSelected: "{{ stopApp }}"
+    onSelected: '{{ stopApp }}'

@@ -1,0 +1,46 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        List Demo
+        
+        Scrollable lists with selectable items.
+        Use arrow keys to navigate.
+        Press Enter to select an item.
+        
+        Press ESC to return to the main menu.
+    fixedSize: 6
+    proportion: 1
+    focus: false
+  - primitive:
+      type: list
+      border: true
+      title: "Sample List"
+      listItems:
+        - mainText: "Item 1"
+          secondaryText: "First item in the list"
+          shortcut: "1"
+          onSelected: '{{ showSimpleModal "Item 1 selected" }}'
+        - mainText: "Item 2"
+          secondaryText: "Second item in the list"
+          shortcut: "2"
+          onSelected: '{{ showSimpleModal "Item 2 selected" }}'
+        - mainText: "Item 3"
+          secondaryText: "Third item in the list"
+          shortcut: "3"
+          onSelected: '{{ showSimpleModal "Item 3 selected" }}'
+        - mainText: "Item 4"
+          secondaryText: "Fourth item in the list"
+          shortcut: "4"
+          onSelected: '{{ showSimpleModal "Item 4 selected" }}'
+        - mainText: "Item 5"
+          secondaryText: "Fifth item in the list"
+          shortcut: "5"
+          onSelected: '{{ showSimpleModal "Item 5 selected" }}'
+    fixedSize: 0
+    proportion: 2
+    focus: true

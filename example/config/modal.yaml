@@ -1,0 +1,39 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Modal Demo
+        
+        Modal dialogs with buttons and callbacks
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "Button Options"
+      formItems:
+        - type: button
+          label: "Show Confirmation Modal"
+          onSelected: '{{ showSimpleModal "Do you want to proceed?" "Yes" "No" "Cancel" }}'
+        - type: button
+          label: "Show Info Modal"
+          onSelected: '{{ showSimpleModal "This is an informational modal.\n\nIt can display multiple lines of text." "OK" }}'
+        - type: button
+          label: "Show Error Modal"
+          onSelected: '{{ showSimpleModal "Error: Something went wrong!\n\nThis demonstrates an error modal." "OK" "Retry" }}'
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Use Tab/Backtab to navigate between buttons, Enter to activate, ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false

@@ -101,94 +101,34 @@ func main() {
 }
 ```
 
-## Configuration Examples
+## Examples
 
-### Flex Layout with Multiple Widgets
+The [`example/`](example/) directory contains a comprehensive demonstration application showcasing all widget types and features. This is the best way to learn how to use tviewyaml.
 
-```yaml
-type: flex
-direction: row
-border: true
-title: Dashboard
-items:
-  - primitive:
-      type: textView
-      text: "Welcome to the app!"
-      border: true
-      title: Info
-    fixedSize: 0
-    proportion: 1
-    focus: false
-  
-  - primitive:
-      type: list
-      border: true
-      title: Actions
-      listItems:
-        - mainText: Action 1
-          onSelected: "{{ showSimpleModal \"Action 1 clicked\" }}"
-        - mainText: Action 2
-          onSelected: "{{ showSimpleModal \"Action 2 clicked\" }}"
-    fixedSize: 0
-    proportion: 1
-    focus: true
+### Running the Examples
+
+```bash
+cd example
+go run main.go
 ```
 
-### Form Example
+### What's Included
 
-```yaml
-type: form
-title: User Input
-border: true
-formItems:
-  - type: inputfield
-    label: "Name:"
-    value: ""
-    fieldWidth: 20
-  
-  - type: inputfield
-    label: "Age:"
-    value: ""
-    fieldWidth: 3
-    acceptanceFunc: integer
-  
-  - type: checkbox
-    label: "Subscribe to newsletter"
-    checked: false
-  
-  - type: dropdown
-    label: "Country:"
-    options:
-      - USA
-      - Canada
-      - UK
-      - Other
-  
-  - type: button
-    label: Submit
-    onSelected: "{{ showSimpleModal \"Form submitted!\" \"OK\" }}"
-  
-  - type: button
-    label: Cancel
-    onSelected: "{{ switchToPage \"main\" }}"
-```
+The example application demonstrates:
 
-### Table Example
+- **Layouts**: Flex (horizontal/vertical), Grid (responsive)
+- **Widgets**: Box, Button, Checkbox, Dropdown, Form, InputField, List, Modal, Table, TextView, TreeView
+- **Features**: Borders, titles, colors, text alignment, dynamic colors, regions
+- **Callbacks**: Page navigation, modals, form submissions, app control
+- **Patterns**: Nested layouts, complex forms, data tables, hierarchical trees
 
-```yaml
-type: table
-title: Data Table
-border: true
-tableData:
-  headers:
-    - Name
-    - Age
-    - City
-  rows:
-    - ["Alice", "30", "New York"]
-    - ["Bob", "25", "San Francisco"]
-    - ["Charlie", "35", "Chicago"]
-```
+### Navigation
+
+- Use arrow keys and Tab to navigate between items
+- Press shortcut keys (shown in the main menu) to jump to specific demos
+- Press ESC to return to the main menu from any page
+
+See the [example README](example/README.md) for detailed information about each demonstration.
 
 ## Template Functions
 

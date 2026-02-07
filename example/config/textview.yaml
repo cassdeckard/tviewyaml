@@ -1,0 +1,46 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        TextView Demo
+        
+        Text display with dynamic colors, regions, highlights, and scrolling
+    fixedSize: 4
+    proportion: 1
+    focus: false
+  - primitive:
+      type: textView
+      border: true
+      title: "TextView with Colors and Regions"
+      dynamicColors: true
+      regions: true
+      text: |
+        [yellow]TextView Features:[white]
+        
+        [green]1. Dynamic Colors:[white] You can use color tags like [red]red[white], [green]green[white], [blue]blue[white], [yellow]yellow[white]
+        
+        [green]2. Selectable Regions:[white] Press Enter to start selecting, then Tab/Backtab to navigate
+        ["0"]This is region 0[""]
+        ["1"]This is region 1[""]
+        ["2"]This is region 2[""]
+        
+        [green]3. Scrolling:[white] Use arrow keys or Page Up/Down to scroll through long content
+        
+        [green]4. Word Wrap:[white] Long lines automatically wrap to fit the view
+        
+        [yellow]Press Enter to start region selection, Tab/Backtab to navigate regions
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Enter to start selection, Tab/Backtab to navigate regions, arrow keys to scroll, ESC to return"
+    fixedSize: 2
+    proportion: 1
+    focus: false

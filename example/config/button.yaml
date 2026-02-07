@@ -1,0 +1,43 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Button Demo
+        
+        Interactive buttons with callbacks.
+        Press Enter to activate a button.
+        Use Tab to switch between buttons.
+        
+        Press ESC to return to the main menu.
+    fixedSize: 6
+    proportion: 1
+    focus: false
+  - primitive:
+      type: form
+      border: true
+      title: "Button Options"
+      formItems:
+        - type: button
+          label: "Button 1 - Click me!"
+          onSelected: '{{ showSimpleModal "Button 1 was clicked!" }}'
+        - type: button
+          label: "Button 2 - Another action"
+          onSelected: '{{ showSimpleModal "Button 2 was clicked!" }}'
+        - type: button
+          label: "Return to Menu"
+          onSelected: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 2
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: "Use Tab/Backtab to navigate between buttons, Enter to activate, ESC to return to menu"
+    fixedSize: 2
+    proportion: 1
+    focus: false
