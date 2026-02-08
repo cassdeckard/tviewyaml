@@ -55,6 +55,10 @@ listItems:
     secondaryText: "Grid layout with responsive design"
     shortcut: "g"
     onSelected: '{{ switchToPage "grid" }}'
+  - mainText: "Clock"
+    secondaryText: "State-driven clock with template binding"
+    shortcut: "k"
+    onSelected: '{{ switchToPage "clock" }}'
   - mainText: "Quit"
     secondaryText: "Exit the application"
     shortcut: "q"

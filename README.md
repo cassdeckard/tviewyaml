@@ -96,8 +96,9 @@ import (
 )
 
 func main() {
-    // Create app from YAML config directory
-    app, err := tviewyaml.CreateApp("./config")
+    // Create app from YAML config directory using the Builder pattern
+    app, err := tviewyaml.NewAppBuilder("./config").
+        Build()
     if err != nil {
         log.Fatal(err)
     }
@@ -162,11 +163,110 @@ Built-in template functions for callbacks:
 - `showSimpleModal "text" "button1" "button2"` - Show a modal dialog
 - `noop` - No operation (placeholder callback)
 
+### Custom Template Functions
+
+You can register custom template functions using the Builder API. Each function is defined by:
+
+- **Name**: String identifier used in templates (e.g., `"myCustomFunc"`)
+- **MinArgs**: Minimum number of arguments (non-negative integer)
+- **MaxArgs**: Maximum number of arguments (`nil` for unlimited/variadic)
+- **Validator**: Optional validation function (called after argument count is validated)
+- **Handler**: Function that executes the template logic
+
+#### Example: Fixed Arguments
+
+```go
+package main
+
+import (
+    "log"
+    "github.com/cassdeckard/tviewyaml"
+    "github.com/cassdeckard/tviewyaml/template"
+)
+
+func main() {
+    // Helper to create *int for maxArgs
+    intPtr := func(i int) *int { return &i }
+    
+    app, err := tviewyaml.NewAppBuilder("./config").
+        WithTemplateFunction("logMessage", 1, intPtr(1), nil,
+            func(ctx *template.Context, message string) {
+                log.Printf("Custom log: %s", message)
+            },
+        ).
+        WithTemplateFunction("switchAndLog", 2, intPtr(2), nil,
+            func(ctx *template.Context, pageName, logMsg string) {
+                log.Printf("Switching to %s: %s", pageName, logMsg)
+                ctx.Pages.SwitchToPage(pageName)
+            },
+        ).
+        Build()
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    if err := app.Run(); err != nil {
+        log.Fatal(err)
+    }
+}
+```
+
+Then use in your YAML:
+
+```yaml
+onSelected: "{{ logMessage \"Button clicked!\" }}"
+onSelected: "{{ switchAndLog \"settings\" \"User opened settings\" }}"
+```
+
+#### Example: Variadic Arguments
+
+```go
+app, err := tviewyaml.NewAppBuilder("./config").
+    WithTemplateFunction("multiLog", 1, nil, nil,
+        func(ctx *template.Context, args []string) {
+            // Variadic - accepts 1 or more arguments
+            for i, arg := range args {
+                log.Printf("Arg %d: %s", i, arg)
+            }
+        },
+    ).
+    Build()
+```
+
+Use in YAML:
+
+```yaml
+onSelected: "{{ multiLog \"first\" \"second\" \"third\" }}"
+```
+
+#### Example: With Validator
+
+```go
+app, err := tviewyaml.NewAppBuilder("./config").
+    WithTemplateFunction("switchToExistingPage", 1, intPtr(1),
+        func(ctx *template.Context, args []string) error {
+            pageName := args[0]
+            // Validate that the page exists
+            if !pageExists(ctx.Pages, pageName) {
+                return fmt.Errorf("page %q does not exist", pageName)
+            }
+            return nil
+        },
+        func(ctx *template.Context, pageName string) {
+            ctx.Pages.SwitchToPage(pageName)
+        },
+    ).
+    Build()
+```
+
+**Note**: The validator is only called after argument count validation passes. Use it for semantic validation like checking if a page exists or validating argument format.
+
 ## Package Structure
 
 ```
 github.com/cassdeckard/tviewyaml/
-├── app.go           # Main application entry point
+├── app.go           # Application builder (deprecated CreateApp)
+├── builder.go       # AppBuilder with Builder pattern API
 ├── builder/         # UI builder components
 │   ├── builder.go
 │   ├── callbacks.go
@@ -179,10 +279,11 @@ github.com/cassdeckard/tviewyaml/
 ├── keys/            # Key binding parsing
 │   └── keys.go      # ParseKey for key string parsing
 └── template/        # Template execution
+    ├── builtins.go  # Built-in template functions
     ├── context.go
     ├── executor.go
-    ├── functions.go
-    └── keybinding.go  # MatchesKeyBinding for key event matching
+    ├── keybinding.go  # MatchesKeyBinding for key event matching
+    └── registry.go  # Function registry system
 ```
 
 ## Requirements

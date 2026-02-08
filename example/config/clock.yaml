@@ -6,11 +6,10 @@ items:
       textAlign: center
       textColor: yellow
       text: |
-        Button Demo
+        Clock Demo
         
-        Interactive buttons with callbacks.
-        Press Enter to activate a button.
-        Use Tab to switch between buttons.
+        Start the clock, then press any key to
+        see the time update (no goroutines).
         
         Press ESC to return to the main menu.
     fixedSize: 6
@@ -19,14 +18,14 @@ items:
   - primitive:
       type: form
       border: true
-      title: "Button Options"
+      title: "Clock"
       formItems:
         - type: button
-          label: "Button 1 - Click me!"
-          onSelected: '{{ showSimpleModal "Button 1 was clicked!" }}'
+          label: "Start Clock"
+          onSelected: '{{ startClock }}'
         - type: button
-          label: "Button 2 - Another action"
-          onSelected: '{{ showNotification "Button 2 was clicked!" }}'
+          label: "Stop Clock"
+          onSelected: '{{ stopClock }}'
         - type: button
           label: "Return to Menu"
           onSelected: '{{ switchToPage "main" }}'
@@ -37,7 +36,7 @@ items:
       type: textView
       textAlign: center
       textColor: gray
-      text: "Last event: {{ bindState notification }}"
+      text: "Time: {{ bindState clock }}"
     fixedSize: 2
     proportion: 1
     focus: false

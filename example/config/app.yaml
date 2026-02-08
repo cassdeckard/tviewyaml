@@ -27,6 +27,8 @@ application:
         ref: form.yaml
       - name: grid
         ref: grid.yaml
+      - name: clock
+        ref: clock.yaml
       - name: inputfield
         ref: inputfield.yaml
       - name: list

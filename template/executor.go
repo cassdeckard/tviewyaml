@@ -2,22 +2,135 @@ package template
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"strings"
-
-	"github.com/rivo/tview"
 )
 
 // Executor handles template execution
 type Executor struct {
-	ctx *Context
+	ctx      *Context
+	registry *FunctionRegistry
 }
 
 // NewExecutor creates a new template executor
-func NewExecutor(ctx *Context) *Executor {
+func NewExecutor(ctx *Context, registry *FunctionRegistry) *Executor {
 	return &Executor{
-		ctx: ctx,
+		ctx:      ctx,
+		registry: registry,
 	}
+}
+
+// EvaluateToString evaluates a template string containing {{ bindState key }} (and other evaluators) and returns the rendered string.
+// Example: "Notification: {{ bindState notification }}" -> "Notification: Hello" when state "notification" is "Hello"
+func (e *Executor) EvaluateToString(templateStr string) (string, error) {
+	if templateStr == "" {
+		return "", nil
+	}
+	return e.evaluateTemplateString(templateStr)
+}
+
+// ExtractBindStateKeys returns all state keys referenced by bindState in the template string.
+// Used to subscribe to state changes for re-evaluation.
+func (e *Executor) ExtractBindStateKeys(templateStr string) []string {
+	var keys []string
+	seen := make(map[string]bool)
+	for _, expr := range extractTemplateExpressions(templateStr) {
+		name, args := parseEvaluatorExpr(expr)
+		if name == "bindState" && len(args) > 0 && !seen[args[0]] {
+			keys = append(keys, args[0])
+			seen[args[0]] = true
+		}
+	}
+	return keys
+}
+
+// evaluateTemplateString parses {{ ... }} blocks and evaluates them
+func (e *Executor) evaluateTemplateString(s string) (string, error) {
+	parts := splitTemplateString(s)
+	var result strings.Builder
+	for i, part := range parts {
+		if i%2 == 0 {
+			result.WriteString(part)
+			continue
+		}
+		expr := strings.TrimSpace(part)
+		name, args := parseEvaluatorExpr(expr)
+		ev, ok := e.registry.GetEvaluator(name)
+		if !ok {
+			return "", fmt.Errorf("unknown evaluator: %s", name)
+		}
+		if len(args) < ev.MinArgs || len(args) > ev.MaxArgs {
+			return "", fmt.Errorf("evaluator %q expects %d-%d args, got %d", name, ev.MinArgs, ev.MaxArgs, len(args))
+		}
+		result.WriteString(ev.Handler(e.ctx, args))
+	}
+	return result.String(), nil
+}
+
+// splitTemplateString splits by {{ and }}; even indices are literal, odd are expression content
+func splitTemplateString(s string) []string {
+	var parts []string
+	for {
+		start := strings.Index(s, "{{")
+		if start < 0 {
+			parts = append(parts, s)
+			break
+		}
+		parts = append(parts, s[:start])
+		s = s[start+2:]
+		end := strings.Index(s, "}}")
+		if end < 0 {
+			parts = append(parts, "{{"+s) // treat as literal if unclosed
+			break
+		}
+		parts = append(parts, s[:end])
+		s = s[end+2:]
+	}
+	return parts
+}
+
+// extractTemplateExpressions returns the content of each {{ ... }} block
+func extractTemplateExpressions(s string) []string {
+	var exprs []string
+	for {
+		start := strings.Index(s, "{{")
+		if start < 0 {
+			break
+		}
+		s = s[start+2:]
+		end := strings.Index(s, "}}")
+		if end < 0 {
+			break
+		}
+		exprs = append(exprs, strings.TrimSpace(s[:end]))
+		s = s[end+2:]
+	}
+	return exprs
+}
+
+// parseEvaluatorExpr parses "funcName arg1 arg2" into name and args (supports unquoted identifiers)
+func parseEvaluatorExpr(expr string) (string, []string) {
+	expr = strings.TrimSpace(expr)
+	if expr == "" {
+		return "", nil
+	}
+	re := regexp.MustCompile(`^(\w+)\s*(.*)$`)
+	matches := re.FindStringSubmatch(expr)
+	if len(matches) < 2 {
+		return "", nil
+	}
+	name := matches[1]
+	rest := strings.TrimSpace(matches[2])
+	if rest == "" {
+		return name, nil
+	}
+	// Try quoted args first; if none, use unquoted words
+	args := parseArguments(rest)
+	if len(args) == 0 {
+		args = strings.Fields(rest)
+	}
+	return name, args
 }
 
 // ExecuteCallback parses and executes a template expression to create a callback function
@@ -26,6 +139,7 @@ func (e *Executor) ExecuteCallback(templateStr string) (func(), error) {
 	// Template format: {{ functionName "arg1" "arg2" }}
 
 	if templateStr == "" {
+		// Empty template string - return no-op callback
 		return func() {}, nil
 	}
 
@@ -55,49 +169,29 @@ func (e *Executor) parseAndCreateCallback(expr string) (func(), error) {
 	// Parse arguments (strings in quotes)
 	args := parseArguments(argsStr)
 
-	// Execute the appropriate function
-	switch funcName {
-	case "switchToPage":
-		if len(args) < 1 {
-			return nil, fmt.Errorf("switchToPage requires 1 argument")
-		}
-		return func() { e.ctx.Pages.SwitchToPage(args[0]) }, nil
-
-	case "removePage":
-		if len(args) < 1 {
-			return nil, fmt.Errorf("removePage requires 1 argument")
-		}
-		return func() { e.ctx.Pages.RemovePage(args[0]) }, nil
-
-	case "stopApp":
-		return func() { e.ctx.App.Stop() }, nil
-
-	case "showSimpleModal":
-		if len(args) < 1 {
-			return nil, fmt.Errorf("showSimpleModal requires at least 1 argument (text)")
-		}
-		text := args[0]
-		// Remaining args are button labels
-		buttons := args[1:]
-		if len(buttons) == 0 {
-			buttons = []string{"OK"}
-		}
-		return func() {
-			modal := tview.NewModal().
-				SetText(text).
-				AddButtons(buttons).
-				SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-					e.ctx.Pages.RemovePage("simple-modal")
-				})
-			e.ctx.Pages.AddPage("simple-modal", modal, false, true)
-		}, nil
-
-	case "noop":
-		return func() {}, nil
-
-	default:
+	// Look up function in registry
+	fn, ok := e.registry.Get(funcName)
+	if !ok {
 		return nil, fmt.Errorf("unknown function: %s", funcName)
 	}
+
+	// Validate argument count
+	if len(args) < fn.MinArgs {
+		return nil, fmt.Errorf("function %q requires at least %d argument(s), got %d", funcName, fn.MinArgs, len(args))
+	}
+	if fn.MaxArgs != nil && len(args) > *fn.MaxArgs {
+		return nil, fmt.Errorf("function %q accepts at most %d argument(s), got %d", funcName, *fn.MaxArgs, len(args))
+	}
+
+	// Call validator if present (only called after argument count validation)
+	if fn.Validator != nil {
+		if err := fn.Validator(e.ctx, args); err != nil {
+			return nil, fmt.Errorf("validation failed for function %q: %w", funcName, err)
+		}
+	}
+
+	// Create callback that invokes the handler
+	return e.createCallbackFromHandler(fn, args)
 }
 
 // parseArguments extracts string arguments from a function call
@@ -144,4 +238,29 @@ func parseArguments(argsStr string) []string {
 	}
 
 	return args
+}
+
+// createCallbackFromHandler creates a callback function that invokes the handler with proper arguments
+func (e *Executor) createCallbackFromHandler(fn *TemplateFunction, args []string) (func(), error) {
+	handlerValue := reflect.ValueOf(fn.Handler)
+	contextValue := reflect.ValueOf(e.ctx)
+
+	return func() {
+		// Prepare arguments for the handler call
+		var callArgs []reflect.Value
+		callArgs = append(callArgs, contextValue)
+
+		if fn.MaxArgs != nil {
+			// Fixed args: pass each argument individually
+			for _, arg := range args {
+				callArgs = append(callArgs, reflect.ValueOf(arg))
+			}
+		} else {
+			// Variadic: pass args as a slice
+			callArgs = append(callArgs, reflect.ValueOf(args))
+		}
+
+		// Call the handler
+		handlerValue.Call(callArgs)
+	}, nil
 }

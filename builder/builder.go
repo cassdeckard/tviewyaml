@@ -18,12 +18,13 @@ type Builder struct {
 }
 
 // NewBuilder creates a new UI builder
-func NewBuilder(ctx *template.Context) *Builder {
+func NewBuilder(ctx *template.Context, registry *template.FunctionRegistry) *Builder {
+	executor := template.NewExecutor(ctx, registry)
 	return &Builder{
 		factory:  NewFactory(),
-		mapper:   NewPropertyMapper(ctx),
+		mapper:   NewPropertyMapper(ctx, executor),
 		attacher: NewCallbackAttacher(),
-		executor: template.NewExecutor(ctx),
+		executor: executor,
 		context:  ctx,
 	}
 }

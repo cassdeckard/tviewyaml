@@ -1,0 +1,133 @@
+package tviewyaml
+
+import (
+	"log"
+	"time"
+
+	"github.com/cassdeckard/tviewyaml/builder"
+	"github.com/cassdeckard/tviewyaml/config"
+	"github.com/cassdeckard/tviewyaml/template"
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
+
+// AppBuilder provides a fluent API for building tview applications from YAML configuration
+type AppBuilder struct {
+	configDir string
+	registry  *template.FunctionRegistry
+}
+
+// NewAppBuilder creates a new application builder
+func NewAppBuilder(configDir string) *AppBuilder {
+	return &AppBuilder{
+		configDir: configDir,
+		registry:  template.NewFunctionRegistry(),
+	}
+}
+
+// WithTemplateFunction registers a custom template function
+func (b *AppBuilder) WithTemplateFunction(name string, minArgs int, maxArgs *int, validator func(*template.Context, []string) error, handler interface{}) *AppBuilder {
+	if err := b.registry.Register(name, minArgs, maxArgs, validator, handler); err != nil {
+		// Log the error but continue building (could also panic or store errors)
+		log.Printf("Warning: failed to register template function %q: %v", name, err)
+	}
+	return b
+}
+
+// RegisterTemplateFunctions calls fn with the builder so the app can register custom
+// template functions (e.g. clock). Returns fn(b) for chaining.
+func (b *AppBuilder) RegisterTemplateFunctions(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
+	return fn(b)
+}
+
+// Build creates and configures a tview application from YAML configuration files
+func (b *AppBuilder) Build() (*tview.Application, error) {
+	// Initialize tview application
+	app := tview.NewApplication()
+	pages := tview.NewPages()
+
+	// Create template context
+	ctx := template.NewContext(app, pages)
+
+	// Load configuration
+	loader := config.NewLoader(b.configDir)
+	appConfig, err := loader.LoadApp("app.yaml")
+	if err != nil {
+		return nil, err
+	}
+
+	// Validate app config
+	validator := config.NewValidator()
+	if err := validator.ValidateApp(appConfig); err != nil {
+		return nil, err
+	}
+
+	// Create builder with registry
+	uiBuilder := builder.NewBuilder(ctx, b.registry)
+
+	// Build all pages from config
+	for _, pageRef := range appConfig.Application.Root.Pages {
+		pageConfig, err := loader.LoadPage(pageRef.Ref)
+		if err != nil {
+			log.Printf("Error loading page %s: %v", pageRef.Name, err)
+			continue
+		}
+
+		// Validate page config
+		if err := validator.ValidatePage(pageConfig); err != nil {
+			log.Printf("Invalid page config %s: %v", pageRef.Name, err)
+			continue
+		}
+
+		pagePrimitive, err := uiBuilder.BuildFromConfig(pageConfig)
+		if err != nil {
+			log.Printf("Error building page %s: %v", pageRef.Name, err)
+			continue
+		}
+
+		// Add to pages
+		visible := pageRef.Name == "main"
+		pages.AddPage(pageRef.Name, pagePrimitive, true, visible)
+	}
+
+	// Background goroutine: periodically refresh bound views whose state is dirty.
+	// Does not depend on clock or user input; runs continuously and queues updates via QueueUpdateDraw.
+	go func() {
+		ticker := time.NewTicker(150 * time.Millisecond)
+		defer ticker.Stop()
+		for range ticker.C {
+			if !ctx.HasDirtyKeys() {
+				continue
+			}
+			app.QueueUpdateDraw(func() {
+				ctx.RefreshDirtyBoundViews()
+			})
+		}
+	}()
+
+	// Set input capture only when we have global key bindings; avoid running refresh
+	// from capture to prevent deadlock (QueueUpdate would block) or draw re-entrancy.
+	executor := template.NewExecutor(ctx, b.registry)
+	if len(appConfig.Application.GlobalKeyBindings) > 0 {
+		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			for _, binding := range appConfig.Application.GlobalKeyBindings {
+				if template.MatchesKeyBinding(event, binding) {
+					callback, err := executor.ExecuteCallback(binding.Action)
+					if err == nil {
+						callback()
+						return nil
+					}
+				}
+			}
+			return event
+		})
+	}
+
+	// Apply mouse setting (default to true if not specified)
+	enableMouse := true
+	if appConfig.Application.EnableMouse {
+		enableMouse = appConfig.Application.EnableMouse
+	}
+
+	return app.SetRoot(pages, true).EnableMouse(enableMouse), nil
+}

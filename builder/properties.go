@@ -2,7 +2,8 @@ package builder
 
 import (
 	"fmt"
-	
+	"strings"
+
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/cassdeckard/tviewyaml/config"
@@ -13,13 +14,15 @@ import (
 type PropertyMapper struct {
 	colorHelper *template.ColorHelper
 	context     *template.Context
+	executor    *template.Executor
 }
 
 // NewPropertyMapper creates a new property mapper
-func NewPropertyMapper(ctx *template.Context) *PropertyMapper {
+func NewPropertyMapper(ctx *template.Context, executor *template.Executor) *PropertyMapper {
 	return &PropertyMapper{
 		colorHelper: &template.ColorHelper{},
 		context:     ctx,
+		executor:    executor,
 	}
 }
 
@@ -65,7 +68,30 @@ func (pm *PropertyMapper) ApplyProperties(primitive tview.Primitive, prim *confi
 
 func (pm *PropertyMapper) applyTextViewProperties(tv *tview.TextView, prim *config.Primitive) error {
 	if prim.Text != "" {
-		tv.SetText(prim.Text)
+		if strings.Contains(prim.Text, "{{") && strings.Contains(prim.Text, "}}") && pm.executor != nil {
+			// Template syntax: evaluate once and register for deferred refresh on key events
+			result, err := pm.executor.EvaluateToString(prim.Text)
+			if err != nil {
+				return fmt.Errorf("template evaluation failed: %w", err)
+			}
+			tv.SetText(result)
+			keys := pm.executor.ExtractBindStateKeys(prim.Text)
+			templateStr := prim.Text
+			for _, key := range keys {
+				pm.context.RegisterBoundView(key, template.BoundView{
+					Refresh: func() string {
+						s, err := pm.executor.EvaluateToString(templateStr)
+						if err != nil {
+							return ""
+						}
+						return s
+					},
+					SetText: func(s string) { tv.SetText(s) },
+				})
+			}
+		} else {
+			tv.SetText(prim.Text)
+		}
 	}
 	if prim.TextAlign != "" {
 		tv.SetTextAlign(template.ParseAlignment(prim.TextAlign))
