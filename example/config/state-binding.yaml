@@ -1,0 +1,142 @@
+type: flex
+direction: row
+items:
+  # Header explaining the reactive pattern
+  - primitive:
+      type: textView
+      border: true
+      title: "State Binding - Multiple Views, Single State"
+      text: |
+        [yellow::b]Reactive State Pattern[::-]
+        
+        This demo shows how multiple views can bind to the same state key.
+        When the state changes, [cyan]ALL bound views update simultaneously[::-].
+        
+        [green]How it works:[::-]
+        • Multiple TextViews use {{ bindState counter }} or {{ bindState message }}
+        • Button clicks call functions that update state
+        • State system broadcasts changes to all bound views
+        • Updates happen automatically - no manual refresh needed
+        
+        [yellow]Try the buttons below and watch all views update at once![::-]
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 13
+    proportion: 0
+    focus: false
+  
+  # Control buttons in a flex container for better width control
+  - primitive:
+      type: flex
+      direction: row
+      items:
+        - primitive:
+            type: form
+            border: true
+            title: "State Controls"
+            formItems:
+              - type: button
+                label: "Increment Counter"
+                onSelected: '{{ incrementCounter }}'
+              - type: button
+                label: "Reset Counter"
+                onSelected: '{{ resetCounter }}'
+              - type: button
+                label: "Update Message"
+                onSelected: '{{ updateMessage }}'
+          fixedSize: 0
+          proportion: 1
+          focus: true
+    fixedSize: 7
+    proportion: 0
+    focus: true
+  
+  # Multiple views bound to counter
+  - primitive:
+      type: textView
+      border: true
+      title: "Counter Binding Examples (3 views, 1 state key)"
+      text: |
+        [gray]Each box below is bound to the same 'counter' state key.
+        Click "Increment Counter" to see them all update together:[::-]
+      dynamicColors: true
+      textAlign: center
+    fixedSize: 3
+    focus: false
+  
+  - primitive:
+      type: flex
+      direction: column
+      items:
+        # Counter view 1 - centered, yellow
+        - primitive:
+            type: textView
+            border: true
+            title: "View 1: Centered"
+            text: "{{ bindState counter }}"
+            textAlign: center
+            textColor: yellow
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        
+        # Counter view 2 - left-aligned, cyan
+        - primitive:
+            type: textView
+            border: true
+            title: "View 2: Left Aligned"
+            text: "{{ bindState counter }}"
+            textAlign: left
+            textColor: cyan
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        
+        # Counter view 3 - right-aligned, green
+        - primitive:
+            type: textView
+            border: true
+            title: "View 3: Right Aligned"
+            text: "{{ bindState counter }}"
+            textAlign: right
+            textColor: green
+          fixedSize: 0
+          proportion: 1
+          focus: false
+    fixedSize: 8
+    proportion: 0
+    focus: false
+  
+  # Message binding example
+  - primitive:
+      type: textView
+      border: true
+      title: "Message Binding (bound to 'message' state)"
+      text: |
+        [white]Current Message: [cyan]{{ bindState message }}[::-]
+        
+        [gray](Click "Update Message" to cycle through messages)[::-]
+      dynamicColors: true
+      textAlign: center
+    fixedSize: 5
+    proportion: 0
+    focus: false
+  
+  # Footer with instructions
+  - primitive:
+      type: textView
+      border: false
+      text: |
+        [yellow]Key Concepts:[::-]
+        • Binding syntax: {{ bindState keyName }}
+        • State updates are broadcast to ALL bound views
+        • Views can have different styling but share the same data
+        • Perfect for dashboards, status displays, synchronized UIs
+        
+        [gray]ESC: Return to main menu[::-]
+      dynamicColors: true
+      regions: true
+      textAlign: center
+    fixedSize: 8
+    focus: false

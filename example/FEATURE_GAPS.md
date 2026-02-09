@@ -155,25 +155,6 @@ Items are prioritized based on:
 
 ---
 
-### 11. Complex State Binding Patterns
-
-**Description**: Multiple bound views updating from single state key
-
-**Why It Matters**: Shows reactive UI pattern where multiple components react to state changes.
-
-**Current Status**: Single bound view (clock) shown but not multi-view pattern.
-
-**Suggested Example**: Add example with:
-- One state key
-- Multiple TextViews bound to same key
-- Shows broadcast update pattern
-
-**Related Files**: 
-- `template/context.go` - BoundView registration
-- Background refresh system
-
----
-
 ## Already Well Demonstrated
 
 The following features are adequately covered in existing examples:
@@ -195,9 +176,9 @@ The following features are adequately covered in existing examples:
 - **TreeView** - treeview.yaml, treeview-standalone.yaml, treeview-modes.yaml (hierarchy, colors, selection modes: auto/true/false)
 
 ### Template Features
-- **State binding** - clock.yaml (`{{ bindState clock }}`)
+- **State binding** - clock.yaml (`{{ bindState clock }}`), state-binding.yaml (multiple views bound to single state key, reactive broadcast pattern)
 - **Function calls** - button.yaml, modal.yaml (multiple function types)
-- **Custom functions** - clock.go (registration and implementation)
+- **Custom functions** - clock.go, state-binding.go (registration and implementation)
 - **Multi-parameter calls** - modal.yaml (`showSimpleModal` with multiple args)
 
 ### Navigation & Layout
@@ -250,12 +231,10 @@ When adding examples for missing features, consider this order:
 
 **Phase 4: Advanced Topics**
 10. OnStateChange subscriptions (reactive patterns)
-11. Complex state binding (multi-view updates)
 
 **Phase 5: Edge Cases & Polish**
-12. Nested form patterns (wizard UIs)
-13. Grid constraints (responsive control)
-14. Dynamic page lifecycle (advanced workflows)
+11. Nested form patterns (wizard UIs)
+12. Grid constraints (responsive control)
 
 ---
 
@@ -283,10 +262,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 8 gaps
+- **Total Features Identified**: 7 gaps
 - **High Priority**: 0 items
 - **Medium Priority**: 2 items  
-- **Low Priority**: 6 items
-- **Well Demonstrated**: 38+ features
+- **Low Priority**: 5 items
+- **Well Demonstrated**: 39+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 82% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 84% of package functionality, with most common use cases well covered.

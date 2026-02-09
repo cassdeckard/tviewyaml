@@ -97,3 +97,5 @@ application:
         ref: modal-help.yaml
       - name: help
         ref: help.yaml
+      - name: state-binding
+        ref: state-binding.yaml

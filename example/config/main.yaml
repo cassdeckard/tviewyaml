@@ -79,6 +79,10 @@ listItems:
     secondaryText: "State-driven clock with template binding"
     shortcut: "k"
     onSelected: '{{ switchToPage "clock" }}'
+  - mainText: "State Binding (Multiple Views)"
+    secondaryText: "Multiple views bound to single state key"
+    shortcut: "w"
+    onSelected: '{{ switchToPage "state-binding" }}'
   - mainText: "Quit"
     secondaryText: "Exit the application"
     shortcut: "q"

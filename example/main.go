@@ -9,6 +9,7 @@ import (
 func main() {
 	app, pageErrors, err := tviewyaml.NewAppBuilder("./config").
 		With(RegisterClock).
+		With(RegisterStateBinding).
 		Build()
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)
