@@ -12,6 +12,22 @@ import (
 	"github.com/rivo/tview"
 )
 
+// Application wraps tview.Application with lifecycle management for background goroutines
+type Application struct {
+	*tview.Application
+	stopRefresh chan struct{}
+}
+
+// Stop gracefully shuts down the application and stops all background goroutines
+func (a *Application) Stop() {
+	if a.stopRefresh != nil {
+		close(a.stopRefresh)
+	}
+	if a.Application != nil {
+		a.Application.Stop()
+	}
+}
+
 // AppBuilder provides a fluent API for building tview applications from YAML configuration
 type AppBuilder struct {
 	configDir string
@@ -44,13 +60,13 @@ func (b *AppBuilder) With(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
 // Build creates and configures a tview application from YAML configuration files.
 // Returns (app, pageErrors, err) where err is fatal (app config load/validate failure),
 // and pageErrors are non-fatal per-page failures (missing/invalid pages are skipped).
-func (b *AppBuilder) Build() (*tview.Application, []error, error) {
+func (b *AppBuilder) Build() (*Application, []error, error) {
 	// Initialize tview application
-	app := tview.NewApplication()
+	tvApp := tview.NewApplication()
 	pages := tview.NewPages()
 
 	// Create template context
-	ctx := template.NewContext(app, pages)
+	ctx := template.NewContext(tvApp, pages)
 
 	// Load configuration
 	loader := config.NewLoader(b.configDir)
@@ -97,18 +113,31 @@ func (b *AppBuilder) Build() (*tview.Application, []error, error) {
 		pages.AddPage(pageRef.Name, pagePrimitive, true, visible)
 	}
 
+	// Create wrapped application with lifecycle management
+	stopRefresh := make(chan struct{})
+	app := &Application{
+		Application: tvApp,
+		stopRefresh: stopRefresh,
+	}
+
 	// Background goroutine: periodically refresh bound views whose state is dirty.
 	// Does not depend on clock or user input; runs continuously and queues updates via QueueUpdateDraw.
+	// The goroutine stops when stopRefresh channel is closed (via app.Stop()).
 	go func() {
 		ticker := time.NewTicker(150 * time.Millisecond)
 		defer ticker.Stop()
-		for range ticker.C {
-			if !ctx.HasDirtyKeys() {
-				continue
+		for {
+			select {
+			case <-stopRefresh:
+				return
+			case <-ticker.C:
+				if !ctx.HasDirtyKeys() {
+					continue
+				}
+				tvApp.QueueUpdateDraw(func() {
+					ctx.RefreshDirtyBoundViews()
+				})
 			}
-			app.QueueUpdateDraw(func() {
-				ctx.RefreshDirtyBoundViews()
-			})
 		}
 	}()
 
@@ -118,7 +147,7 @@ func (b *AppBuilder) Build() (*tview.Application, []error, error) {
 	ctx.SetExecutor(executor)
 	if len(appConfig.Application.GlobalKeyBindings) > 0 {
 		passthrough := appConfig.Application.EscapePassthroughPages
-		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		tvApp.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 			// On Escape, if current page is in passthrough list, let the primitive (e.g. form) handle it.
 			if event.Key() == tcell.KeyEscape && len(passthrough) > 0 {
 				if front, _ := pages.GetFrontPage(); front != "" {
@@ -148,5 +177,6 @@ func (b *AppBuilder) Build() (*tview.Application, []error, error) {
 		enableMouse = *appConfig.Application.EnableMouse
 	}
 
-	return app.SetRoot(pages, true).EnableMouse(enableMouse), pageErrors, nil
+	app.Application = tvApp.SetRoot(pages, true).EnableMouse(enableMouse)
+	return app, pageErrors, nil
 }
