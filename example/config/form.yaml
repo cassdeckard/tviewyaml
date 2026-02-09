@@ -21,7 +21,7 @@ items:
       name: "user-registration"
       border: true
       title: "User Registration"
-      onSubmit: '{{ showSimpleModal "Form submitted!" }}'
+      onSubmit: '{{ showSimpleModal "Form submitted!" "OK" "switchToPage \"main\"" }}'
       formItems:
         - type: inputfield
           label: "Username:"

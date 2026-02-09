@@ -43,12 +43,19 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.App.Stop()
 	})
 
-	// showSimpleModal: displays a simple modal with text and buttons
-	// First arg is text, remaining args are button labels (defaults to "OK" if no buttons provided)
+	// showSimpleModal: displays a simple modal with text and buttons.
+	// Args: text, [button labels...], [optional onDone template]. Example: "Done!" "OK" "switchToPage \"main\""
 	// Uses a unique page name so multiple modals can be shown without overwriting.
 	registry.Register("showSimpleModal", 1, nil, nil, func(ctx *Context, args []string) {
 		text := args[0]
-		buttons := args[1:]
+		var buttons []string
+		var onDone string
+		if len(args) >= 3 {
+			onDone = args[len(args)-1]
+			buttons = args[1 : len(args)-1]
+		} else {
+			buttons = args[1:]
+		}
 		if len(buttons) == 0 {
 			buttons = []string{"OK"}
 		}
@@ -58,6 +65,9 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 			SetText(text).
 			AddButtons(buttons).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+				if onDone != "" {
+					ctx.RunCallback(onDone)
+				}
 				ctx.Pages.RemovePage(pageName)
 			})
 		ctx.Pages.AddPage(pageName, modal, false, true)

@@ -111,8 +111,20 @@ func (b *AppBuilder) Build() (*tview.Application, error) {
 	// Set input capture only when we have global key bindings; avoid running refresh
 	// from capture to prevent deadlock (QueueUpdate would block) or draw re-entrancy.
 	executor := template.NewExecutor(ctx, b.registry)
+	ctx.SetExecutor(executor)
 	if len(appConfig.Application.GlobalKeyBindings) > 0 {
+		passthrough := appConfig.Application.EscapePassthroughPages
 		app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+			// On Escape, if current page is in passthrough list, let the primitive (e.g. form) handle it.
+			if event.Key() == tcell.KeyEscape && len(passthrough) > 0 {
+				if front, _ := pages.GetFrontPage(); front != "" {
+					for _, p := range passthrough {
+						if p == front {
+							return event
+						}
+					}
+				}
+			}
 			for _, binding := range appConfig.Application.GlobalKeyBindings {
 				if template.MatchesKeyBinding(event, binding) {
 					callback, err := executor.ExecuteCallback(binding.Action)

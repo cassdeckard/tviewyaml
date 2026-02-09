@@ -107,15 +107,24 @@ func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Pri
 	if err != nil {
 		return nil, err
 	}
-	if cfg.OnSubmit != "" {
+	// SetCancelFunc runs when user presses Escape on the form; use OnCancel if set, else OnSubmit
+	if cfg.OnCancel != "" || cfg.OnSubmit != "" {
+		expr := cfg.OnCancel
+		if expr == "" {
+			expr = cfg.OnSubmit
+		}
+		cb, err := b.executor.ExecuteCallback(expr)
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute form cancel callback: %w", err)
+		}
+		form.SetCancelFunc(cb)
+	}
+	if cfg.OnSubmit != "" && cfg.Name != "" {
 		cb, err := b.executor.ExecuteCallback(cfg.OnSubmit)
 		if err != nil {
 			return nil, fmt.Errorf("failed to execute onSubmit callback: %w", err)
 		}
-		form.SetCancelFunc(cb)
-		if cfg.Name != "" {
-			b.context.RegisterFormSubmit(cfg.Name, cb)
-		}
+		b.context.RegisterFormSubmit(cfg.Name, cb)
 	}
 	return form, nil
 }
@@ -327,15 +336,23 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) er
 	if err != nil {
 		return err
 	}
-	if prim.OnSubmit != "" {
+	if prim.OnCancel != "" || prim.OnSubmit != "" {
+		expr := prim.OnCancel
+		if expr == "" {
+			expr = prim.OnSubmit
+		}
+		cb, err := b.executor.ExecuteCallback(expr)
+		if err != nil {
+			return fmt.Errorf("failed to execute form cancel callback: %w", err)
+		}
+		form.SetCancelFunc(cb)
+	}
+	if prim.OnSubmit != "" && prim.Name != "" {
 		cb, err := b.executor.ExecuteCallback(prim.OnSubmit)
 		if err != nil {
 			return fmt.Errorf("failed to execute onSubmit callback: %w", err)
 		}
-		form.SetCancelFunc(cb)
-		if prim.Name != "" {
-			b.context.RegisterFormSubmit(prim.Name, cb)
-		}
+		b.context.RegisterFormSubmit(prim.Name, cb)
 	}
 	return nil
 }

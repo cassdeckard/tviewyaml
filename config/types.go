@@ -7,10 +7,11 @@ type AppConfig struct {
 
 // ApplicationElement contains application-level settings
 type ApplicationElement struct {
-	Name              string        `yaml:"name,omitempty"`
-	EnableMouse       *bool         `yaml:"enableMouse,omitempty"` // nil = default true
-	GlobalKeyBindings []KeyBinding  `yaml:"globalKeyBindings,omitempty"`
-	Root              RootElement   `yaml:"root"`
+	Name                   string       `yaml:"name,omitempty"`
+	EnableMouse            *bool        `yaml:"enableMouse,omitempty"` // nil = default true
+	GlobalKeyBindings      []KeyBinding `yaml:"globalKeyBindings,omitempty"`
+	EscapePassthroughPages []string     `yaml:"escapePassthroughPages,omitempty"` // pages where Escape is not captured globally (e.g. so form SetCancelFunc runs)
+	Root                   RootElement `yaml:"root"`
 }
 
 // KeyBinding represents a global keyboard shortcut
@@ -42,7 +43,8 @@ type PageConfig struct {
 	Items      []FlexItem             `yaml:"items,omitempty"`
 	ListItems  []ListItem             `yaml:"listItems,omitempty"`
 	FormItems  []FormItem             `yaml:"formItems,omitempty"`
-	OnSubmit   string                 `yaml:"onSubmit,omitempty"` // Template expression when form is cancelled (Escape)
+	OnSubmit   string                 `yaml:"onSubmit,omitempty"` // Template expression for runFormSubmit (e.g. Submit button)
+	OnCancel   string                 `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
 	TableData  *TableData             `yaml:"tableData,omitempty"`
 	// TreeView-specific (for page-level type: treeView)
 	RootNode    string     `yaml:"rootNode,omitempty"`
@@ -83,7 +85,8 @@ type Primitive struct {
 	Rows          [][]string `yaml:"rows,omitempty"`
 	Options       []string   `yaml:"options,omitempty"`
 	FormItems     []FormItem `yaml:"formItems,omitempty"`
-	OnSubmit      string     `yaml:"onSubmit,omitempty"` // Template expression when form is cancelled (Escape, nested form)
+	OnSubmit      string     `yaml:"onSubmit,omitempty"` // Template expression for runFormSubmit (nested form)
+	OnCancel      string     `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
 	// Table-specific properties
 	Borders      bool `yaml:"borders,omitempty"`      // Show borders between cells
 	FixedRows    int  `yaml:"fixedRows,omitempty"`    // Number of fixed rows

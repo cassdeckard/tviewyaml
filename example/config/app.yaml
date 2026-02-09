@@ -1,6 +1,7 @@
 application:
   name: "TView Feature Demos"
   enableMouse: true
+  escapePassthroughPages: ["form"]
   globalKeyBindings:
     - key: "Escape"
       action: '{{ switchToPage "main" }}'

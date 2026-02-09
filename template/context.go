@@ -24,7 +24,8 @@ type Context struct {
 	boundViews         map[string][]BoundView // key -> views to refresh when key changes
 	dirtyKeys          map[string]bool
 	formSubmitCallbacks map[string]func() // form name -> callback (e.g. onSubmit)
-	mu                 sync.RWMutex
+	executor            *Executor         // set by app builder so RunCallback can execute templates
+	mu                  sync.RWMutex
 }
 
 // NewContext creates a new template context
@@ -151,6 +152,29 @@ func (c *Context) RunFormSubmit(name string) {
 	cb := c.formSubmitCallbacks[name]
 	c.mu.RUnlock()
 	if cb != nil {
+		cb()
+	}
+}
+
+// SetExecutor sets the template executor so RunCallback can execute template expressions (e.g. from modal onDone).
+// Called by the app builder after creating the executor.
+func (c *Context) SetExecutor(e *Executor) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.executor = e
+}
+
+// RunCallback executes a template expression (e.g. "switchToPage \"main\"") and runs the resulting callback.
+// No-op if executor is not set or execution fails.
+func (c *Context) RunCallback(templateStr string) {
+	c.mu.RLock()
+	e := c.executor
+	c.mu.RUnlock()
+	if e == nil {
+		return
+	}
+	cb, err := e.ExecuteCallback(templateStr)
+	if err == nil {
 		cb()
 	}
 }
