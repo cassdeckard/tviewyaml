@@ -1,52 +1,46 @@
 type: flex
-direction: row
+direction: column
 items:
   - primitive:
       type: textView
-      textAlign: center
-      textColor: yellow
+      border: true
+      title: "Temporary Detail Page"
       text: |
-        Temporary Detail Page
+        [yellow::b]Temporary Detail Page[::-]
         
-        This page demonstrates the removePage function.
+        This page demonstrates the [cyan]removePage[::-] function.
         
-        Try the "Remove This Page" button to delete
-        this page from the container.
+        When you click "Remove This Page & Go Back", this page will be
+        deleted from the page container and you'll be redirected.
         
-        After removal, attempting to navigate here
-        will fail until the page is recreated.
-    fixedSize: 6
+        [green]Try it:[::-]
+        1. Click "Remove This Page & Go Back" below
+        2. You'll be redirected (tview picks where to go)
+        3. Press [yellow]Esc[::-] to get back to main menu
+        4. Navigate to Dynamic Pages demo again
+        5. Try "Navigate to Temporary Detail Page" - it will fail!
+        6. The page no longer exists until you restart the app
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 0
     proportion: 1
     focus: false
+  
   - primitive:
       type: form
       border: true
-      title: "Temporary Detail Page - Actions"
+      title: "Actions"
       formItems:
         - type: button
-          label: "Remove This Page"
+          label: "Remove This Page & Go Back"
           onSelected: '{{ removePage "temp-detail" }}'
         - type: button
-          label: "Go Back to Dynamic Pages Demo"
+          label: "Go Back (Keep Page)"
           onSelected: '{{ switchToPage "dynamic-pages" }}'
         - type: button
-          label: "Go to Main Menu"
+          label: "Main Menu (Keep Page)"
           onSelected: '{{ switchToPage "main" }}'
     fixedSize: 0
-    proportion: 2
-    focus: true
-  - primitive:
-      type: textView
-      textAlign: center
-      textColor: gray
-      text: |
-        Note: The "Remove This Page" button will
-        delete this page from the container.
-        
-        After removal, navigation attempts will
-        fail until the page is recreated.
-        
-        ESC: Return to main menu
-    fixedSize: 8
     proportion: 1
-    focus: false
+    focus: true

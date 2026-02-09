@@ -41,22 +41,22 @@ Items are prioritized based on:
 
 ---
 
-### 2. Nested Pages Container
+### 2. TreeView Selection Mode Differences
 
-**Description**: Pages primitive used within flex/grid layouts (not just as root)
+**Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
-**Why It Matters**: Enables sub-navigation patterns and tab-like interfaces within sections of the UI.
+**Why It Matters**: Understanding mode differences helps users choose appropriate behavior for their use case.
 
-**Current Status**: Pages only demonstrated as root container in `app.yaml`.
+**Current Status**: Modes mentioned but behavioral differences unclear.
 
-**Suggested Example**: Add `nested-pages.yaml`:
-- Flex layout with sidebar and content area
-- Content area uses nested pages container
-- Buttons in sidebar switch content pages
+**Suggested Example**: Create `treeview-modes.yaml`:
+- Three separate trees demonstrating each mode
+- Clear labels explaining behavior
+- Comments describing when to use each mode
 
 **Related Files**:
-- `builder/factory.go` - Pages factory
-- Package supports nesting inherently
+- `builder/builder.go` - `populateTreeView` implements mode logic
+- `config/types.go` - `Selectable` field
 
 ---
 
@@ -77,25 +77,6 @@ Items are prioritized based on:
 **Related Files**:
 - `template/keybinding.go` - Full special key support
 - `keys/keys_test.go` - All keys tested
-
----
-
-### 4. TreeView Selection Mode Differences
-
-**Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
-
-**Why It Matters**: Understanding mode differences helps users choose appropriate behavior for their use case.
-
-**Current Status**: Modes mentioned but behavioral differences unclear.
-
-**Suggested Example**: Create `treeview-modes.yaml`:
-- Three separate trees demonstrating each mode
-- Clear labels explaining behavior
-- Comments describing when to use each mode
-
-**Related Files**:
-- `builder/builder.go` - `populateTreeView` implements mode logic
-- `config/types.go` - `Selectable` field
 
 ---
 
@@ -258,9 +239,10 @@ The following features are adequately covered in existing examples:
 
 ### Navigation & Layout
 - **Page switching** - Demonstrated throughout via `{{ switchToPage }}`
-- **Page removal** - dynamic-pages.yaml, temp-detail.yaml (removePage function, dynamic page lifecycle)
+- **Page removal** - dynamic-pages.yaml (removePage function, dynamic page lifecycle)
 - **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M - all modifiers)
 - **Page container** - app.yaml (root pages structure)
+- **Nested pages** - nested-pages.yaml (pages within flex layouts, tab-based interfaces, sub-navigation)
 - **Responsive layouts** - grid.yaml, flex.yaml (flexible sizing)
 
 ### Callbacks & Events
@@ -340,10 +322,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 11 gaps
+- **Total Features Identified**: 10 gaps
 - **High Priority**: 0 items
-- **Medium Priority**: 4 items  
+- **Medium Priority**: 3 items  
 - **Low Priority**: 7 items
-- **Well Demonstrated**: 35+ features
+- **Well Demonstrated**: 36+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 76% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 78% of package functionality, with most common use cases well covered.

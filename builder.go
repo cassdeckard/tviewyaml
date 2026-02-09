@@ -98,6 +98,7 @@ func (b *AppBuilder) Build() (*Application, []error, error) {
 
 	// Create builder with registry
 	uiBuilder := builder.NewBuilder(ctx, b.registry)
+	uiBuilder.SetLoader(loader) // Enable nested pages support
 
 	// Build all pages from config, collecting non-fatal errors
 	var pageErrors []error

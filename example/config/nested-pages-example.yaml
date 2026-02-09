@@ -1,0 +1,39 @@
+type: flex
+direction: column
+items:
+  - primitive:
+      type: textView
+      border: true
+      title: "Nested Page Content"
+      text: |
+        [cyan::b]This content is loaded from a nested page[::-]
+        
+        This demonstrates that pages within a nested pages container
+        work just like root-level pages - they can contain any primitive
+        type and complex layouts.
+        
+        File: [yellow]nested-pages-example.yaml[::-]
+        Container: Nested pages primitive within the parent layout
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 9
+    focus: false
+  
+  - primitive:
+      type: form
+      border: true
+      title: "Interactive Content in Nested Page"
+      formItems:
+        - type: input
+          label: "Example Input:"
+          value: "This works!"
+        - type: button
+          label: "Show Modal"
+          onSelected: '{{ showSimpleModal "Nested Page Demo" "This modal was triggered from a nested page!" "OK" }}'
+        - type: button
+          label: "Return to Main Menu"
+          onSelected: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 1
+    focus: true

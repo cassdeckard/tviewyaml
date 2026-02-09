@@ -56,6 +56,12 @@ type Builder struct {
 	attacher *CallbackAttacher
 	executor *template.Executor
 	context  *template.Context
+	loader   PageLoader
+}
+
+// PageLoader interface for loading page configurations
+type PageLoader interface {
+	LoadPage(ref string) (*config.PageConfig, error)
 }
 
 // assertPrimitiveType safely asserts a primitive to a specific type, returning an error if the type doesn't match.
@@ -80,7 +86,13 @@ func NewBuilder(ctx *template.Context, registry *template.FunctionRegistry) *Bui
 		attacher: NewCallbackAttacher(),
 		executor: executor,
 		context:  ctx,
+		loader:   nil, // Set via SetLoader if nested pages are needed
 	}
+}
+
+// SetLoader sets the page loader for loading nested page configurations
+func (b *Builder) SetLoader(loader PageLoader) {
+	b.loader = loader
 }
 
 // BuildFromConfig builds a tview primitive from a page configuration
@@ -419,6 +431,10 @@ func (b *Builder) buildPrimitive(prim *config.Primitive, bc *BuildContext) (tvie
 		if err := b.populateGridItems(v, prim, bc); err != nil {
 			return nil, err
 		}
+	case *tview.Pages:
+		if err := b.populateNestedPages(v, prim, bc); err != nil {
+			return nil, err
+		}
 	}
 
 	return primitive, nil
@@ -708,6 +724,37 @@ func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive, bc
 		}
 
 		grid.AddItem(child, item.Row, item.Column, rowSpan, colSpan, item.MinHeight, item.MinWidth, item.Focus)
+	}
+
+	return nil
+}
+
+// populateNestedPages populates a nested pages container with child pages
+func (b *Builder) populateNestedPages(pages *tview.Pages, prim *config.Primitive, bc *BuildContext) error {
+	if b.loader == nil {
+		return bc.Errorf("nested pages require a page loader (use SetLoader)")
+	}
+
+	for i, pageRef := range prim.Pages {
+		bc.Push(fmt.Sprintf("page[%d]:%s", i, pageRef.Name))
+
+		// Load page config from referenced file
+		pageCfg, err := b.loader.LoadPage(pageRef.Ref)
+		if err != nil {
+			bc.Pop()
+			return bc.Errorf("failed to load nested page %s: %w", pageRef.Name, err)
+		}
+
+		// Build the page primitive
+		pagePrim, err := b.BuildFromConfig(pageCfg)
+		if err != nil {
+			bc.Pop()
+			return err
+		}
+
+		// Add to pages container (first page visible by default)
+		pages.AddPage(pageRef.Name, pagePrim, true, i == 0)
+		bc.Pop()
 	}
 
 	return nil

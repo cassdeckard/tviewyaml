@@ -104,7 +104,9 @@ type Primitive struct {
 	GridColumns []int        `yaml:"gridColumns,omitempty"` // Column widths (0 = flexible)
 	GridBorders bool         `yaml:"gridBorders,omitempty"` // Show borders between grid cells
 	GridItems   []GridItem   `yaml:"gridItems,omitempty"`   // Items to place in grid
-	Properties  map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+	// Pages-specific properties (for nested pages containers)
+	Pages      []PageRef              `yaml:"pages,omitempty"`   // List of pages for nested pages container
+	Properties map[string]interface{} `yaml:",inline"` // Catch-all for other properties
 }
 
 // TreeNode represents a node in a tree view

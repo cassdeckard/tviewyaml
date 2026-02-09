@@ -1,86 +1,48 @@
 type: flex
-direction: row
+direction: column
 items:
   - primitive:
       type: textView
-      textAlign: center
-      textColor: yellow
+      border: true
+      title: "Dynamic Page Lifecycle Demo"
       text: |
-        Dynamic Page Lifecycle Demo
+        [yellow::b]Dynamic Page Lifecycle Management[::-]
         
-        Demonstrates the removePage function for dynamic page
+        This demo showcases the [cyan]removePage[::-] function for dynamic page
         lifecycle management.
         
-        removePage allows pages to be removed from the container:
-        - Wizards with temporary steps
-        - Detail views that can close themselves
-        - Modal-like pages that clean up after use
+        [green::b]Key Functions:[::-]
+        • [cyan]switchToPage(name)[::-] - Navigate to a page
+        • [cyan]removePage(name)[::-] - Remove a page from container
+        • [cyan]showSimpleModal(...)[::-] - Show modal (uses removePage internally)
         
-        Note: showSimpleModal uses this pattern internally -
-        it creates a unique temporary page and removes it when
-        you click OK.
-    fixedSize: 11
-    proportion: 1
+        [green::b]Use Cases:[::-]
+        • Temporary detail pages that clean up after themselves
+        • Multi-step wizards where steps are removed after completion
+        • Dynamic content that should be removed when no longer needed
+        • Custom modal-like interfaces
+        
+        [yellow]Try the demo below:[::-]
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 18
     focus: false
+  
   - primitive:
-      type: flex
-      direction: column
-      items:
-        - primitive:
-            type: textView
-            border: true
-            title: "Page Lifecycle Control"
-            text: |
-              [yellow]Built-in Functions:[white]
-              
-              • switchToPage(name) - Navigate to page
-              • removePage(name) - Remove page from container
-              
-              [yellow]Use Cases:[white]
-              
-              • Temporary detail pages
-              • Wizard steps that clean up after themselves
-              • Dynamic content that should be removed
-              • Custom modal-like interfaces
-              
-              [yellow]Try the demo below:[white]
-            dynamicColors: true
-            textAlign: left
-          fixedSize: 0
-          proportion: 1
-          focus: false
-        - primitive:
-            type: form
-            border: true
-            title: "Test Dynamic Page Lifecycle"
-            formItems:
-              - type: button
-                label: "Navigate to Temporary Detail Page"
-                onSelected: '{{ switchToPage "temp-detail" }}'
-              - type: button
-                label: "Show Modal (auto-cleanup demo)"
-                onSelected: '{{ showSimpleModal "This is a Modal" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
-              - type: button
-                label: "Return to Main Menu"
-                onSelected: '{{ switchToPage "main" }}'
-          fixedSize: 0
-          proportion: 1
-          focus: true
+      type: form
+      border: true
+      title: "Test Dynamic Page Lifecycle"
+      formItems:
+        - type: button
+          label: "Navigate to Temporary Detail Page"
+          onSelected: '{{ switchToPage "temp-detail" }}'
+        - type: button
+          label: "Show Modal (auto-cleanup demo)"
+          onSelected: '{{ showSimpleModal "Modal Demo" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
+        - type: button
+          label: "Return to Main Menu"
+          onSelected: '{{ switchToPage "main" }}'
     fixedSize: 0
-    proportion: 2
-    focus: true
-  - primitive:
-      type: textView
-      textAlign: center
-      textColor: gray
-      text: |
-        Demo Flow:
-        1. Navigate to the temp-detail page
-        2. The page has a "Remove This Page" button
-        3. After removal, the page cannot be accessed
-        4. Use ESC to return to main menu
-        
-        ESC: Return to main menu
-    fixedSize: 8
     proportion: 1
-    focus: false
+    focus: true

@@ -81,5 +81,7 @@ application:
         ref: treeview-standalone.yaml
       - name: dynamic-pages
         ref: dynamic-pages.yaml
+      - name: nested-pages
+        ref: nested-pages.yaml
       - name: temp-detail
         ref: temp-detail.yaml

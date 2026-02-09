@@ -1,0 +1,64 @@
+type: flex
+direction: column
+items:
+  - primitive:
+      type: textView
+      border: true
+      title: "Nested Pages Container Demo"
+      text: |
+        [yellow::b]Nested Pages Container[::-]
+        
+        This demo showcases the [cyan]nested pages[::-] feature, which allows you to
+        embed a pages container as a primitive within your layout.
+        
+        [green::b]Key Concepts:[::-]
+        
+        1. [yellow]Pages as Primitives[::-]
+           The 'pages' type can be used as a nested primitive within flex/grid layouts,
+           not just at the root level.
+        
+        2. [yellow]Multiple Content Areas[::-]
+           Below, you can see a nested pages container with multiple pages loaded.
+           The pages are defined in separate YAML files and referenced by name.
+        
+        3. [yellow]Use Cases[::-]
+           • Tab-based interfaces within a section
+           • Content areas that swap between different views
+           • Sub-navigation patterns without leaving the current page
+        
+        [green::b]Limitation:[::-]
+        Currently, navigation between nested pages requires custom implementation.
+        The built-in {{ switchToPage }} function only works for root-level pages.
+        
+        [green::b]YAML Structure:[::-]
+        
+        type: flex
+        items:
+          - primitive:
+              type: pages
+              pages:
+                - name: content1
+                  ref: content1.yaml
+                - name: content2
+                  ref: content2.yaml
+        
+        The first page in the list is shown by default.
+        
+        Press [yellow]Esc[::-] to return to the main menu.
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 0
+    proportion: 1
+    focus: false
+  
+  - primitive:
+      type: pages
+      border: true
+      title: "Example: Nested Pages Container (showing first page)"
+      pages:
+        - name: example-content
+          ref: nested-pages-example.yaml
+    fixedSize: 0
+    proportion: 1
+    focus: true

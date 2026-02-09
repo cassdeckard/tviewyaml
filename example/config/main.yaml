@@ -59,6 +59,10 @@ listItems:
     secondaryText: "Page lifecycle: create, navigate, remove"
     shortcut: "y"
     onSelected: '{{ switchToPage "dynamic-pages" }}'
+  - mainText: "Nested Pages"
+    secondaryText: "Tab-based interface with nested pages container"
+    shortcut: "n"
+    onSelected: '{{ switchToPage "nested-pages" }}'
   - mainText: "Flex"
     secondaryText: "Flexbox layout (horizontal and vertical)"
     shortcut: "x"
