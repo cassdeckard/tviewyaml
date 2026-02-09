@@ -17,6 +17,19 @@ type Builder struct {
 	context  *template.Context
 }
 
+// assertPrimitiveType safely asserts a primitive to a specific type, returning an error if the type doesn't match.
+// This prevents panics when factory and builder get out of sync.
+func assertPrimitiveType[T tview.Primitive](p tview.Primitive) (T, error) {
+	var zero T
+	if p == nil {
+		return zero, fmt.Errorf("primitive is nil")
+	}
+	if result, ok := p.(T); ok {
+		return result, nil
+	}
+	return zero, fmt.Errorf("primitive type mismatch: expected %T, got %T", zero, p)
+}
+
 // NewBuilder creates a new UI builder
 func NewBuilder(ctx *template.Context, registry *template.FunctionRegistry) *Builder {
 	executor := template.NewExecutor(ctx, registry)
@@ -45,15 +58,35 @@ func (b *Builder) BuildFromConfig(pageConfig *config.PageConfig) (tview.Primitiv
 	// Build based on type
 	switch pageConfig.Type {
 	case "list":
-		return b.buildList(primitive.(*tview.List), pageConfig)
+		list, err := assertPrimitiveType[*tview.List](primitive)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build list: %w", err)
+		}
+		return b.buildList(list, pageConfig)
 	case "flex":
-		return b.buildFlex(primitive.(*tview.Flex), pageConfig)
+		flex, err := assertPrimitiveType[*tview.Flex](primitive)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build flex: %w", err)
+		}
+		return b.buildFlex(flex, pageConfig)
 	case "form":
-		return b.buildForm(primitive.(*tview.Form), pageConfig)
+		form, err := assertPrimitiveType[*tview.Form](primitive)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build form: %w", err)
+		}
+		return b.buildForm(form, pageConfig)
 	case "table":
-		return b.buildTable(primitive.(*tview.Table), pageConfig)
+		table, err := assertPrimitiveType[*tview.Table](primitive)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build table: %w", err)
+		}
+		return b.buildTable(table, pageConfig)
 	case "treeView":
-		return b.buildTreeView(primitive.(*tview.TreeView), pageConfig)
+		tree, err := assertPrimitiveType[*tview.TreeView](primitive)
+		if err != nil {
+			return nil, fmt.Errorf("failed to build treeView: %w", err)
+		}
+		return b.buildTreeView(tree, pageConfig)
 	default:
 		return primitive, nil
 	}
