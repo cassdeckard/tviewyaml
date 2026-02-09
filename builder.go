@@ -2,7 +2,6 @@ package tviewyaml
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/cassdeckard/tviewyaml/builder"
@@ -32,6 +31,7 @@ func (a *Application) Stop() {
 type AppBuilder struct {
 	configDir string
 	registry  *template.FunctionRegistry
+	errors    []error
 }
 
 // NewAppBuilder creates a new application builder
@@ -39,14 +39,14 @@ func NewAppBuilder(configDir string) *AppBuilder {
 	return &AppBuilder{
 		configDir: configDir,
 		registry:  template.NewFunctionRegistry(),
+		errors:    make([]error, 0),
 	}
 }
 
 // WithTemplateFunction registers a custom template function
 func (b *AppBuilder) WithTemplateFunction(name string, minArgs int, maxArgs *int, validator func(*template.Context, []string) error, handler interface{}) *AppBuilder {
 	if err := b.registry.Register(name, minArgs, maxArgs, validator, handler); err != nil {
-		// Log the error but continue building (could also panic or store errors)
-		log.Printf("Warning: failed to register template function %q: %v", name, err)
+		b.errors = append(b.errors, fmt.Errorf("failed to register template function %q: %w", name, err))
 	}
 	return b
 }
@@ -61,6 +61,11 @@ func (b *AppBuilder) With(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
 // Returns (app, pageErrors, err) where err is fatal (app config load/validate failure),
 // and pageErrors are non-fatal per-page failures (missing/invalid pages are skipped).
 func (b *AppBuilder) Build() (*Application, []error, error) {
+	// Check for builder configuration errors first
+	if len(b.errors) > 0 {
+		return nil, nil, fmt.Errorf("builder configuration errors: %v", b.errors)
+	}
+
 	// Initialize tview application
 	tvApp := tview.NewApplication()
 	pages := tview.NewPages()
