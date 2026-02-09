@@ -191,24 +191,9 @@ func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig, bc *BuildC
 	if err != nil {
 		return nil, err
 	}
-	// SetCancelFunc runs when user presses Escape on the form; use OnCancel if set, else OnSubmit
-	if cfg.OnCancel != "" || cfg.OnSubmit != "" {
-		expr := cfg.OnCancel
-		if expr == "" {
-			expr = cfg.OnSubmit
-		}
-		cb, err := b.executor.ExecuteCallback(expr)
-		if err != nil {
-			return nil, bc.Errorf("failed to execute form cancel callback: %w", err)
-		}
-		form.SetCancelFunc(cb)
-	}
-	if cfg.OnSubmit != "" && cfg.Name != "" {
-		cb, err := b.executor.ExecuteCallback(cfg.OnSubmit)
-		if err != nil {
-			return nil, bc.Errorf("failed to execute onSubmit callback: %w", err)
-		}
-		b.context.RegisterFormSubmit(cfg.Name, cb)
+	// Setup form callbacks (cancel and submit)
+	if err := b.setupFormCallbacks(form, cfg.OnCancel, cfg.OnSubmit, cfg.Name, bc); err != nil {
+		return nil, err
 	}
 	return form, nil
 }
@@ -297,6 +282,31 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem, bc
 	}
 
 	return form, nil
+}
+
+// setupFormCallbacks configures the cancel and submit callbacks for a form
+// This is shared logic used by both buildForm and populateFormItems
+func (b *Builder) setupFormCallbacks(form *tview.Form, onCancel, onSubmit, name string, bc *BuildContext) error {
+	// SetCancelFunc runs when user presses Escape on the form; use OnCancel if set, else OnSubmit
+	if onCancel != "" || onSubmit != "" {
+		expr := onCancel
+		if expr == "" {
+			expr = onSubmit
+		}
+		cb, err := b.executor.ExecuteCallback(expr)
+		if err != nil {
+			return bc.Errorf("failed to execute form cancel callback: %w", err)
+		}
+		form.SetCancelFunc(cb)
+	}
+	if onSubmit != "" && name != "" {
+		cb, err := b.executor.ExecuteCallback(onSubmit)
+		if err != nil {
+			return bc.Errorf("failed to execute onSubmit callback: %w", err)
+		}
+		b.context.RegisterFormSubmit(name, cb)
+	}
+	return nil
 }
 
 // buildTable populates a table with data
@@ -438,25 +448,8 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive, bc
 	if err != nil {
 		return err
 	}
-	if prim.OnCancel != "" || prim.OnSubmit != "" {
-		expr := prim.OnCancel
-		if expr == "" {
-			expr = prim.OnSubmit
-		}
-		cb, err := b.executor.ExecuteCallback(expr)
-		if err != nil {
-			return bc.Errorf("failed to execute form cancel callback: %w", err)
-		}
-		form.SetCancelFunc(cb)
-	}
-	if prim.OnSubmit != "" && prim.Name != "" {
-		cb, err := b.executor.ExecuteCallback(prim.OnSubmit)
-		if err != nil {
-			return bc.Errorf("failed to execute onSubmit callback: %w", err)
-		}
-		b.context.RegisterFormSubmit(prim.Name, cb)
-	}
-	return nil
+	// Setup form callbacks (cancel and submit)
+	return b.setupFormCallbacks(form, prim.OnCancel, prim.OnSubmit, prim.Name, bc)
 }
 
 // populateTableData populates table with data from primitive config
