@@ -2,6 +2,8 @@ package template
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/rivo/tview"
 )
@@ -43,6 +45,7 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 
 	// showSimpleModal: displays a simple modal with text and buttons
 	// First arg is text, remaining args are button labels (defaults to "OK" if no buttons provided)
+	// Uses a unique page name so multiple modals can be shown without overwriting.
 	registry.Register("showSimpleModal", 1, nil, nil, func(ctx *Context, args []string) {
 		text := args[0]
 		buttons := args[1:]
@@ -50,13 +53,14 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 			buttons = []string{"OK"}
 		}
 
+		pageName := "simple-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
 		modal := tview.NewModal().
 			SetText(text).
 			AddButtons(buttons).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-				ctx.Pages.RemovePage("simple-modal")
+				ctx.Pages.RemovePage(pageName)
 			})
-		ctx.Pages.AddPage("simple-modal", modal, false, true)
+		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
 
 	// noop: does nothing (useful for testing or placeholder actions)
