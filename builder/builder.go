@@ -255,7 +255,11 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem, bc
 						bc.Pop()
 						return nil, bc.Errorf("failed to execute callback for inputfield %q: %w", item.Label, err)
 					}
-					input.SetChangedFunc(func(text string) { cb() })
+					input.SetChangedFunc(func(text string) {
+						// Store input text in state so template functions can access it
+						b.context.SetStateDirect("__inputText", text)
+						cb()
+					})
 				}
 				form.AddFormItem(input)
 			} else {

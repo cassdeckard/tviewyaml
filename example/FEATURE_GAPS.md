@@ -22,25 +22,6 @@ Items are prioritized based on:
 
 ## Medium Priority Gaps
 
-### 1. InputField onChange Callback
-
-**Description**: Callback fired on every keystroke in an input field
-
-**Why It Matters**: Enables real-time validation, search-as-you-type, character counting, and other interactive patterns.
-
-**Current Status**: `onChanged` callback exists but isn't demonstrated for InputField.
-
-**Suggested Example**: Add `inputfield-live.yaml` or update existing:
-- InputField with `onChanged` callback
-- TextView showing character count or validation status
-- Live feedback via state binding
-
-**Related Files**:
-- `config/types.go` - `OnChanged` in FormItem
-- `builder/builder.go` - `SetChangedFunc` in addFormItems
-
----
-
 ### 2. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
@@ -167,7 +148,7 @@ The following features are adequately covered in existing examples:
 - **Flex** - flex.yaml, box.yaml (direction, sizing, nesting)
 - **Form** - form.yaml (all item types including textarea, submission, cancellation, onSubmit/onCancel callbacks, runFormSubmit/runFormCancel)
 - **Grid** - grid.yaml (rows, columns, spans, borders)
-- **InputField** - inputfield.yaml (validation, password mode, placeholder)
+- **InputField** - inputfield.yaml (validation, password mode, placeholder, onChange callbacks with real-time feedback)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
 - **Modal** - modal-yaml.yaml, modal.yaml (YAML-configured with buttons/callbacks, programmatic via showSimpleModal)
 - **Table** - table.yaml (headers, rows, selection, fixed rows, fixed columns, column colors)
@@ -225,16 +206,15 @@ When adding examples for missing features, consider this order:
 6. Table fixedColumns (wide tables)
 
 **Phase 3: Interactive Patterns**
-7. InputField onChanged (real-time feedback)
-8. Extended special keys (F1-F12, PgUp, etc.)
-9. TreeView selection modes (behavioral clarity)
+7. Extended special keys (F1-F12, PgUp, etc.)
+8. TreeView selection modes (behavioral clarity)
 
 **Phase 4: Advanced Topics**
-10. OnStateChange subscriptions (reactive patterns)
+9. OnStateChange subscriptions (reactive patterns)
 
 **Phase 5: Edge Cases & Polish**
-11. Nested form patterns (wizard UIs)
-12. Grid constraints (responsive control)
+10. Nested form patterns (wizard UIs)
+11. Grid constraints (responsive control)
 
 ---
 
@@ -262,10 +242,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 7 gaps
+- **Total Features Identified**: 6 gaps
 - **High Priority**: 0 items
-- **Medium Priority**: 2 items  
+- **Medium Priority**: 1 item  
 - **Low Priority**: 5 items
-- **Well Demonstrated**: 39+ features
+- **Well Demonstrated**: 40+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 84% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 85% of package functionality, with most common use cases well covered.
