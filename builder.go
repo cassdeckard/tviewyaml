@@ -1,6 +1,7 @@
 package tviewyaml
 
 import (
+	"fmt"
 	"log"
 	"time"
 
@@ -40,8 +41,10 @@ func (b *AppBuilder) RegisterTemplateFunctions(fn func(*AppBuilder) *AppBuilder)
 	return fn(b)
 }
 
-// Build creates and configures a tview application from YAML configuration files
-func (b *AppBuilder) Build() (*tview.Application, error) {
+// Build creates and configures a tview application from YAML configuration files.
+// Returns (app, pageErrors, err) where err is fatal (app config load/validate failure),
+// and pageErrors are non-fatal per-page failures (missing/invalid pages are skipped).
+func (b *AppBuilder) Build() (*tview.Application, []error, error) {
 	// Initialize tview application
 	app := tview.NewApplication()
 	pages := tview.NewPages()
@@ -53,38 +56,39 @@ func (b *AppBuilder) Build() (*tview.Application, error) {
 	loader := config.NewLoader(b.configDir)
 	appConfig, err := loader.LoadApp("app.yaml")
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Validate app config
 	validator := config.NewValidator()
 	if err := validator.ValidateApp(appConfig); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	if err := validator.ValidateAppRefs(appConfig, loader); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	// Create builder with registry
 	uiBuilder := builder.NewBuilder(ctx, b.registry)
 
-	// Build all pages from config
+	// Build all pages from config, collecting non-fatal errors
+	var pageErrors []error
 	for _, pageRef := range appConfig.Application.Root.Pages {
 		pageConfig, err := loader.LoadPage(pageRef.Ref)
 		if err != nil {
-			log.Printf("Error loading page %s: %v", pageRef.Name, err)
+			pageErrors = append(pageErrors, fmt.Errorf("error loading page %s: %w", pageRef.Name, err))
 			continue
 		}
 
 		// Validate page config
 		if err := validator.ValidatePage(pageConfig); err != nil {
-			log.Printf("Invalid page config %s: %v", pageRef.Name, err)
+			pageErrors = append(pageErrors, fmt.Errorf("invalid page config %s: %w", pageRef.Name, err))
 			continue
 		}
 
 		pagePrimitive, err := uiBuilder.BuildFromConfig(pageConfig)
 		if err != nil {
-			log.Printf("Error building page %s: %v", pageRef.Name, err)
+			pageErrors = append(pageErrors, fmt.Errorf("error building page %s: %w", pageRef.Name, err))
 			continue
 		}
 
@@ -144,5 +148,5 @@ func (b *AppBuilder) Build() (*tview.Application, error) {
 		enableMouse = *appConfig.Application.EnableMouse
 	}
 
-	return app.SetRoot(pages, true).EnableMouse(enableMouse), nil
+	return app.SetRoot(pages, true).EnableMouse(enableMouse), pageErrors, nil
 }

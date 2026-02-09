@@ -7,11 +7,18 @@ import (
 )
 
 func main() {
-	app, err := tviewyaml.NewAppBuilder("./config").
+	app, pageErrors, err := tviewyaml.NewAppBuilder("./config").
 		RegisterTemplateFunctions(RegisterClockFunctions).
 		Build()
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)
+	}
+
+	if len(pageErrors) > 0 {
+		log.Printf("Warning: %d page(s) failed to load/build:", len(pageErrors))
+		for _, pageErr := range pageErrors {
+			log.Printf("  - %v", pageErr)
+		}
 	}
 
 	if err := app.Run(); err != nil {
