@@ -44,6 +44,37 @@ application:
       action: '{{ switchToPage "help" }}'
     - key: "Meta+M"
       action: '{{ switchToPage "main" }}'
+    
+    # Extended special keys - Navigation, editing, and function keys
+    # Supported: Home, End, PgUp/PageUp, PgDn/PageDown, Insert/Ins, Delete/Del
+    # Function keys F1-F12 (with optional modifiers)
+    # All keys can be combined with modifiers: Ctrl, Alt, Shift, Meta
+    
+    # Navigation keys
+    - key: "Home"
+      action: '{{ switchToPage "main" }}'
+    - key: "End"
+      action: '{{ switchToPage "state-binding" }}'
+    - key: "PgUp"
+      action: '{{ showNotification "PgUp - Navigate to previous section" }}'
+    - key: "PgDn"
+      action: '{{ showNotification "PgDn - Navigate to next section" }}'
+    
+    # Editing keys
+    - key: "Insert"
+      action: '{{ showNotification "Insert key - Toggle insert mode" }}'
+    - key: "Delete"
+      action: '{{ showNotification "Delete key - Remove item" }}'
+    
+    # Function keys (F2-F12)
+    - key: "F2"
+      action: '{{ showNotification "F2 - Rename or edit mode" }}'
+    - key: "F5"
+      action: '{{ showNotification "F5 - Refresh" }}'
+    - key: "F11"
+      action: '{{ showNotification "F11 - Toggle fullscreen (example)" }}'
+    - key: "F12"
+      action: '{{ showNotification "F12 - Developer tools (example)" }}'
   root:
     type: pages
     pages:

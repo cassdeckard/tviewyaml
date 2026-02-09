@@ -20,31 +20,9 @@ Items are prioritized based on:
 
 ---
 
-## Medium Priority Gaps
-
-### 2. Extended Special Keys
-
-**Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
-
-**Why It Matters**: Many terminal applications use these keys (vim-style navigation, IDE-style shortcuts).
-
-**Current Status**: Only Escape, Ctrl+C, Ctrl+Q demonstrated.
-
-**Suggested Example**: Update `app.yaml` or add comments:
-- `F1` for help
-- `PgUp`/`PgDn` for page navigation
-- `Home`/`End` for first/last page
-- Comment listing all supported special keys
-
-**Related Files**:
-- `template/keybinding.go` - Full special key support
-- `keys/keys_test.go` - All keys tested
-
----
-
 ## Lower Priority / Advanced Gaps
 
-### 6. OnStateChange Subscriptions
+### 2. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -63,7 +41,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. Nested Form Submission Pattern
+### 3. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -82,7 +60,7 @@ Items are prioritized based on:
 
 ---
 
-### 8. Grid Size Constraints
+### 4. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -101,7 +79,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. noop Function
+### 5. noop Function
 
 **Description**: No-operation template function
 
@@ -145,7 +123,7 @@ The following features are adequately covered in existing examples:
 - **Page switching** - Demonstrated throughout via `{{ switchToPage }}`
 - **Page removal** - dynamic-pages.yaml (removePage function)
 - **Dynamic page creation** - dynamic-pages.yaml (programmatic AddPage from Go code, data-driven detail pages)
-- **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M - all modifiers)
+- **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M, Home/End/PgUp/PgDn/Insert/Delete, F2/F5/F11/F12 - all modifiers and special keys)
 - **Page container** - app.yaml (root pages structure)
 - **Nested pages** - nested-pages.yaml (pages within flex layouts, tab-based interfaces, sub-navigation)
 - **Responsive layouts** - grid.yaml, flex.yaml (flexible sizing)
@@ -186,8 +164,7 @@ When adding examples for missing features, consider this order:
 6. Table fixedColumns (wide tables)
 
 **Phase 3: Interactive Patterns**
-7. Extended special keys (F1-F12, PgUp, etc.)
-8. TreeView selection modes (behavioral clarity)
+7. TreeView selection modes (behavioral clarity)
 
 **Phase 4: Advanced Topics**
 8. OnStateChange subscriptions (reactive patterns)
@@ -222,10 +199,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 5 gaps
+- **Total Features Identified**: 4 gaps
 - **High Priority**: 0 items
-- **Medium Priority**: 1 item  
+- **Medium Priority**: 0 items  
 - **Low Priority**: 4 items
 - **Well Demonstrated**: 40+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 86% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 87% of package functionality, with most common use cases well covered.
