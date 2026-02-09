@@ -207,20 +207,22 @@ type ColorHelper struct{}
 // Parse converts color names to tcell.Color
 func (c *ColorHelper) Parse(name string) tcell.Color {
 	colorMap := map[string]tcell.Color{
-		"black":  tcell.ColorBlack,
-		"red":    tcell.ColorRed,
-		"green":  tcell.ColorGreen,
-		"yellow": tcell.ColorYellow,
-		"blue":   tcell.ColorBlue,
-		"white":  tcell.ColorWhite,
-		"gray":   tcell.ColorGray,
-		"orange": tcell.ColorOrange,
-		"purple": tcell.ColorPurple,
-		"pink":   tcell.ColorPink,
-		"lime":   tcell.ColorLime,
-		"navy":   tcell.ColorNavy,
-		"teal":   tcell.ColorTeal,
-		"silver": tcell.ColorSilver,
+		"black":   tcell.ColorBlack,
+		"red":     tcell.ColorRed,
+		"green":   tcell.ColorGreen,
+		"yellow":  tcell.ColorYellow,
+		"blue":    tcell.ColorBlue,
+		"white":   tcell.ColorWhite,
+		"gray":    tcell.ColorGray,
+		"orange":  tcell.ColorOrange,
+		"purple":  tcell.ColorPurple,
+		"pink":    tcell.ColorPink,
+		"lime":    tcell.ColorLime,
+		"navy":    tcell.ColorNavy,
+		"teal":    tcell.ColorTeal,
+		"silver":  tcell.ColorSilver,
+		"cyan":    tcell.ColorAqua,    // Cyan/Aqua
+		"magenta": tcell.ColorFuchsia, // Magenta/Fuchsia
 	}
 
 	if color, ok := colorMap[name]; ok {
