@@ -316,3 +316,41 @@ func TestExtractBindStateKeys(t *testing.T) {
 		})
 	}
 }
+
+// Benchmark template evaluation with simple template
+func BenchmarkEvaluateToString_Simple(b *testing.B) {
+	executor, ctx := newTestExecutor()
+	ctx.SetStateDirect("key", "value")
+	template := "Hello {{ bindState key }} World"
+	
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = executor.EvaluateToString(template)
+	}
+}
+
+// Benchmark template evaluation with multiple evaluators
+func BenchmarkEvaluateToString_Multiple(b *testing.B) {
+	executor, ctx := newTestExecutor()
+	ctx.SetStateDirect("a", "A")
+	ctx.SetStateDirect("b", "B")
+	ctx.SetStateDirect("c", "C")
+	template := "{{ bindState a }} {{ bindState b }} {{ bindState c }} {{ testEval test }}"
+	
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = executor.EvaluateToString(template)
+	}
+}
+
+// Benchmark template evaluation with long template
+func BenchmarkEvaluateToString_Long(b *testing.B) {
+	executor, ctx := newTestExecutor()
+	ctx.SetStateDirect("notification", "Important Message")
+	template := "Notification: {{ bindState notification }} - Status: {{ testEval status }} - Details: Lorem ipsum dolor sit amet, consectetur adipiscing elit."
+	
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_, _ = executor.EvaluateToString(template)
+	}
+}

@@ -48,7 +48,11 @@ func (e *Executor) ExtractBindStateKeys(templateStr string) []string {
 // evaluateTemplateString parses {{ ... }} blocks and evaluates them
 func (e *Executor) evaluateTemplateString(s string) (string, error) {
 	parts := splitTemplateString(s)
+	// Pre-allocate buffer capacity: original string length + estimated expansion for evaluators
+	estimatedSize := len(s) + len(parts)*16
 	var result strings.Builder
+	result.Grow(estimatedSize)
+	
 	for i, part := range parts {
 		if i%2 == 0 {
 			result.WriteString(part)
