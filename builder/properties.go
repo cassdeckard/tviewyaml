@@ -117,9 +117,7 @@ func (pm *PropertyMapper) applyTextViewProperties(tv *tview.TextView, prim *conf
 				}
 			} else if len(currentSelection) > 0 {
 				index := 0
-				if len(currentSelection) > 0 {
-					fmt.Sscanf(currentSelection[0], "%d", &index)
-				}
+				fmt.Sscanf(currentSelection[0], "%d", &index)
 				if key == tcell.KeyTab {
 					index = (index + 1) % 3
 				} else if key == tcell.KeyBacktab {
