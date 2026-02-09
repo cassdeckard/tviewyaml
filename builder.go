@@ -61,6 +61,9 @@ func (b *AppBuilder) Build() (*tview.Application, error) {
 	if err := validator.ValidateApp(appConfig); err != nil {
 		return nil, err
 	}
+	if err := validator.ValidateAppRefs(appConfig, loader); err != nil {
+		return nil, err
+	}
 
 	// Create builder with registry
 	uiBuilder := builder.NewBuilder(ctx, b.registry)

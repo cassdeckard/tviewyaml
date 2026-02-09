@@ -75,8 +75,21 @@ func (v *Validator) ValidatePage(config *PageConfig) error {
 		if config.TableData == nil {
 			return fmt.Errorf("table type requires tableData")
 		}
+	case "treeView":
+		// Nodes may be empty (empty tree is valid)
 	}
 
+	return nil
+}
+
+// ValidateAppRefs checks that each page ref exists under the loader's base path.
+// Call after ValidateApp when a loader is available.
+func (v *Validator) ValidateAppRefs(config *AppConfig, loader *Loader) error {
+	for _, page := range config.Application.Root.Pages {
+		if !loader.RefExists(page.Ref) {
+			return fmt.Errorf("page %q ref %q: file does not exist", page.Name, page.Ref)
+		}
+	}
 	return nil
 }
 

@@ -34,6 +34,13 @@ func (l *Loader) LoadApp(filename string) (*AppConfig, error) {
 	return &config, nil
 }
 
+// RefExists returns true if the page ref file exists under the loader's base path.
+func (l *Loader) RefExists(ref string) bool {
+	path := filepath.Join(l.basePath, ref)
+	_, err := os.Stat(path)
+	return err == nil
+}
+
 // LoadPage loads a page configuration file
 func (l *Loader) LoadPage(ref string) (*PageConfig, error) {
 	path := filepath.Join(l.basePath, ref)
