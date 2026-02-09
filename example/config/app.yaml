@@ -3,12 +3,47 @@ application:
   enableMouse: true
   escapePassthroughPages: ["form"]
   globalKeyBindings:
+    # Standard navigation
     - key: "Escape"
       action: '{{ switchToPage "main" }}'
+    
+    # Ctrl modifier - Application control
     - key: "Ctrl+C"
       action: '{{ stopApp }}'
     - key: "Ctrl+Q"
       action: '{{ stopApp }}'
+    
+    # Alt modifier - Quick page navigation (Alt+1 through Alt+9)
+    - key: "Alt+1"
+      action: '{{ switchToPage "main" }}'
+    - key: "Alt+2"
+      action: '{{ switchToPage "form" }}'
+    - key: "Alt+3"
+      action: '{{ switchToPage "table" }}'
+    - key: "Alt+4"
+      action: '{{ switchToPage "list" }}'
+    - key: "Alt+5"
+      action: '{{ switchToPage "treeview" }}'
+    - key: "Alt+6"
+      action: '{{ switchToPage "clock" }}'
+    - key: "Alt+7"
+      action: '{{ switchToPage "modal" }}'
+    - key: "Alt+8"
+      action: '{{ switchToPage "inputfield" }}'
+    - key: "Alt+9"
+      action: '{{ switchToPage "button" }}'
+    
+    # Shift modifier - Alternative actions
+    - key: "Shift+Tab"
+      action: '{{ showNotification "Shift+Tab pressed - could be used for reverse navigation" }}'
+    - key: "Shift+F1"
+      action: '{{ showSimpleModal "Keyboard Shortcuts Help" "Alt+1-9: Quick page navigation" "Ctrl+Q: Quit" "ESC: Main menu" "OK" }}'
+    
+    # Meta modifier (Windows key / Command key)
+    - key: "Meta+H"
+      action: '{{ showSimpleModal "Keyboard Shortcuts Help" "Alt+1-9: Quick page navigation" "Ctrl+Q: Quit" "ESC: Main menu" "Meta+M: Main menu" "OK" }}'
+    - key: "Meta+M"
+      action: '{{ switchToPage "main" }}'
   root:
     type: pages
     pages:

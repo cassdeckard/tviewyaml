@@ -3,6 +3,10 @@ border: true
 title: "Tview Feature Demos - Select a feature to explore"
 titleAlign: center
 listItems:
+  - mainText: "Keyboard Shortcuts Help"
+    secondaryText: "Alt+1-9: Quick nav | Meta+H: Help | Shift+F1: Help | Ctrl+Q: Quit"
+    shortcut: "h"
+    onSelected: '{{ showSimpleModal "Keyboard Shortcuts" "Alt+1: Main Menu" "Alt+2: Form" "Alt+3: Table" "Alt+4: List" "Alt+5: TreeView" "Alt+6: Clock" "Alt+7: Modal" "Alt+8: InputField" "Alt+9: Button" "Meta+H or Shift+F1: This help" "Meta+M: Main Menu" "Ctrl+Q or Ctrl+C: Quit" "ESC: Main Menu" "OK" }}'
   - mainText: "Box"
     secondaryText: "Basic container with borders and titles"
     shortcut: "b"

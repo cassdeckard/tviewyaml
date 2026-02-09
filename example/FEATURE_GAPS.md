@@ -60,29 +60,9 @@ Items are prioritized based on:
 
 ---
 
-### 3. Advanced Key Modifiers
-
-**Description**: Key binding combinations with Alt, Shift, and Meta modifiers
-
-**Why It Matters**: Provides more keyboard shortcuts without conflicts. Essential for power users and keyboard-driven UIs.
-
-**Current Status**: Only `Ctrl` combinations demonstrated (`Ctrl+C`, `Ctrl+Q`).
-
-**Suggested Example**: Update `app.yaml` global key bindings:
-- `Alt+1` through `Alt+9` for quick page navigation
-- `Shift+Tab` for reverse navigation
-- `Meta+H` for help
-- Comment explaining modifier support
-
-**Related Files**:
-- `template/keybinding.go` - Full modifier parsing
-- `keys/keys_test.go` - Comprehensive key binding tests
-
----
-
 ## Medium Priority Gaps
 
-### 4. Table Fixed Columns
+### 3. Table Fixed Columns
 
 **Description**: Lock leftmost columns when scrolling horizontally
 
@@ -101,7 +81,7 @@ Items are prioritized based on:
 
 ---
 
-### 5. InputField onChange Callback
+### 4. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -120,7 +100,7 @@ Items are prioritized based on:
 
 ---
 
-### 6. Nested Pages Container
+### 5. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -139,7 +119,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. Extended Special Keys
+### 6. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -159,7 +139,7 @@ Items are prioritized based on:
 
 ---
 
-### 8. TreeView Selection Mode Differences
+### 7. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -180,7 +160,7 @@ Items are prioritized based on:
 
 ## Lower Priority / Advanced Gaps
 
-### 9. OnStateChange Subscriptions
+### 8. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -199,7 +179,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. YAML-Configured Modals
+### 9. YAML-Configured Modals
 
 **Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
 
@@ -218,7 +198,7 @@ Items are prioritized based on:
 
 ---
 
-### 11. Nested Form Submission Pattern
+### 10. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -237,7 +217,7 @@ Items are prioritized based on:
 
 ---
 
-### 12. Grid Size Constraints
+### 11. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -256,7 +236,7 @@ Items are prioritized based on:
 
 ---
 
-### 13. Dynamic Page Lifecycle Management
+### 12. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -277,7 +257,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 14. noop Function
+### 13. noop Function
 
 **Description**: No-operation template function
 
@@ -291,7 +271,7 @@ Items are prioritized based on:
 
 ---
 
-### 15. Complex State Binding Patterns
+### 14. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -336,7 +316,7 @@ The following features are adequately covered in existing examples:
 
 ### Navigation & Layout
 - **Page switching** - Demonstrated throughout via `{{ switchToPage }}`
-- **Global key bindings** - app.yaml (Escape, Ctrl+C, Ctrl+Q)
+- **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M - all modifiers)
 - **Page container** - app.yaml (root pages structure)
 - **Responsive layouts** - grid.yaml, flex.yaml (flexible sizing)
 
@@ -417,10 +397,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 15 gaps
-- **High Priority**: 3 items
+- **Total Features Identified**: 14 gaps
+- **High Priority**: 2 items
 - **Medium Priority**: 5 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 72% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 73% of package functionality, with most common use cases well covered.
