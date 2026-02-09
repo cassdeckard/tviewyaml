@@ -1,0 +1,9 @@
+type: modal
+text: "Are you sure you want to proceed with this action?"
+buttons:
+  - label: "Yes"
+    onSelected: '{{ showNotification "You confirmed!" }}{{ switchToPage "modal-yaml" }}'
+  - label: "No"
+    onSelected: '{{ showNotification "You declined!" }}{{ switchToPage "modal-yaml" }}'
+  - label: "Cancel"
+    onSelected: '{{ switchToPage "modal-yaml" }}'

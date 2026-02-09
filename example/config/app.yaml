@@ -37,11 +37,11 @@ application:
     - key: "Shift+Tab"
       action: '{{ showNotification "Shift+Tab pressed - could be used for reverse navigation" }}'
     - key: "Shift+F1"
-      action: '{{ showSimpleModal "Keyboard Shortcuts Help" "Alt+1-9: Quick page navigation" "Ctrl+Q: Quit" "ESC: Main menu" "OK" }}'
+      action: '{{ switchToPage "help" }}'
     
     # Meta modifier (Windows key / Command key)
     - key: "Meta+H"
-      action: '{{ showSimpleModal "Keyboard Shortcuts Help" "Alt+1-9: Quick page navigation" "Ctrl+Q: Quit" "ESC: Main menu" "Meta+M: Main menu" "OK" }}'
+      action: '{{ switchToPage "help" }}'
     - key: "Meta+M"
       action: '{{ switchToPage "main" }}'
   root:
@@ -87,3 +87,13 @@ application:
         ref: nested-pages.yaml
       - name: temp-detail
         ref: temp-detail.yaml
+      - name: modal-yaml
+        ref: modal-yaml.yaml
+      - name: about-modal
+        ref: modal-about.yaml
+      - name: confirm-modal
+        ref: modal-confirm.yaml
+      - name: help-modal
+        ref: modal-help.yaml
+      - name: help
+        ref: help.yaml

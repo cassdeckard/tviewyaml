@@ -144,6 +144,12 @@ func (b *Builder) BuildFromConfig(pageConfig *config.PageConfig) (tview.Primitiv
 			return nil, bc.Errorf("failed to build treeView: %w", err)
 		}
 		return b.buildTreeView(tree, pageConfig, bc)
+	case "modal":
+		modal, err := assertPrimitiveType[*tview.Modal](primitive)
+		if err != nil {
+			return nil, bc.Errorf("failed to build modal: %w", err)
+		}
+		return b.buildModal(modal, pageConfig, bc)
 	default:
 		return primitive, nil
 	}
@@ -433,6 +439,10 @@ func (b *Builder) buildPrimitive(prim *config.Primitive, bc *BuildContext) (tvie
 		}
 	case *tview.Pages:
 		if err := b.populateNestedPages(v, prim, bc); err != nil {
+			return nil, err
+		}
+	case *tview.Modal:
+		if err := b.setupModal(v, prim, bc); err != nil {
 			return nil, err
 		}
 	}
@@ -760,6 +770,41 @@ func (b *Builder) populateNestedPages(pages *tview.Pages, prim *config.Primitive
 	return nil
 }
 
+// setupModal configures a modal dialog with buttons and callbacks
+func (b *Builder) setupModal(modal *tview.Modal, prim *config.Primitive, bc *BuildContext) error {
+	// Set modal text (supports template evaluation)
+	if prim.Text != "" {
+		result, err := b.executor.EvaluateToString(prim.Text)
+		if err != nil {
+			return bc.Errorf("failed to evaluate modal text: %w", err)
+		}
+		modal.SetText(result)
+	}
+
+	// Configure buttons
+	if len(prim.Buttons) > 0 {
+		buttonLabels := make([]string, len(prim.Buttons))
+		for i, btn := range prim.Buttons {
+			buttonLabels[i] = btn.Label
+		}
+		modal.AddButtons(buttonLabels)
+
+		// Set done function to handle button clicks
+		modal.SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			if buttonIndex >= 0 && buttonIndex < len(prim.Buttons) {
+				btn := prim.Buttons[buttonIndex]
+				if btn.OnSelected != "" {
+					if cb, err := b.executor.ExecuteCallback(btn.OnSelected); err == nil {
+						cb()
+					}
+				}
+			}
+		})
+	}
+
+	return nil
+}
+
 // buildTreeView populates a tree view from page config (for page-level type: treeView)
 func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
 	prim := &config.Primitive{
@@ -769,4 +814,13 @@ func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig, bc
 		Nodes:          cfg.Nodes,
 	}
 	return tree, b.populateTreeView(tree, prim, bc)
+}
+
+// buildModal populates a modal from page config (for page-level type: modal)
+func (b *Builder) buildModal(modal *tview.Modal, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
+	prim := &config.Primitive{
+		Text:    cfg.Text,
+		Buttons: cfg.Buttons,
+	}
+	return modal, b.setupModal(modal, prim, bc)
 }

@@ -1,0 +1,29 @@
+type: modal
+text: |
+  [yellow::b]Keyboard Shortcuts[::-]
+  
+  [cyan]Navigation:[::-]
+  ESC             - Return to main menu
+  Tab             - Navigate forward
+  Shift+Tab       - Navigate backward
+  Enter           - Select/Activate
+  
+  [cyan]Quick Page Navigation:[::-]
+  Alt+1           - Main Menu
+  Alt+2           - Form Demo
+  Alt+3           - Table Demo
+  Alt+4           - List Demo
+  Alt+5           - TreeView Demo
+  Alt+6           - Clock Demo
+  Alt+7           - Modal Demo
+  Alt+8           - InputField Demo
+  Alt+9           - Button Demo
+  
+  [cyan]Application Control:[::-]
+  Ctrl+Q / Ctrl+C - Quit application
+  Meta+M          - Main menu
+  Meta+H          - Show this help
+  Shift+F1        - Show this help
+buttons:
+  - label: "Got it!"
+    onSelected: '{{ switchToPage "main" }}'

@@ -51,6 +51,9 @@ type PageConfig struct {
 	RootNode       string     `yaml:"rootNode,omitempty"`
 	CurrentNode    string     `yaml:"currentNode,omitempty"`
 	Nodes          []TreeNode `yaml:"nodes,omitempty"`
+	// Modal-specific (for page-level type: modal)
+	Text    string        `yaml:"text,omitempty"`    // Modal text content
+	Buttons []ModalButton `yaml:"buttons,omitempty"` // Modal buttons
 	Properties     map[string]interface{} `yaml:",inline"` // Catch-all for other properties
 }
 
@@ -105,8 +108,10 @@ type Primitive struct {
 	GridBorders bool         `yaml:"gridBorders,omitempty"` // Show borders between grid cells
 	GridItems   []GridItem   `yaml:"gridItems,omitempty"`   // Items to place in grid
 	// Pages-specific properties (for nested pages containers)
-	Pages      []PageRef              `yaml:"pages,omitempty"`   // List of pages for nested pages container
-	Properties map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+	Pages []PageRef `yaml:"pages,omitempty"` // List of pages for nested pages container
+	// Modal-specific properties
+	Buttons    []ModalButton          `yaml:"buttons,omitempty"` // Buttons with callbacks for modal dialogs
+	Properties map[string]interface{} `yaml:",inline"`           // Catch-all for other properties
 }
 
 // TreeNode represents a node in a tree view
@@ -116,6 +121,12 @@ type TreeNode struct {
 	Color      string   `yaml:"color,omitempty"`      // Text color
 	Selectable string   `yaml:"selectable,omitempty"` // "true" (always run onNodeSelected), "auto" (default behavior), "false" (not selectable). Defaults to "auto" if unset.
 	Children   []string `yaml:"children,omitempty"`   // Names of child nodes
+}
+
+// ModalButton represents a button in a modal dialog
+type ModalButton struct {
+	Label      string `yaml:"label"`                // Button text
+	OnSelected string `yaml:"onSelected,omitempty"` // Template expression when clicked
 }
 
 // GridItem represents an item in a grid layout

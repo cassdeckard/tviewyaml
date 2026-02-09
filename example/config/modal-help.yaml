@@ -1,0 +1,16 @@
+type: modal
+text: |
+  Keyboard Shortcuts:
+  
+  ESC - Return to main menu
+  Tab - Navigate forward
+  Shift+Tab - Navigate backward
+  Enter - Select/Activate
+  
+  Alt+1-9 - Quick page navigation
+  Ctrl+Q - Quit application
+  
+  For more help, see the main menu.
+buttons:
+  - label: "Got it!"
+    onSelected: '{{ switchToPage "modal-yaml" }}'

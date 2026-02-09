@@ -82,26 +82,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. YAML-Configured Modals
-
-**Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
-
-**Why It Matters**: Static modals for confirmations, about boxes, or error messages can be pre-configured.
-
-**Current Status**: Package supports `modal` primitive type but examples only show programmatic creation.
-
-**Suggested Example**: Add `modal-yaml.yaml`:
-- Modal defined in YAML with buttons
-- Compare to `showSimpleModal` approach
-- Show when each approach is appropriate
-
-**Related Files**:
-- `builder/factory.go` - Modal factory exists
-- Modal creation supported
-
----
-
-### 8. Nested Form Submission Pattern
+### 7. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -120,7 +101,7 @@ Items are prioritized based on:
 
 ---
 
-### 9. Grid Size Constraints
+### 8. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -139,7 +120,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. Dynamic Page Lifecycle Management
+### 9. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -160,7 +141,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 11. noop Function
+### 10. noop Function
 
 **Description**: No-operation template function
 
@@ -174,7 +155,7 @@ Items are prioritized based on:
 
 ---
 
-### 12. Complex State Binding Patterns
+### 11. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -207,6 +188,7 @@ The following features are adequately covered in existing examples:
 - **Grid** - grid.yaml (rows, columns, spans, borders)
 - **InputField** - inputfield.yaml (validation, password mode, placeholder)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
+- **Modal** - modal-yaml.yaml, modal.yaml (YAML-configured with buttons/callbacks, programmatic via showSimpleModal)
 - **Table** - table.yaml (headers, rows, selection, fixed rows, fixed columns, column colors)
 - **TextView** - textview.yaml (colors, regions, formatting)
 - **TextArea** - form.yaml (multi-line input, placeholder)
@@ -271,10 +253,9 @@ When adding examples for missing features, consider this order:
 11. Complex state binding (multi-view updates)
 
 **Phase 5: Edge Cases & Polish**
-12. YAML-configured modals (alternative approach)
-13. Nested form patterns (wizard UIs)
-14. Grid constraints (responsive control)
-15. Dynamic page lifecycle (advanced workflows)
+12. Nested form patterns (wizard UIs)
+13. Grid constraints (responsive control)
+14. Dynamic page lifecycle (advanced workflows)
 
 ---
 
@@ -302,10 +283,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 9 gaps
+- **Total Features Identified**: 8 gaps
 - **High Priority**: 0 items
 - **Medium Priority**: 2 items  
-- **Low Priority**: 7 items
-- **Well Demonstrated**: 37+ features
+- **Low Priority**: 6 items
+- **Well Demonstrated**: 38+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 80% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 82% of package functionality, with most common use cases well covered.

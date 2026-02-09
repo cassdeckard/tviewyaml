@@ -1,0 +1,12 @@
+type: modal
+text: |
+  TView YAML Demo App
+  Version 1.0
+  
+  A demonstration of declarative UI
+  configuration for terminal applications.
+  
+  Built with tviewyaml package
+buttons:
+  - label: "OK"
+    onSelected: '{{ switchToPage "modal-yaml" }}'

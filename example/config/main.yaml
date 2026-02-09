@@ -6,7 +6,7 @@ listItems:
   - mainText: "Keyboard Shortcuts Help"
     secondaryText: "Alt+1-9: Quick nav | Meta+H: Help | Shift+F1: Help | Ctrl+Q: Quit"
     shortcut: "h"
-    onSelected: '{{ showSimpleModal "Keyboard Shortcuts" "Alt+1: Main Menu" "Alt+2: Form" "Alt+3: Table" "Alt+4: List" "Alt+5: TreeView" "Alt+6: Clock" "Alt+7: Modal" "Alt+8: InputField" "Alt+9: Button" "Meta+H or Shift+F1: This help" "Meta+M: Main Menu" "Ctrl+Q or Ctrl+C: Quit" "ESC: Main Menu" "OK" }}'
+    onSelected: '{{ switchToPage "help" }}'
   - mainText: "Box"
     secondaryText: "Basic container with borders and titles"
     shortcut: "b"
@@ -56,9 +56,9 @@ listItems:
     shortcut: "d"
     onSelected: '{{ switchToPage "dropdown" }}'
   - mainText: "Modal"
-    secondaryText: "Modal dialogs with buttons"
+    secondaryText: "YAML-configured vs programmatic modals"
     shortcut: "m"
-    onSelected: '{{ switchToPage "modal" }}'
+    onSelected: '{{ switchToPage "modal-yaml" }}'
   - mainText: "Dynamic Pages"
     secondaryText: "Page lifecycle: create, navigate, remove"
     shortcut: "y"

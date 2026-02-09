@@ -1,0 +1,97 @@
+type: flex
+direction: column
+items:
+  # Header explaining the two approaches
+  - primitive:
+      type: textView
+      border: true
+      title: "Modal Configuration Approaches"
+      text: |
+        [yellow::b]Two Ways to Create Modals:[::-]
+        
+        1. [cyan]YAML-Configured (Static)[::-]
+           - Pre-defined in page configuration
+           - Best for: About boxes, help screens, confirmations
+           - Defined once, reused multiple times
+           - Shown on the left below
+        
+        2. [cyan]Programmatic (Dynamic)[::-]
+           - Created via showSimpleModal template function
+           - Best for: Runtime messages, dynamic content
+           - Created on-demand, auto-removed
+           - Shown on the right below
+        
+        [green::b]When to Use Each:[::-]
+        
+        [yellow]YAML modals:[::-] Static content that doesn't change
+        (About, Help, standard confirmations)
+        
+        [yellow]Programmatic modals:[::-] Dynamic runtime messages
+        (Success/error notifications, context-specific prompts)
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 21
+    focus: false
+  
+  # Side-by-side comparison
+  - primitive:
+      type: flex
+      direction: row
+      items:
+        # Left: YAML-configured modal demonstration
+        - primitive:
+            type: form
+            border: true
+            title: "YAML-Configured Modals"
+            formItems:
+              - type: button
+                label: "Show About Modal"
+                onSelected: '{{ switchToPage "about-modal" }}'
+              - type: button
+                label: "Show Confirmation"
+                onSelected: '{{ switchToPage "confirm-modal" }}'
+              - type: button
+                label: "Show Help"
+                onSelected: '{{ switchToPage "help-modal" }}'
+          fixedSize: 0
+          proportion: 1
+          focus: true
+        
+        # Right: Programmatic modal demonstration
+        - primitive:
+            type: form
+            border: true
+            title: "Programmatic Modals"
+            formItems:
+              - type: button
+                label: "Dynamic Info"
+                onSelected: '{{ showSimpleModal "Info" "This modal was created at runtime!" "OK" }}'
+              - type: button
+                label: "Multi-Button Modal"
+                onSelected: '{{ showSimpleModal "Choose an option" "Yes" "No" "Cancel" }}'
+              - type: button
+                label: "With Notification"
+                onSelected: '{{ showSimpleModal "Click OK below" "OK" "{{ showNotification \"You clicked OK!\" }}" }}'
+          fixedSize: 0
+          proportion: 1
+          focus: false
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  
+  - primitive:
+      type: textView
+      border: false
+      text: |
+        [yellow]Key Differences:[::-]
+        • YAML modals are pre-defined pages that can be navigated to
+        • Programmatic modals are created on-demand and auto-removed
+        • Use YAML for static content, programmatic for dynamic
+        
+        [gray]ESC: Return to main menu[::-]
+      dynamicColors: true
+      regions: true
+      textAlign: center
+    fixedSize: 6
+    focus: false

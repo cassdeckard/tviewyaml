@@ -104,6 +104,9 @@ func (f *Factory) CreatePrimitiveFromPageConfig(cfg *config.PageConfig) (tview.P
 	case "treeView":
 		return tview.NewTreeView(), nil
 
+	case "modal":
+		return tview.NewModal(), nil
+
 	default:
 		return nil, fmt.Errorf("unknown page type: %s", cfg.Type)
 	}
