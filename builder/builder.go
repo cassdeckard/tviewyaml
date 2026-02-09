@@ -401,13 +401,20 @@ func (b *Builder) populateTableData(table *tview.Table, prim *config.Primitive) 
 		table.SetFixed(prim.FixedRows, prim.FixedColumns)
 	}
 
-	// Add selection handler to change cell color when selected
-	table.SetSelectedFunc(func(row int, column int) {
-		cell := table.GetCell(row, column)
-		if cell != nil {
-			cell.SetTextColor(b.context.Colors.Parse("red"))
-		}
-	})
+	if prim.OnCellSelected != "" {
+		table.SetSelectedFunc(func(row int, column int) {
+			cellText := ""
+			if cell := table.GetCell(row, column); cell != nil {
+				cellText = cell.Text
+			}
+			b.context.SetStateDirect("__selectedCellText", cellText)
+			b.context.SetStateDirect("__selectedRow", row)
+			b.context.SetStateDirect("__selectedCol", column)
+			if cb, err := b.executor.ExecuteCallback(prim.OnCellSelected); err == nil {
+				cb()
+			}
+		})
+	}
 
 	table.SetBorder(true)
 	table.SetSelectable(true, false)

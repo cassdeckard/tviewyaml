@@ -78,6 +78,22 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.RunFormSubmit(formName)
 	})
 
+	// showSelectedCellModal: shows a modal with the currently selected table cell info (reads __selectedCellText, __selectedRow, __selectedCol from state).
+	registry.Register("showSelectedCellModal", 0, intPtr(0), nil, func(ctx *Context) {
+		cellText, _ := ctx.GetState("__selectedCellText")
+		row, _ := ctx.GetState("__selectedRow")
+		col, _ := ctx.GetState("__selectedCol")
+		text := fmt.Sprintf("Selected cell: %s\nRow: %v, Column: %v", cellText, row, col)
+		pageName := "cell-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
+		modal := tview.NewModal().
+			SetText(text).
+			AddButtons([]string{"OK"}).
+			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+				ctx.Pages.RemovePage(pageName)
+			})
+		ctx.Pages.AddPage(pageName, modal, false, true)
+	})
+
 	// noop: does nothing (useful for testing or placeholder actions)
 	registry.Register("noop", 0, intPtr(0), nil, func(ctx *Context) {
 		// Do nothing
