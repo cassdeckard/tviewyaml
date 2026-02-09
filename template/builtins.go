@@ -30,17 +30,23 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 
 	// switchToPage: switches to a different page
 	registry.Register("switchToPage", 1, intPtr(1), nil, func(ctx *Context, pageName string) {
-		ctx.Pages.SwitchToPage(pageName)
+		if ctx.Pages != nil {
+			ctx.Pages.SwitchToPage(pageName)
+		}
 	})
 
 	// removePage: removes a page from the pages container
 	registry.Register("removePage", 1, intPtr(1), nil, func(ctx *Context, pageName string) {
-		ctx.Pages.RemovePage(pageName)
+		if ctx.Pages != nil {
+			ctx.Pages.RemovePage(pageName)
+		}
 	})
 
 	// stopApp: stops the tview application
 	registry.Register("stopApp", 0, intPtr(0), nil, func(ctx *Context) {
-		ctx.App.Stop()
+		if ctx.App != nil {
+			ctx.App.Stop()
+		}
 	})
 
 	// showSimpleModal: displays a simple modal with text and buttons.
@@ -60,6 +66,9 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 			buttons = []string{"OK"}
 		}
 
+		if ctx.Pages == nil {
+			return
+		}
 		pageName := "simple-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
 		modal := tview.NewModal().
 			SetText(text).
@@ -68,7 +77,9 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 				if onDone != "" {
 					ctx.RunCallback(onDone)
 				}
-				ctx.Pages.RemovePage(pageName)
+				if ctx.Pages != nil {
+					ctx.Pages.RemovePage(pageName)
+				}
 			})
 		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
@@ -83,19 +94,27 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		cellText, _ := ctx.GetState("__selectedCellText")
 		row, _ := ctx.GetState("__selectedRow")
 		col, _ := ctx.GetState("__selectedCol")
+		if ctx.Pages == nil {
+			return
+		}
 		text := fmt.Sprintf("Selected cell: %s\nRow: %v, Column: %v", cellText, row, col)
 		pageName := "cell-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
 		modal := tview.NewModal().
 			SetText(text).
 			AddButtons([]string{"OK"}).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-				ctx.Pages.RemovePage(pageName)
+				if ctx.Pages != nil {
+					ctx.Pages.RemovePage(pageName)
+				}
 			})
 		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
 
 	// showSelectedNodeModal: shows a modal with the currently selected tree node text (reads __selectedNodeText from state).
 	registry.Register("showSelectedNodeModal", 0, intPtr(0), nil, func(ctx *Context) {
+		if ctx.Pages == nil {
+			return
+		}
 		nodeText, _ := ctx.GetState("__selectedNodeText")
 		text := fmt.Sprintf("Selected node: %s", nodeText)
 		pageName := "node-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
@@ -103,7 +122,9 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 			SetText(text).
 			AddButtons([]string{"OK"}).
 			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-				ctx.Pages.RemovePage(pageName)
+				if ctx.Pages != nil {
+					ctx.Pages.RemovePage(pageName)
+				}
 			})
 		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
