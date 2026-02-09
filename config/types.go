@@ -89,10 +89,11 @@ type Primitive struct {
 	OnSubmit      string     `yaml:"onSubmit,omitempty"` // Template expression for runFormSubmit (nested form)
 	OnCancel      string     `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
 	// Table-specific properties
-	OnCellSelected string `yaml:"onCellSelected,omitempty"` // Template expression when a cell is selected (state: __selectedCellText, __selectedRow, __selectedCol)
-	Borders        bool   `yaml:"borders,omitempty"`        // Show borders between cells
-	FixedRows      int    `yaml:"fixedRows,omitempty"`       // Number of fixed rows
-	FixedColumns   int    `yaml:"fixedColumns,omitempty"`    // Number of fixed columns
+	OnCellSelected string   `yaml:"onCellSelected,omitempty"` // Template expression when a cell is selected (state: __selectedCellText, __selectedRow, __selectedCol)
+	Borders        bool     `yaml:"borders,omitempty"`        // Show borders between cells
+	FixedRows      int      `yaml:"fixedRows,omitempty"`      // Number of fixed rows
+	FixedColumns   int      `yaml:"fixedColumns,omitempty"`   // Number of fixed columns
+	ColumnColors   []string `yaml:"columnColors,omitempty"`   // Colors for each column (cycles if fewer colors than columns)
 	// TreeView-specific properties
 	OnNodeSelected string     `yaml:"onNodeSelected,omitempty"` // Template expression when a node is selected (state: __selectedNodeText)
 	RootNode       string     `yaml:"rootNode,omitempty"`       // Name of the root node

@@ -461,7 +461,11 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive, bc
 
 // populateTableData populates table with data from primitive config
 func (b *Builder) populateTableData(table *tview.Table, prim *config.Primitive, bc *BuildContext) error {
-	colors := []string{"white", "green", "blue", "red"}
+	// Use configured column colors if provided, otherwise use defaults
+	colors := prim.ColumnColors
+	if len(colors) == 0 {
+		colors = []string{"white", "green", "blue", "red"}
+	}
 	
 	// Set borders before adding cells (if specified)
 	if prim.Borders {
