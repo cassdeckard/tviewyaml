@@ -8,7 +8,7 @@ type AppConfig struct {
 // ApplicationElement contains application-level settings
 type ApplicationElement struct {
 	Name              string        `yaml:"name,omitempty"`
-	EnableMouse       bool          `yaml:"enableMouse,omitempty"`
+	EnableMouse       *bool         `yaml:"enableMouse,omitempty"` // nil = default true
 	GlobalKeyBindings []KeyBinding  `yaml:"globalKeyBindings,omitempty"`
 	Root              RootElement   `yaml:"root"`
 }

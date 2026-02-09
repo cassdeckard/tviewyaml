@@ -126,10 +126,10 @@ func (b *AppBuilder) Build() (*tview.Application, error) {
 		})
 	}
 
-	// Apply mouse setting (default to true if not specified)
+	// Apply mouse setting (default to true when not specified in config)
 	enableMouse := true
-	if appConfig.Application.EnableMouse {
-		enableMouse = appConfig.Application.EnableMouse
+	if appConfig.Application.EnableMouse != nil {
+		enableMouse = *appConfig.Application.EnableMouse
 	}
 
 	return app.SetRoot(pages, true).EnableMouse(enableMouse), nil
