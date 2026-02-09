@@ -16,13 +16,14 @@ items:
       type: treeView
       border: true
       title: "Tree View (Enter to expand/collapse or select)"
+      onNodeSelected: '{{ showSelectedNodeModal }}'
       rootNode: root
       currentNode: root
       nodes:
         - name: root
           text: Root
           color: red
-          selectable: false
+          selectable: "false"
           children:
             - child1
             - child2
@@ -30,54 +31,54 @@ items:
         - name: child1
           text: Documents
           color: green
-          selectable: true
+          selectable: "auto"
           children:
             - child1a
             - child1b
         - name: child1a
           text: file1.txt
           color: white
-          selectable: true
+          selectable: "true"
         - name: child1b
           text: file2.txt
           color: white
-          selectable: true
+          selectable: "true"
         - name: child2
           text: Pictures
           color: green
-          selectable: true
+          selectable: "auto"
           children:
             - child2a
             - child2b
         - name: child2a
           text: photo1.jpg
           color: white
-          selectable: true
+          selectable: "true"
         - name: child2b
           text: photo2.png
           color: white
-          selectable: true
+          selectable: "true"
         - name: child3
           text: Projects
           color: green
-          selectable: true
+          selectable: "auto"
           children:
             - child3a
         - name: child3a
           text: project1
           color: blue
-          selectable: true
+          selectable: "auto"
           children:
             - child3a1
             - child3a2
         - name: child3a1
           text: src
           color: white
-          selectable: true
+          selectable: "true"
         - name: child3a2
           text: BOGOS_BINTED.md
           color: white
-          selectable: true
+          selectable: "true"
     fixedSize: 0
     proportion: 2
     focus: true

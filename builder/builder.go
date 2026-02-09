@@ -428,8 +428,9 @@ func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive)
 		return nil
 	}
 
-	// Build a map of node name to tview.TreeNode
+	// Build a map of node name to tview.TreeNode and selectable mode
 	tviewNodeMap := make(map[string]*tview.TreeNode)
+	selectableModeMap := make(map[string]string) // node name -> selectable mode ("true", "auto", "false")
 
 	// Create all nodes first
 	for _, node := range prim.Nodes {
@@ -437,7 +438,16 @@ func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive)
 		if node.Color != "" {
 			tviewNode.SetColor(b.context.Colors.Parse(node.Color))
 		}
-		tviewNode.SetSelectable(node.Selectable)
+		// Parse selectable mode: "true", "auto", "false", or default to "auto"
+		selectableMode := node.Selectable
+		if selectableMode == "" {
+			selectableMode = "auto"
+		}
+		selectableModeMap[node.Name] = selectableMode
+		// Set tview selectable: "true" and "auto" are selectable, "false" is not
+		tviewNode.SetSelectable(selectableMode != "false")
+		// Store node name in Reference so we can look it up later
+		tviewNode.SetReference(node.Name)
 		tviewNodeMap[node.Name] = tviewNode
 	}
 
@@ -479,19 +489,46 @@ func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive)
 	// Handle node selection
 	tree.SetSelectedFunc(func(node *tview.TreeNode) {
 		children := node.GetChildren()
-		if len(children) == 0 {
-			// Leaf node - show info
-			modal := tview.NewModal().
-				SetText(fmt.Sprintf("Selected: %s", node.GetText())).
-				AddButtons([]string{"OK"}).
-				SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-					b.context.Pages.RemovePage("tree-modal")
-				})
-			b.context.Pages.AddPage("tree-modal", modal, false, true)
-		} else {
-			// Toggle expansion
-			node.SetExpanded(!node.IsExpanded())
+		isParent := len(children) > 0
+
+		// Get selectable mode from stored node name
+		nodeName, ok := node.GetReference().(string)
+		selectableMode := "auto" // default
+		if ok {
+			if mode, exists := selectableModeMap[nodeName]; exists {
+				selectableMode = mode
+			}
 		}
+
+		if selectableMode == "auto" {
+			// Default behavior: modal for leaf, toggle expansion for parent (ignore onNodeSelected)
+			if isParent {
+				// Toggle expansion
+				node.SetExpanded(!node.IsExpanded())
+			} else {
+				// Leaf node - show info
+				modal := tview.NewModal().
+					SetText(fmt.Sprintf("Selected: %s", node.GetText())).
+					AddButtons([]string{"OK"}).
+					SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+						b.context.Pages.RemovePage("tree-modal")
+					})
+				b.context.Pages.AddPage("tree-modal", modal, false, true)
+			}
+		} else if selectableMode == "true" {
+			// Always run onNodeSelected if set, and toggle expansion for parent nodes
+			if prim.OnNodeSelected != "" {
+				b.context.SetStateDirect("__selectedNodeText", node.GetText())
+				if cb, err := b.executor.ExecuteCallback(prim.OnNodeSelected); err == nil {
+					cb()
+				}
+			}
+			// Still toggle expansion for parent nodes (preserve default UX)
+			if isParent {
+				node.SetExpanded(!node.IsExpanded())
+			}
+		}
+		// selectableMode == "false" shouldn't happen (node wouldn't be selectable), but handle gracefully
 	})
 
 	return nil
@@ -544,9 +581,10 @@ func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive) er
 // buildTreeView populates a tree view from page config (for page-level type: treeView)
 func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig) (tview.Primitive, error) {
 	prim := &config.Primitive{
-		RootNode:    cfg.RootNode,
-		CurrentNode: cfg.CurrentNode,
-		Nodes:       cfg.Nodes,
+		OnNodeSelected: cfg.OnNodeSelected,
+		RootNode:       cfg.RootNode,
+		CurrentNode:    cfg.CurrentNode,
+		Nodes:          cfg.Nodes,
 	}
 	return tree, b.populateTreeView(tree, prim)
 }

@@ -94,6 +94,20 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
 
+	// showSelectedNodeModal: shows a modal with the currently selected tree node text (reads __selectedNodeText from state).
+	registry.Register("showSelectedNodeModal", 0, intPtr(0), nil, func(ctx *Context) {
+		nodeText, _ := ctx.GetState("__selectedNodeText")
+		text := fmt.Sprintf("Selected node: %s", nodeText)
+		pageName := "node-modal-" + strconv.FormatInt(time.Now().UnixNano(), 10)
+		modal := tview.NewModal().
+			SetText(text).
+			AddButtons([]string{"OK"}).
+			SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+				ctx.Pages.RemovePage(pageName)
+			})
+		ctx.Pages.AddPage(pageName, modal, false, true)
+	})
+
 	// noop: does nothing (useful for testing or placeholder actions)
 	registry.Register("noop", 0, intPtr(0), nil, func(ctx *Context) {
 		// Do nothing

@@ -47,10 +47,11 @@ type PageConfig struct {
 	OnCancel   string                 `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
 	TableData  *TableData             `yaml:"tableData,omitempty"`
 	// TreeView-specific (for page-level type: treeView)
-	RootNode    string     `yaml:"rootNode,omitempty"`
-	CurrentNode string     `yaml:"currentNode,omitempty"`
-	Nodes       []TreeNode `yaml:"nodes,omitempty"`
-	Properties  map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+	OnNodeSelected string     `yaml:"onNodeSelected,omitempty"` // Template expression when a node is selected (state: __selectedNodeText)
+	RootNode       string     `yaml:"rootNode,omitempty"`
+	CurrentNode    string     `yaml:"currentNode,omitempty"`
+	Nodes          []TreeNode `yaml:"nodes,omitempty"`
+	Properties     map[string]interface{} `yaml:",inline"` // Catch-all for other properties
 }
 
 // FlexItem represents an item in a flex container
@@ -93,9 +94,10 @@ type Primitive struct {
 	FixedRows      int    `yaml:"fixedRows,omitempty"`       // Number of fixed rows
 	FixedColumns   int    `yaml:"fixedColumns,omitempty"`    // Number of fixed columns
 	// TreeView-specific properties
-	RootNode    string     `yaml:"rootNode,omitempty"`    // Name of the root node
-	CurrentNode string     `yaml:"currentNode,omitempty"` // Name of the initial current node
-	Nodes       []TreeNode `yaml:"nodes,omitempty"`       // List of tree nodes
+	OnNodeSelected string     `yaml:"onNodeSelected,omitempty"` // Template expression when a node is selected (state: __selectedNodeText)
+	RootNode       string     `yaml:"rootNode,omitempty"`       // Name of the root node
+	CurrentNode    string     `yaml:"currentNode,omitempty"`    // Name of the initial current node
+	Nodes          []TreeNode `yaml:"nodes,omitempty"`          // List of tree nodes
 	// Grid-specific properties
 	GridRows    []int        `yaml:"gridRows,omitempty"`    // Row heights (0 = flexible)
 	GridColumns []int        `yaml:"gridColumns,omitempty"` // Column widths (0 = flexible)
@@ -109,7 +111,7 @@ type TreeNode struct {
 	Name       string   `yaml:"name"`                 // Unique identifier for the node
 	Text       string   `yaml:"text"`                 // Display text
 	Color      string   `yaml:"color,omitempty"`      // Text color
-	Selectable bool     `yaml:"selectable,omitempty"` // Whether the node can be selected
+	Selectable string   `yaml:"selectable,omitempty"` // "true" (always run onNodeSelected), "auto" (default behavior), "false" (not selectable). Defaults to "auto" if unset.
 	Children   []string `yaml:"children,omitempty"`   // Names of child nodes
 }
 

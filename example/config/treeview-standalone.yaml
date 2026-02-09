@@ -9,7 +9,7 @@ nodes:
   - name: root
     text: Root
     color: red
-    selectable: false
+    selectable: "false"
     children:
       - docs
       - media
@@ -17,40 +17,40 @@ nodes:
   - name: docs
     text: Documents
     color: green
-    selectable: true
+    selectable: "auto"
     children:
       - readme
       - notes
   - name: readme
     text: README.md
     color: white
-    selectable: true
+    selectable: "auto"
   - name: notes
     text: notes.txt
     color: white
-    selectable: true
+    selectable: "auto"
   - name: media
     text: Media
     color: green
-    selectable: true
+    selectable: "auto"
     children:
       - img1
       - img2
   - name: img1
     text: image.png
     color: white
-    selectable: true
+    selectable: "auto"
   - name: img2
     text: video.mp4
     color: white
-    selectable: true
+    selectable: "auto"
   - name: code
     text: Source
     color: blue
-    selectable: true
+    selectable: "auto"
     children:
       - pkg
   - name: pkg
     text: main.go
     color: white
-    selectable: true
+    selectable: "auto"
