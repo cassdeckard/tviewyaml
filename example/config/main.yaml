@@ -47,6 +47,10 @@ listItems:
     secondaryText: "Top-level page with type: treeView"
     shortcut: "e"
     onSelected: '{{ switchToPage "treeview-standalone" }}'
+  - mainText: "TreeView Selection Modes"
+    secondaryText: "Compare auto, true, and false selection behaviors"
+    shortcut: "s"
+    onSelected: '{{ switchToPage "treeview-modes" }}'
   - mainText: "DropDown"
     secondaryText: "Dropdown menu with options"
     shortcut: "d"

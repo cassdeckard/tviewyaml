@@ -79,6 +79,8 @@ application:
         ref: treeview.yaml
       - name: treeview-standalone
         ref: treeview-standalone.yaml
+      - name: treeview-modes
+        ref: treeview-modes.yaml
       - name: dynamic-pages
         ref: dynamic-pages.yaml
       - name: nested-pages

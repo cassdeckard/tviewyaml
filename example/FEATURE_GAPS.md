@@ -41,26 +41,7 @@ Items are prioritized based on:
 
 ---
 
-### 2. TreeView Selection Mode Differences
-
-**Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
-
-**Why It Matters**: Understanding mode differences helps users choose appropriate behavior for their use case.
-
-**Current Status**: Modes mentioned but behavioral differences unclear.
-
-**Suggested Example**: Create `treeview-modes.yaml`:
-- Three separate trees demonstrating each mode
-- Clear labels explaining behavior
-- Comments describing when to use each mode
-
-**Related Files**:
-- `builder/builder.go` - `populateTreeView` implements mode logic
-- `config/types.go` - `Selectable` field
-
----
-
-### 3. Extended Special Keys
+### 2. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -229,7 +210,7 @@ The following features are adequately covered in existing examples:
 - **Table** - table.yaml (headers, rows, selection, fixed rows, fixed columns, column colors)
 - **TextView** - textview.yaml (colors, regions, formatting)
 - **TextArea** - form.yaml (multi-line input, placeholder)
-- **TreeView** - treeview.yaml, treeview-standalone.yaml (hierarchy, colors)
+- **TreeView** - treeview.yaml, treeview-standalone.yaml, treeview-modes.yaml (hierarchy, colors, selection modes: auto/true/false)
 
 ### Template Features
 - **State binding** - clock.yaml (`{{ bindState clock }}`)
@@ -287,14 +268,13 @@ When adding examples for missing features, consider this order:
 
 **Phase 4: Advanced Topics**
 10. OnStateChange subscriptions (reactive patterns)
-11. Nested pages container (sub-navigation)
-12. Complex state binding (multi-view updates)
+11. Complex state binding (multi-view updates)
 
 **Phase 5: Edge Cases & Polish**
-13. YAML-configured modals (alternative approach)
-14. Nested form patterns (wizard UIs)
-15. Grid constraints (responsive control)
-16. Dynamic page lifecycle (advanced workflows)
+12. YAML-configured modals (alternative approach)
+13. Nested form patterns (wizard UIs)
+14. Grid constraints (responsive control)
+15. Dynamic page lifecycle (advanced workflows)
 
 ---
 
@@ -322,10 +302,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 10 gaps
+- **Total Features Identified**: 9 gaps
 - **High Priority**: 0 items
-- **Medium Priority**: 3 items  
+- **Medium Priority**: 2 items  
 - **Low Priority**: 7 items
-- **Well Demonstrated**: 36+ features
+- **Well Demonstrated**: 37+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 78% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 80% of package functionality, with most common use cases well covered.

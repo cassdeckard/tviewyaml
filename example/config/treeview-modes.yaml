@@ -1,0 +1,141 @@
+type: flex
+direction: column
+items:
+  # Header with explanation
+  - primitive:
+      type: textView
+      border: true
+      title: "TreeView Selection Modes"
+      text: |
+        [yellow::b]Three Selection Modes:[::-]
+        
+        1. [cyan]selectable: "auto"[white] (default)
+           - Parent nodes: Toggle expansion
+           - Leaf nodes: Show built-in modal
+           - onNodeSelected callback is IGNORED
+        
+        2. [cyan]selectable: "true"[white]
+           - Parent nodes: Run callback AND toggle expansion
+           - Leaf nodes: Run callback
+           - Use when you need custom behavior
+        
+        3. [cyan]selectable: "false"[white]
+           - Node is not selectable at all
+           - Enter key does nothing
+           - Use for headers/dividers
+        
+        [yellow]Try each tree below to see the differences![::-]
+      dynamicColors: true
+      regions: true
+      textAlign: left
+    fixedSize: 15
+    focus: false
+  
+  # Three tree views side-by-side demonstrating each mode
+  - primitive:
+      type: flex
+      direction: row
+      items:
+        # Tree 1: All "auto" mode
+        - primitive:
+            type: treeView
+            border: true
+            title: "Mode: auto (default)"
+            onNodeSelected: '{{ showSimpleModal "Should Not Appear" "This should never show!" "OK" }}'
+            rootNode: auto-root
+            currentNode: auto-root
+            nodes:
+              - name: auto-root
+                text: "Parent (auto)"
+                color: cyan
+                selectable: "auto"
+                children:
+                  - auto-leaf1
+                  - auto-leaf2
+              - name: auto-leaf1
+                text: "Leaf 1 (auto)"
+                color: white
+                selectable: "auto"
+              - name: auto-leaf2
+                text: "Leaf 2 (auto)"
+                color: white
+                selectable: "auto"
+          fixedSize: 0
+          proportion: 1
+          focus: true
+        
+        # Tree 2: All "true" mode
+        - primitive:
+            type: treeView
+            border: true
+            title: "Mode: true (custom)"
+            onNodeSelected: '{{ showSelectedNodeModal }}'
+            rootNode: true-root
+            currentNode: true-root
+            nodes:
+              - name: true-root
+                text: "Parent (true)"
+                color: yellow
+                selectable: "true"
+                children:
+                  - true-leaf1
+                  - true-leaf2
+              - name: true-leaf1
+                text: "Leaf 1 (true)"
+                color: white
+                selectable: "true"
+              - name: true-leaf2
+                text: "Leaf 2 (true)"
+                color: white
+                selectable: "true"
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        
+        # Tree 3: Mixed modes (false header, auto items)
+        - primitive:
+            type: treeView
+            border: true
+            title: "Mode: false (disabled)"
+            onNodeSelected: '{{ showSimpleModal "Auto Mode" "Leaf selected: {{ getState \"__selectedNodeText\" }}" "OK" }}'
+            rootNode: false-header
+            currentNode: false-header
+            nodes:
+              - name: false-header
+                text: "-- HEADER (false) --"
+                color: gray
+                selectable: "false"
+                children:
+                  - false-item1
+                  - false-item2
+              - name: false-item1
+                text: "Item 1 (auto)"
+                color: green
+                selectable: "auto"
+              - name: false-item2
+                text: "Item 2 (auto)"
+                color: green
+                selectable: "auto"
+          fixedSize: 0
+          proportion: 1
+          focus: false
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  
+  # Bottom help text
+  - primitive:
+      type: textView
+      border: false
+      text: |
+        [yellow]Try it:[::-]
+        - Left tree: Parents toggle, leaves show built-in modal (callback ignored)
+        - Middle tree: All nodes run custom callback
+        - Right tree: Header is not selectable, items show built-in modal
+        
+        [gray]ESC: Return to main menu[::-]
+      dynamicColors: true
+      regions: true
+      textAlign: center
+    fixedSize: 5
+    focus: false
