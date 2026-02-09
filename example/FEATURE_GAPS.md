@@ -60,26 +60,7 @@ Items are prioritized based on:
 
 ---
 
-### 3. Form onCancel Callback
-
-**Description**: Separate callback for form cancellation (Escape key) vs submission
-
-**Why It Matters**: Allows different behavior when user cancels vs submits form. Critical for proper form UX.
-
-**Current Status**: `onCancel` exists but example only shows `onSubmit`.
-
-**Suggested Example**: Update `form.yaml` or create `form-cancel.yaml`:
-- Form with both `onSubmit` and `onCancel`
-- Different modal messages for submit vs cancel
-- Demonstrate Escape key handling
-
-**Related Files**:
-- `config/types.go` - `OnCancel` field in PageConfig and Primitive
-- `builder/builder.go` - `setupFormCallbacks` handles both
-
----
-
-### 4. removePage Function
+### 3. removePage Function
 
 **Description**: Built-in template function to dynamically remove pages from the page container
 
@@ -98,7 +79,7 @@ Items are prioritized based on:
 
 ---
 
-### 5. Advanced Key Modifiers
+### 4. Advanced Key Modifiers
 
 **Description**: Key binding combinations with Alt, Shift, and Meta modifiers
 
@@ -120,7 +101,7 @@ Items are prioritized based on:
 
 ## Medium Priority Gaps
 
-### 6. Table Fixed Columns
+### 5. Table Fixed Columns
 
 **Description**: Lock leftmost columns when scrolling horizontally
 
@@ -139,7 +120,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. InputField onChange Callback
+### 6. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -158,7 +139,7 @@ Items are prioritized based on:
 
 ---
 
-### 8. Nested Pages Container
+### 7. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -177,7 +158,7 @@ Items are prioritized based on:
 
 ---
 
-### 9. Extended Special Keys
+### 8. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -197,7 +178,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. TreeView Selection Mode Differences
+### 9. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -218,7 +199,7 @@ Items are prioritized based on:
 
 ## Lower Priority / Advanced Gaps
 
-### 11. OnStateChange Subscriptions
+### 10. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -237,7 +218,7 @@ Items are prioritized based on:
 
 ---
 
-### 12. YAML-Configured Modals
+### 11. YAML-Configured Modals
 
 **Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
 
@@ -256,7 +237,7 @@ Items are prioritized based on:
 
 ---
 
-### 13. Nested Form Submission Pattern
+### 12. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -275,7 +256,7 @@ Items are prioritized based on:
 
 ---
 
-### 14. Grid Size Constraints
+### 13. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -294,7 +275,7 @@ Items are prioritized based on:
 
 ---
 
-### 15. Dynamic Page Lifecycle Management
+### 14. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -315,7 +296,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 16. noop Function
+### 15. noop Function
 
 **Description**: No-operation template function
 
@@ -329,7 +310,7 @@ Items are prioritized based on:
 
 ---
 
-### 17. Complex State Binding Patterns
+### 16. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -358,7 +339,7 @@ The following features are adequately covered in existing examples:
 - **Checkbox** - checkbox.yaml (checked state, labels)
 - **Dropdown** - dropdown.yaml (options, multiple dropdowns)
 - **Flex** - flex.yaml, box.yaml (direction, sizing, nesting)
-- **Form** - form.yaml (all item types, submission)
+- **Form** - form.yaml (all item types, submission, cancellation, onSubmit/onCancel callbacks, runFormSubmit/runFormCancel)
 - **Grid** - grid.yaml (rows, columns, spans, borders)
 - **InputField** - inputfield.yaml (validation, password mode, placeholder)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
@@ -455,10 +436,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 17 gaps
-- **High Priority**: 5 items
+- **Total Features Identified**: 16 gaps
+- **High Priority**: 4 items
 - **Medium Priority**: 5 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 70% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 71% of package functionality, with most common use cases well covered.

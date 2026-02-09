@@ -287,6 +287,14 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem, bc
 // setupFormCallbacks configures the cancel and submit callbacks for a form
 // This is shared logic used by both buildForm and populateFormItems
 func (b *Builder) setupFormCallbacks(form *tview.Form, onCancel, onSubmit, name string, bc *BuildContext) error {
+	// Register cancel callback if provided
+	if onCancel != "" && name != "" {
+		cb, err := b.executor.ExecuteCallback(onCancel)
+		if err != nil {
+			return bc.Errorf("failed to execute onCancel callback: %w", err)
+		}
+		b.context.RegisterFormCancel(name, cb)
+	}
 	// SetCancelFunc runs when user presses Escape on the form; use OnCancel if set, else OnSubmit
 	if onCancel != "" || onSubmit != "" {
 		expr := onCancel

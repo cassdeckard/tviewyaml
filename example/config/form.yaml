@@ -12,7 +12,11 @@ items:
         Use Tab to navigate between fields.
         Press Enter on buttons to activate.
         
-        Press ESC to return to the main menu.
+        Submit vs Cancel demonstrates form lifecycle:
+        - Submit button calls runFormSubmit
+        - Cancel button calls runFormCancel
+        - ESC key triggers the form's onCancel
+        All show different modals to clarify behavior.
     fixedSize: 6
     proportion: 1
     focus: false
@@ -21,7 +25,8 @@ items:
       name: "user-registration"
       border: true
       title: "User Registration"
-      onSubmit: '{{ showSimpleModal "Form submitted!" "OK" "switchToPage \"main\"" }}'
+      onSubmit: '{{ showSimpleModal "Registration Complete!" "OK" "switchToPage \"main\"" }}'
+      onCancel: '{{ showSimpleModal "Registration Cancelled" "OK" "switchToPage \"main\"" }}'
       formItems:
         - type: inputfield
           label: "Username:"
@@ -47,7 +52,7 @@ items:
           onSelected: '{{ runFormSubmit "user-registration" }}'
         - type: button
           label: "Cancel"
-          onSelected: '{{ switchToPage "main" }}'
+          onSelected: '{{ runFormCancel "user-registration" }}'
     fixedSize: 0
     proportion: 2
     focus: true

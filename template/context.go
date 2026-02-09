@@ -19,11 +19,12 @@ type Context struct {
 	Pages  *tview.Pages
 	Colors *ColorHelper
 
-	state              map[string]interface{}
-	subscribers        map[string][]func(interface{})
-	boundViews         map[string][]BoundView // key -> views to refresh when key changes
-	dirtyKeys          map[string]bool
+	state               map[string]interface{}
+	subscribers         map[string][]func(interface{})
+	boundViews          map[string][]BoundView // key -> views to refresh when key changes
+	dirtyKeys           map[string]bool
 	formSubmitCallbacks map[string]func() // form name -> callback (e.g. onSubmit)
+	formCancelCallbacks map[string]func() // form name -> callback (e.g. onCancel)
 	executor            *Executor         // set by app builder so RunCallback can execute templates
 	mu                  sync.RWMutex
 }
@@ -39,6 +40,7 @@ func NewContext(app *tview.Application, pages *tview.Pages) *Context {
 		boundViews:          make(map[string][]BoundView),
 		dirtyKeys:           make(map[string]bool),
 		formSubmitCallbacks: make(map[string]func()),
+		formCancelCallbacks: make(map[string]func()),
 	}
 }
 
@@ -150,6 +152,26 @@ func (c *Context) RegisterFormSubmit(name string, callback func()) {
 func (c *Context) RunFormSubmit(name string) {
 	c.mu.RLock()
 	cb := c.formSubmitCallbacks[name]
+	c.mu.RUnlock()
+	if cb != nil {
+		cb()
+	}
+}
+
+// RegisterFormCancel registers a form's cancel callback by name so runFormCancel(formName) can invoke it (e.g. from a button).
+func (c *Context) RegisterFormCancel(name string, callback func()) {
+	if name == "" {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.formCancelCallbacks[name] = callback
+}
+
+// RunFormCancel runs the cancel callback registered for the given form name. No-op if name is unknown.
+func (c *Context) RunFormCancel(name string) {
+	c.mu.RLock()
+	cb := c.formCancelCallbacks[name]
 	c.mu.RUnlock()
 	if cb != nil {
 		cb()

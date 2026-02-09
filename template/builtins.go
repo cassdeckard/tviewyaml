@@ -89,6 +89,11 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.RunFormSubmit(formName)
 	})
 
+	// runFormCancel: runs the cancel callback registered for the form name (e.g. from a Cancel button).
+	registry.Register("runFormCancel", 1, intPtr(1), nil, func(ctx *Context, formName string) {
+		ctx.RunFormCancel(formName)
+	})
+
 	// showSelectedCellModal: shows a modal with the currently selected table cell info (reads __selectedCellText, __selectedRow, __selectedCol from state).
 	registry.Register("showSelectedCellModal", 0, intPtr(0), nil, func(ctx *Context) {
 		cellText, _ := ctx.GetState("__selectedCellText")
