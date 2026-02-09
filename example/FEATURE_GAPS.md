@@ -41,26 +41,7 @@ Items are prioritized based on:
 
 ---
 
-### 2. Table Column Colors (NEW)
-
-**Description**: Custom color configuration for table columns using the new `columnColors` field
-
-**Why It Matters**: Allows visual differentiation of columns, supports theming and semantic coloring (e.g., status columns in red/green).
-
-**Current Status**: Feature was just added in Issue #5 but not demonstrated in examples.
-
-**Suggested Example**: Update `table.yaml` to show:
-- Custom column colors defined in YAML
-- Semantic colors (e.g., Name=cyan, Status=green, Count=yellow)
-- Comment explaining color cycling behavior
-
-**Related Files**:
-- `config/types.go` - `ColumnColors []string` field
-- `builder/builder.go` - `populateTableData` uses colors
-
----
-
-### 3. removePage Function
+### 2. removePage Function
 
 **Description**: Built-in template function to dynamically remove pages from the page container
 
@@ -79,7 +60,7 @@ Items are prioritized based on:
 
 ---
 
-### 4. Advanced Key Modifiers
+### 3. Advanced Key Modifiers
 
 **Description**: Key binding combinations with Alt, Shift, and Meta modifiers
 
@@ -101,7 +82,7 @@ Items are prioritized based on:
 
 ## Medium Priority Gaps
 
-### 5. Table Fixed Columns
+### 4. Table Fixed Columns
 
 **Description**: Lock leftmost columns when scrolling horizontally
 
@@ -120,7 +101,7 @@ Items are prioritized based on:
 
 ---
 
-### 6. InputField onChange Callback
+### 5. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -139,7 +120,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. Nested Pages Container
+### 6. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -158,7 +139,7 @@ Items are prioritized based on:
 
 ---
 
-### 8. Extended Special Keys
+### 7. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -178,7 +159,7 @@ Items are prioritized based on:
 
 ---
 
-### 9. TreeView Selection Mode Differences
+### 8. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -199,7 +180,7 @@ Items are prioritized based on:
 
 ## Lower Priority / Advanced Gaps
 
-### 10. OnStateChange Subscriptions
+### 9. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -218,7 +199,7 @@ Items are prioritized based on:
 
 ---
 
-### 11. YAML-Configured Modals
+### 10. YAML-Configured Modals
 
 **Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
 
@@ -237,7 +218,7 @@ Items are prioritized based on:
 
 ---
 
-### 12. Nested Form Submission Pattern
+### 11. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -256,7 +237,7 @@ Items are prioritized based on:
 
 ---
 
-### 13. Grid Size Constraints
+### 12. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -275,7 +256,7 @@ Items are prioritized based on:
 
 ---
 
-### 14. Dynamic Page Lifecycle Management
+### 13. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -296,7 +277,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 15. noop Function
+### 14. noop Function
 
 **Description**: No-operation template function
 
@@ -310,7 +291,7 @@ Items are prioritized based on:
 
 ---
 
-### 16. Complex State Binding Patterns
+### 15. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -343,7 +324,7 @@ The following features are adequately covered in existing examples:
 - **Grid** - grid.yaml (rows, columns, spans, borders)
 - **InputField** - inputfield.yaml (validation, password mode, placeholder)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
-- **Table** - table.yaml (headers, rows, selection, fixed rows)
+- **Table** - table.yaml (headers, rows, selection, fixed rows, column colors)
 - **TextView** - textview.yaml (colors, regions, formatting)
 - **TreeView** - treeview.yaml, treeview-standalone.yaml (hierarchy, colors)
 
@@ -436,10 +417,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 16 gaps
-- **High Priority**: 4 items
+- **Total Features Identified**: 15 gaps
+- **High Priority**: 3 items
 - **Medium Priority**: 5 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 71% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 72% of package functionality, with most common use cases well covered.
