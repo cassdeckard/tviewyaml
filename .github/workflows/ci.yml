@@ -12,7 +12,7 @@ jobs:
     permissions:
       checks: write
       pull-requests: write
-      contents: read
+      contents: write
     
     steps:
     - name: Checkout code
@@ -81,3 +81,45 @@ jobs:
         echo '```' >> $GITHUB_STEP_SUMMARY
         go tool cover -func=coverage.out >> $GITHUB_STEP_SUMMARY
         echo '```' >> $GITHUB_STEP_SUMMARY
+
+    - name: Extract coverage percentage
+      id: coverage
+      run: |
+        COVERAGE=$(go tool cover -func=coverage.out | grep total | awk '{print $3}' | sed 's/%//')
+        echo "percentage=$COVERAGE" >> $GITHUB_OUTPUT
+        echo "Coverage: $COVERAGE%"
+
+    - name: Create coverage badge
+      if: always()
+      run: |
+        COVERAGE="${{ steps.coverage.outputs.percentage }}"
+        if [ -z "$COVERAGE" ] || [ "$COVERAGE" = "null" ]; then
+          COVERAGE="unknown"
+          COLOR="lightgrey"
+        else
+          # Remove decimal point and compare as integer (multiply by 100)
+          COVERAGE_INT=$(echo "$COVERAGE" | awk -F. '{print $1}')
+          # Determine color based on coverage percentage
+          if [ "$COVERAGE_INT" -ge 90 ]; then
+            COLOR="brightgreen"
+          elif [ "$COVERAGE_INT" -ge 75 ]; then
+            COLOR="green"
+          elif [ "$COVERAGE_INT" -ge 50 ]; then
+            COLOR="yellowgreen"
+          elif [ "$COVERAGE_INT" -ge 25 ]; then
+            COLOR="yellow"
+          else
+            COLOR="red"
+          fi
+        fi
+        echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${COVERAGE}%\",\"color\":\"${COLOR}\"}" > coverage.json
+        cat coverage.json
+
+    - name: Commit coverage badge
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        git add coverage.json || true
+        git diff --staged --quiet || git commit -m "ci: update coverage badge [skip ci]"
+        git push || true
