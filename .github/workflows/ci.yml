@@ -64,7 +64,8 @@ jobs:
         files: junit.xml
         check_name: Test Results
         comment_mode: always
-        report_individual_runs: true
+        report_individual_runs: false
+        check_run_annotations: all tests, skipped tests
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
