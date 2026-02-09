@@ -2,11 +2,52 @@ package builder
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/rivo/tview"
 	"github.com/cassdeckard/tviewyaml/config"
 	"github.com/cassdeckard/tviewyaml/template"
 )
+
+// BuildContext tracks the component path for better error messages
+type BuildContext struct {
+	path []string
+}
+
+// NewBuildContext creates a new build context
+func NewBuildContext() *BuildContext {
+	return &BuildContext{
+		path: make([]string, 0),
+	}
+}
+
+// Push adds a component to the path
+func (bc *BuildContext) Push(component string) {
+	bc.path = append(bc.path, component)
+}
+
+// Pop removes the last component from the path
+func (bc *BuildContext) Pop() {
+	if len(bc.path) > 0 {
+		bc.path = bc.path[:len(bc.path)-1]
+	}
+}
+
+// Path returns the current component path as a string
+func (bc *BuildContext) Path() string {
+	if len(bc.path) == 0 {
+		return ""
+	}
+	return strings.Join(bc.path, " -> ")
+}
+
+// Errorf formats an error with the current component path
+func (bc *BuildContext) Errorf(format string, args ...interface{}) error {
+	if path := bc.Path(); path != "" {
+		return fmt.Errorf("%s: "+format, append([]interface{}{path}, args...)...)
+	}
+	return fmt.Errorf(format, args...)
+}
 
 // Builder orchestrates the building of tview UI from configuration
 type Builder struct {
@@ -44,15 +85,19 @@ func NewBuilder(ctx *template.Context, registry *template.FunctionRegistry) *Bui
 
 // BuildFromConfig builds a tview primitive from a page configuration
 func (b *Builder) BuildFromConfig(pageConfig *config.PageConfig) (tview.Primitive, error) {
+	bc := NewBuildContext()
+	bc.Push(fmt.Sprintf("page:%s", pageConfig.Type))
+	defer bc.Pop()
+
 	// Create the top-level primitive
 	primitive, err := b.factory.CreatePrimitiveFromPageConfig(pageConfig)
 	if err != nil {
-		return nil, err
+		return nil, bc.Errorf("%w", err)
 	}
 
 	// Apply page-level properties
 	if err := b.mapper.ApplyPageProperties(primitive, pageConfig); err != nil {
-		return nil, err
+		return nil, bc.Errorf("%w", err)
 	}
 
 	// Build based on type
@@ -60,41 +105,42 @@ func (b *Builder) BuildFromConfig(pageConfig *config.PageConfig) (tview.Primitiv
 	case "list":
 		list, err := assertPrimitiveType[*tview.List](primitive)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build list: %w", err)
+			return nil, bc.Errorf("failed to build list: %w", err)
 		}
-		return b.buildList(list, pageConfig)
+		return b.buildList(list, pageConfig, bc)
 	case "flex":
 		flex, err := assertPrimitiveType[*tview.Flex](primitive)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build flex: %w", err)
+			return nil, bc.Errorf("failed to build flex: %w", err)
 		}
-		return b.buildFlex(flex, pageConfig)
+		return b.buildFlex(flex, pageConfig, bc)
 	case "form":
 		form, err := assertPrimitiveType[*tview.Form](primitive)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build form: %w", err)
+			return nil, bc.Errorf("failed to build form: %w", err)
 		}
-		return b.buildForm(form, pageConfig)
+		return b.buildForm(form, pageConfig, bc)
 	case "table":
 		table, err := assertPrimitiveType[*tview.Table](primitive)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build table: %w", err)
+			return nil, bc.Errorf("failed to build table: %w", err)
 		}
-		return b.buildTable(table, pageConfig)
+		return b.buildTable(table, pageConfig, bc)
 	case "treeView":
 		tree, err := assertPrimitiveType[*tview.TreeView](primitive)
 		if err != nil {
-			return nil, fmt.Errorf("failed to build treeView: %w", err)
+			return nil, bc.Errorf("failed to build treeView: %w", err)
 		}
-		return b.buildTreeView(tree, pageConfig)
+		return b.buildTreeView(tree, pageConfig, bc)
 	default:
 		return primitive, nil
 	}
 }
 
 // buildList populates a list with items
-func (b *Builder) buildList(list *tview.List, cfg *config.PageConfig) (tview.Primitive, error) {
-	for _, item := range cfg.ListItems {
+func (b *Builder) buildList(list *tview.List, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
+	for i, item := range cfg.ListItems {
+		bc.Push(fmt.Sprintf("listItem[%d]", i))
 		shortcut := rune(0)
 		if len(item.Shortcut) > 0 {
 			shortcut = rune(item.Shortcut[0])
@@ -105,28 +151,33 @@ func (b *Builder) buildList(list *tview.List, cfg *config.PageConfig) (tview.Pri
 		if item.OnSelected != "" {
 			cb, err := b.executor.ExecuteCallback(item.OnSelected)
 			if err != nil {
-				return nil, fmt.Errorf("failed to execute callback for list item: %w", err)
+				bc.Pop()
+				return nil, bc.Errorf("failed to execute callback: %w", err)
 			}
 			callback = cb
 		}
 
 		list.AddItem(item.MainText, item.SecondaryText, shortcut, callback)
+		bc.Pop()
 	}
 
 	return list, nil
 }
 
 // buildFlex populates a flex container with items
-func (b *Builder) buildFlex(flex *tview.Flex, cfg *config.PageConfig) (tview.Primitive, error) {
-	for _, item := range cfg.Items {
+func (b *Builder) buildFlex(flex *tview.Flex, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
+	for i, item := range cfg.Items {
 		if item.Primitive == nil {
 			continue
 		}
 
-		child, err := b.buildPrimitive(item.Primitive)
+		bc.Push(fmt.Sprintf("flex[%d]", i))
+		child, err := b.buildPrimitive(item.Primitive, bc)
 		if err != nil {
+			bc.Pop()
 			return nil, err
 		}
+		bc.Pop()
 
 		flex.AddItem(child, item.FixedSize, item.Proportion, item.Focus)
 	}
@@ -135,8 +186,8 @@ func (b *Builder) buildFlex(flex *tview.Flex, cfg *config.PageConfig) (tview.Pri
 }
 
 // buildForm populates a form with items
-func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Primitive, error) {
-	_, err := b.addFormItems(form, cfg.FormItems)
+func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
+	_, err := b.addFormItems(form, cfg.FormItems, bc)
 	if err != nil {
 		return nil, err
 	}
@@ -148,14 +199,14 @@ func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Pri
 		}
 		cb, err := b.executor.ExecuteCallback(expr)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute form cancel callback: %w", err)
+			return nil, bc.Errorf("failed to execute form cancel callback: %w", err)
 		}
 		form.SetCancelFunc(cb)
 	}
 	if cfg.OnSubmit != "" && cfg.Name != "" {
 		cb, err := b.executor.ExecuteCallback(cfg.OnSubmit)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute onSubmit callback: %w", err)
+			return nil, bc.Errorf("failed to execute onSubmit callback: %w", err)
 		}
 		b.context.RegisterFormSubmit(cfg.Name, cb)
 	}
@@ -163,8 +214,9 @@ func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Pri
 }
 
 // addFormItems adds form items to a form (shared logic for both page-level and nested forms)
-func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*tview.Form, error) {
-	for _, item := range formItems {
+func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem, bc *BuildContext) (*tview.Form, error) {
+	for i, item := range formItems {
+		bc.Push(fmt.Sprintf("formItem[%d]:%s", i, item.Type))
 		switch item.Type {
 		case "inputfield":
 			var acceptFunc func(textToCheck string, lastChar rune) bool
@@ -197,7 +249,8 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 				if item.OnChanged != "" {
 					cb, err := b.executor.ExecuteCallback(item.OnChanged)
 					if err != nil {
-						return nil, fmt.Errorf("failed to execute callback for inputfield %q: %w", item.Label, err)
+						bc.Pop()
+						return nil, bc.Errorf("failed to execute callback for inputfield %q: %w", item.Label, err)
 					}
 					input.SetChangedFunc(func(text string) { cb() })
 				}
@@ -211,7 +264,8 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 			if item.OnSelected != "" {
 				cb, err := b.executor.ExecuteCallback(item.OnSelected)
 				if err != nil {
-					return nil, fmt.Errorf("failed to execute callback for button: %w", err)
+					bc.Pop()
+					return nil, bc.Errorf("failed to execute callback for button: %w", err)
 				}
 				callback = cb
 			}
@@ -221,7 +275,8 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 			if item.OnChanged != "" {
 				cb, err := b.executor.ExecuteCallback(item.OnChanged)
 				if err != nil {
-					return nil, fmt.Errorf("failed to execute callback for checkbox %q: %w", item.Label, err)
+					bc.Pop()
+					return nil, bc.Errorf("failed to execute callback for checkbox %q: %w", item.Label, err)
 				}
 				changedFunc = func(checked bool) { cb() }
 			}
@@ -231,19 +286,21 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 			if item.OnChanged != "" {
 				cb, err := b.executor.ExecuteCallback(item.OnChanged)
 				if err != nil {
-					return nil, fmt.Errorf("failed to execute callback for dropdown %q: %w", item.Label, err)
+					bc.Pop()
+					return nil, bc.Errorf("failed to execute callback for dropdown %q: %w", item.Label, err)
 				}
 				selectedFunc = func(text string, index int) { cb() }
 			}
 			form.AddDropDown(item.Label, item.Options, 0, selectedFunc)
 		}
+		bc.Pop()
 	}
 
 	return form, nil
 }
 
 // buildTable populates a table with data
-func (b *Builder) buildTable(table *tview.Table, cfg *config.PageConfig) (tview.Primitive, error) {
+func (b *Builder) buildTable(table *tview.Table, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
 	if cfg.TableData == nil {
 		return table, nil
 	}
@@ -272,23 +329,30 @@ func (b *Builder) buildTable(table *tview.Table, cfg *config.PageConfig) (tview.
 }
 
 // buildPrimitive builds a primitive from a Primitive config (recursive)
-func (b *Builder) buildPrimitive(prim *config.Primitive) (tview.Primitive, error) {
+func (b *Builder) buildPrimitive(prim *config.Primitive, bc *BuildContext) (tview.Primitive, error) {
+	primName := prim.Type
+	if prim.Name != "" {
+		primName = fmt.Sprintf("%s:%s", prim.Type, prim.Name)
+	}
+	bc.Push(primName)
+	defer bc.Pop()
+
 	// Create primitive
 	primitive, err := b.factory.CreatePrimitive(prim)
 	if err != nil {
-		return nil, err
+		return nil, bc.Errorf("%w", err)
 	}
 
 	// Apply properties
 	if err := b.mapper.ApplyProperties(primitive, prim); err != nil {
-		return nil, err
+		return nil, bc.Errorf("%w", err)
 	}
 
 	// Handle callbacks
 	if prim.OnSelected != "" {
 		callback, err := b.executor.ExecuteCallback(prim.OnSelected)
 		if err != nil {
-			return nil, fmt.Errorf("failed to execute callback: %w", err)
+			return nil, bc.Errorf("failed to execute callback: %w", err)
 		}
 		b.attacher.AttachCallback(primitive, callback)
 	}
@@ -296,27 +360,27 @@ func (b *Builder) buildPrimitive(prim *config.Primitive) (tview.Primitive, error
 	// Handle nested items for specific types
 	switch v := primitive.(type) {
 	case *tview.Flex:
-		if err := b.populateFlexItems(v, prim); err != nil {
+		if err := b.populateFlexItems(v, prim, bc); err != nil {
 			return nil, err
 		}
 	case *tview.List:
-		if err := b.populateListItems(v, prim); err != nil {
+		if err := b.populateListItems(v, prim, bc); err != nil {
 			return nil, err
 		}
 	case *tview.Form:
-		if err := b.populateFormItems(v, prim); err != nil {
+		if err := b.populateFormItems(v, prim, bc); err != nil {
 			return nil, err
 		}
 	case *tview.Table:
-		if err := b.populateTableData(v, prim); err != nil {
+		if err := b.populateTableData(v, prim, bc); err != nil {
 			return nil, err
 		}
 	case *tview.TreeView:
-		if err := b.populateTreeView(v, prim); err != nil {
+		if err := b.populateTreeView(v, prim, bc); err != nil {
 			return nil, err
 		}
 	case *tview.Grid:
-		if err := b.populateGridItems(v, prim); err != nil {
+		if err := b.populateGridItems(v, prim, bc); err != nil {
 			return nil, err
 		}
 	}
@@ -325,13 +389,15 @@ func (b *Builder) buildPrimitive(prim *config.Primitive) (tview.Primitive, error
 }
 
 // populateFlexItems adds items to a flex container
-func (b *Builder) populateFlexItems(flex *tview.Flex, prim *config.Primitive) error {
-	for _, item := range prim.Items {
+func (b *Builder) populateFlexItems(flex *tview.Flex, prim *config.Primitive, bc *BuildContext) error {
+	for i, item := range prim.Items {
 		if item.Primitive == nil {
 			continue
 		}
 
-		child, err := b.buildPrimitive(item.Primitive)
+		bc.Push(fmt.Sprintf("flex[%d]", i))
+		child, err := b.buildPrimitive(item.Primitive, bc)
+		bc.Pop()
 		if err != nil {
 			return err
 		}
@@ -342,8 +408,9 @@ func (b *Builder) populateFlexItems(flex *tview.Flex, prim *config.Primitive) er
 }
 
 // populateListItems adds items to a list
-func (b *Builder) populateListItems(list *tview.List, prim *config.Primitive) error {
-	for _, item := range prim.ListItems {
+func (b *Builder) populateListItems(list *tview.List, prim *config.Primitive, bc *BuildContext) error {
+	for i, item := range prim.ListItems {
+		bc.Push(fmt.Sprintf("listItem[%d]", i))
 		shortcut := rune(0)
 		if len(item.Shortcut) > 0 {
 			shortcut = rune(item.Shortcut[0])
@@ -353,19 +420,21 @@ func (b *Builder) populateListItems(list *tview.List, prim *config.Primitive) er
 		if item.OnSelected != "" {
 			cb, err := b.executor.ExecuteCallback(item.OnSelected)
 			if err != nil {
-				return fmt.Errorf("failed to execute callback for list item: %w", err)
+				bc.Pop()
+				return bc.Errorf("failed to execute callback: %w", err)
 			}
 			callback = cb
 		}
 
 		list.AddItem(item.MainText, item.SecondaryText, shortcut, callback)
+		bc.Pop()
 	}
 	return nil
 }
 
 // populateFormItems adds items to a form (delegates to shared logic)
-func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) error {
-	_, err := b.addFormItems(form, prim.FormItems)
+func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive, bc *BuildContext) error {
+	_, err := b.addFormItems(form, prim.FormItems, bc)
 	if err != nil {
 		return err
 	}
@@ -376,14 +445,14 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) er
 		}
 		cb, err := b.executor.ExecuteCallback(expr)
 		if err != nil {
-			return fmt.Errorf("failed to execute form cancel callback: %w", err)
+			return bc.Errorf("failed to execute form cancel callback: %w", err)
 		}
 		form.SetCancelFunc(cb)
 	}
 	if prim.OnSubmit != "" && prim.Name != "" {
 		cb, err := b.executor.ExecuteCallback(prim.OnSubmit)
 		if err != nil {
-			return fmt.Errorf("failed to execute onSubmit callback: %w", err)
+			return bc.Errorf("failed to execute onSubmit callback: %w", err)
 		}
 		b.context.RegisterFormSubmit(prim.Name, cb)
 	}
@@ -391,7 +460,7 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) er
 }
 
 // populateTableData populates table with data from primitive config
-func (b *Builder) populateTableData(table *tview.Table, prim *config.Primitive) error {
+func (b *Builder) populateTableData(table *tview.Table, prim *config.Primitive, bc *BuildContext) error {
 	colors := []string{"white", "green", "blue", "red"}
 	
 	// Set borders before adding cells (if specified)
@@ -455,7 +524,7 @@ func (b *Builder) populateTableData(table *tview.Table, prim *config.Primitive) 
 }
 
 // populateTreeView populates a tree view from primitive config
-func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive) error {
+func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive, bc *BuildContext) error {
 	if len(prim.Nodes) == 0 {
 		// No nodes defined, return empty tree
 		return nil
@@ -568,7 +637,7 @@ func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive)
 }
 
 // populateGridItems configures a grid and adds items to it
-func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive) error {
+func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive, bc *BuildContext) error {
 	// Set rows (0 = flexible)
 	if len(prim.GridRows) > 0 {
 		grid.SetRows(prim.GridRows...)
@@ -590,7 +659,9 @@ func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive) er
 			continue
 		}
 
-		child, err := b.buildPrimitive(item.Primitive)
+		bc.Push(fmt.Sprintf("grid[%d,%d]", item.Row, item.Column))
+		child, err := b.buildPrimitive(item.Primitive, bc)
+		bc.Pop()
 		if err != nil {
 			return err
 		}
@@ -612,12 +683,12 @@ func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive) er
 }
 
 // buildTreeView populates a tree view from page config (for page-level type: treeView)
-func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig) (tview.Primitive, error) {
+func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
 	prim := &config.Primitive{
 		OnNodeSelected: cfg.OnNodeSelected,
 		RootNode:       cfg.RootNode,
 		CurrentNode:    cfg.CurrentNode,
 		Nodes:          cfg.Nodes,
 	}
-	return tree, b.populateTreeView(tree, prim)
+	return tree, b.populateTreeView(tree, prim, bc)
 }
