@@ -550,13 +550,21 @@ func (b *Builder) populateTreeView(tree *tview.TreeView, prim *config.Primitive,
 		tviewNodeMap[node.Name] = tviewNode
 	}
 
-	// Now connect children
+	// Now connect children with validation
 	for _, node := range prim.Nodes {
 		parent := tviewNodeMap[node.Name]
 		for _, childName := range node.Children {
-			if child, ok := tviewNodeMap[childName]; ok {
-				parent.AddChild(child)
+			child, ok := tviewNodeMap[childName]
+			if !ok {
+				// Build list of available node names for error message
+				availableNodes := make([]string, 0, len(tviewNodeMap))
+				for name := range tviewNodeMap {
+					availableNodes = append(availableNodes, fmt.Sprintf("%q", name))
+				}
+				return bc.Errorf("node %q references unknown child %q (available nodes: %s)",
+					node.Name, childName, strings.Join(availableNodes, ", "))
 			}
+			parent.AddChild(child)
 		}
 	}
 
