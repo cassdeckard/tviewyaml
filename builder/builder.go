@@ -111,7 +111,6 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 	for _, item := range formItems {
 		switch item.Type {
 		case "inputfield":
-			// Get acceptance function
 			var acceptFunc func(textToCheck string, lastChar rune) bool
 			switch item.AcceptanceFunc {
 			case "integer":
@@ -123,9 +122,34 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 					acceptFunc = tview.InputFieldMaxLength(item.MaxLength)
 				}
 			}
-			
-			form.AddInputField(item.Label, item.Value, item.FieldWidth, acceptFunc, nil)
-			
+
+			needCustomInput := item.Placeholder != "" || item.PasswordMode || item.OnChanged != ""
+			if needCustomInput {
+				input := tview.NewInputField().
+					SetLabel(item.Label).
+					SetText(item.Value).
+					SetFieldWidth(item.FieldWidth)
+				if acceptFunc != nil {
+					input.SetAcceptanceFunc(acceptFunc)
+				}
+				if item.Placeholder != "" {
+					input.SetPlaceholder(item.Placeholder)
+				}
+				if item.PasswordMode {
+					input.SetMaskCharacter('*')
+				}
+				if item.OnChanged != "" {
+					cb, err := b.executor.ExecuteCallback(item.OnChanged)
+					if err != nil {
+						return nil, fmt.Errorf("failed to execute callback for inputfield %q: %w", item.Label, err)
+					}
+					input.SetChangedFunc(func(text string) { cb() })
+				}
+				form.AddFormItem(input)
+			} else {
+				form.AddInputField(item.Label, item.Value, item.FieldWidth, acceptFunc, nil)
+			}
+
 		case "button":
 			callback := func() {}
 			if item.OnSelected != "" {
@@ -137,9 +161,25 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem) (*
 			}
 			form.AddButton(item.Label, callback)
 		case "checkbox":
-			form.AddCheckbox(item.Label, item.Checked, nil)
+			var changedFunc func(checked bool)
+			if item.OnChanged != "" {
+				cb, err := b.executor.ExecuteCallback(item.OnChanged)
+				if err != nil {
+					return nil, fmt.Errorf("failed to execute callback for checkbox %q: %w", item.Label, err)
+				}
+				changedFunc = func(checked bool) { cb() }
+			}
+			form.AddCheckbox(item.Label, item.Checked, changedFunc)
 		case "dropdown":
-			form.AddDropDown(item.Label, item.Options, 0, nil)
+			var selectedFunc func(text string, index int)
+			if item.OnChanged != "" {
+				cb, err := b.executor.ExecuteCallback(item.OnChanged)
+				if err != nil {
+					return nil, fmt.Errorf("failed to execute callback for dropdown %q: %w", item.Label, err)
+				}
+				selectedFunc = func(text string, index int) { cb() }
+			}
+			form.AddDropDown(item.Label, item.Options, 0, selectedFunc)
 		}
 	}
 
