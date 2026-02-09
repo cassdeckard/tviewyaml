@@ -11,6 +11,7 @@ func main() {
 		With(RegisterClock).
 		With(RegisterStateBinding).
 		With(RegisterInputFieldLive).
+		With(RegisterDynamicPages).
 		Build()
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)

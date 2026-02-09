@@ -101,27 +101,6 @@ Items are prioritized based on:
 
 ---
 
-### 9. Dynamic Page Lifecycle Management
-
-**Description**: Programmatic page creation, removal, and navigation patterns
-
-**Why It Matters**: Enables wizard flows, drill-down interfaces, and dynamic content presentation.
-
-**Current Status**: Static pages only. Dynamic capabilities exist but not shown.
-
-**Suggested Example**: Create advanced example in Go code:
-- Create pages dynamically from data
-- Use `removePage` for cleanup
-- Show pattern for detail/master workflow
-
-**Related Files**:
-- `builder/callbacks.go` - Page management functions
-- Context Pages field
-
----
-
-## Additional Missing Features
-
 ### 10. noop Function
 
 **Description**: No-operation template function
@@ -164,7 +143,8 @@ The following features are adequately covered in existing examples:
 
 ### Navigation & Layout
 - **Page switching** - Demonstrated throughout via `{{ switchToPage }}`
-- **Page removal** - dynamic-pages.yaml (removePage function, dynamic page lifecycle)
+- **Page removal** - dynamic-pages.yaml (removePage function)
+- **Dynamic page creation** - dynamic-pages.yaml (programmatic AddPage from Go code, data-driven detail pages)
 - **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M - all modifiers)
 - **Page container** - app.yaml (root pages structure)
 - **Nested pages** - nested-pages.yaml (pages within flex layouts, tab-based interfaces, sub-navigation)
@@ -210,11 +190,11 @@ When adding examples for missing features, consider this order:
 8. TreeView selection modes (behavioral clarity)
 
 **Phase 4: Advanced Topics**
-9. OnStateChange subscriptions (reactive patterns)
+8. OnStateChange subscriptions (reactive patterns)
 
 **Phase 5: Edge Cases & Polish**
-10. Nested form patterns (wizard UIs)
-11. Grid constraints (responsive control)
+9. Nested form patterns (wizard UIs)
+10. Grid constraints (responsive control)
 
 ---
 
@@ -242,10 +222,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 6 gaps
+- **Total Features Identified**: 5 gaps
 - **High Priority**: 0 items
 - **Medium Priority**: 1 item  
-- **Low Priority**: 5 items
+- **Low Priority**: 4 items
 - **Well Demonstrated**: 40+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 85% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 86% of package functionality, with most common use cases well covered.

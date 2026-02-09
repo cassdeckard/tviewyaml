@@ -1,5 +1,5 @@
 type: flex
-direction: column
+direction: row
 items:
   - primitive:
       type: textView
@@ -8,41 +8,77 @@ items:
       text: |
         [yellow::b]Dynamic Page Lifecycle Management[::-]
         
-        This demo showcases the [cyan]removePage[::-] function for dynamic page
-        lifecycle management.
+        This demo showcases both [cyan]dynamic page creation[::-] and [cyan]page removal[::-]
+        for runtime page lifecycle management.
         
         [green::b]Key Functions:[::-]
+        • [cyan]ctx.Pages.AddPage(...)[::-] - Create page at runtime (in Go)
         • [cyan]switchToPage(name)[::-] - Navigate to a page
         • [cyan]removePage(name)[::-] - Remove a page from container
-        • [cyan]showSimpleModal(...)[::-] - Show modal (uses removePage internally)
+        • [cyan]showSimpleModal(...)[::-] - Show modal (uses AddPage/RemovePage internally)
+        
+        [green::b]Two Approaches:[::-]
+        1. [yellow]Static YAML pages[::-] - Pre-defined in config (like temp-detail)
+        2. [yellow]Dynamic Go pages[::-] - Created at runtime from data
         
         [green::b]Use Cases:[::-]
-        • Temporary detail pages that clean up after themselves
+        • Master/detail workflows with data-driven details
         • Multi-step wizards where steps are removed after completion
-        • Dynamic content that should be removed when no longer needed
+        • Temporary detail pages that clean up after themselves
         • Custom modal-like interfaces
         
-        [yellow]Try the demo below:[::-]
+        [yellow]Try both approaches below:[::-]
       dynamicColors: true
       regions: true
       textAlign: left
-    fixedSize: 18
+    fixedSize: 22
     focus: false
   
   - primitive:
       type: form
       border: true
-      title: "Test Dynamic Page Lifecycle"
+      title: "Static YAML Pages (Pre-defined)"
       formItems:
         - type: button
-          label: "Navigate to Temporary Detail Page"
+          label: "Navigate to temp-detail.yaml"
           onSelected: '{{ switchToPage "temp-detail" }}'
         - type: button
-          label: "Show Modal (auto-cleanup demo)"
-          onSelected: '{{ showSimpleModal "Modal Demo" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
-        - type: button
-          label: "Return to Main Menu"
-          onSelected: '{{ switchToPage "main" }}'
-    fixedSize: 0
-    proportion: 1
+          label: "Show Modal (uses AddPage/RemovePage)"
+          onSelected: '{{ showSimpleModal "Modal Demo" "Modals are temporary pages created with AddPage." "They use removePage internally for cleanup." "When you click OK, the page is removed." "OK" }}'
+    fixedSize: 8
+    proportion: 0
     focus: true
+  
+  - primitive:
+      type: form
+      border: true
+      title: "Dynamic Go Pages (Runtime Creation)"
+      formItems:
+        - type: button
+          label: "Create Detail for 'Product A'"
+          onSelected: '{{ createDetailPageFor "Product A" }}'
+        - type: button
+          label: "Create Detail for 'Product B'"
+          onSelected: '{{ createDetailPageFor "Product B" }}'
+        - type: button
+          label: "Create Detail for 'Product C'"
+          onSelected: '{{ createDetailPageFor "Product C" }}'
+    fixedSize: 8
+    proportion: 0
+    focus: false
+  
+  - primitive:
+      type: textView
+      border: false
+      text: |
+        [yellow]Key Difference:[::-]
+        Static pages are loaded from YAML files at startup.
+        Dynamic pages are built in Go code and added at runtime.
+        
+        [gray]ESC: Return to main menu[::-]
+      dynamicColors: true
+      regions: true
+      textAlign: center
+    fixedSize: 5
+    proportion: 0
+    focus: false
