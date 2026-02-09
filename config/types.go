@@ -42,7 +42,11 @@ type PageConfig struct {
 	ListItems  []ListItem             `yaml:"listItems,omitempty"`
 	FormItems  []FormItem             `yaml:"formItems,omitempty"`
 	TableData  *TableData             `yaml:"tableData,omitempty"`
-	Properties map[string]interface{} `yaml:",inline"` // Catch-all for other properties
+	// TreeView-specific (for page-level type: treeView)
+	RootNode    string     `yaml:"rootNode,omitempty"`
+	CurrentNode string     `yaml:"currentNode,omitempty"`
+	Nodes       []TreeNode `yaml:"nodes,omitempty"`
+	Properties  map[string]interface{} `yaml:",inline"` // Catch-all for other properties
 }
 
 // FlexItem represents an item in a flex container

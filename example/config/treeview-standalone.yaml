@@ -1,0 +1,56 @@
+# Top-level page with type: treeView (nodes defined at page level)
+type: treeView
+border: true
+title: "TreeView as Page (standalone)"
+titleAlign: center
+rootNode: root
+currentNode: root
+nodes:
+  - name: root
+    text: Root
+    color: red
+    selectable: false
+    children:
+      - docs
+      - media
+      - code
+  - name: docs
+    text: Documents
+    color: green
+    selectable: true
+    children:
+      - readme
+      - notes
+  - name: readme
+    text: README.md
+    color: white
+    selectable: true
+  - name: notes
+    text: notes.txt
+    color: white
+    selectable: true
+  - name: media
+    text: Media
+    color: green
+    selectable: true
+    children:
+      - img1
+      - img2
+  - name: img1
+    text: image.png
+    color: white
+    selectable: true
+  - name: img2
+    text: video.mp4
+    color: white
+    selectable: true
+  - name: code
+    text: Source
+    color: blue
+    selectable: true
+    children:
+      - pkg
+  - name: pkg
+    text: main.go
+    color: white
+    selectable: true

@@ -41,3 +41,5 @@ application:
         ref: textview.yaml
       - name: treeview
         ref: treeview.yaml
+      - name: treeview-standalone
+        ref: treeview-standalone.yaml

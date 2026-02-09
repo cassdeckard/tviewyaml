@@ -450,8 +450,12 @@ func (b *Builder) populateGridItems(grid *tview.Grid, prim *config.Primitive) er
 	return nil
 }
 
-// buildTreeView populates a tree view with a sample hierarchical structure (for page-level TreeView)
+// buildTreeView populates a tree view from page config (for page-level type: treeView)
 func (b *Builder) buildTreeView(tree *tview.TreeView, cfg *config.PageConfig) (tview.Primitive, error) {
-	// Delegate to populateTreeView
-	return tree, b.populateTreeView(tree, &config.Primitive{})
+	prim := &config.Primitive{
+		RootNode:    cfg.RootNode,
+		CurrentNode: cfg.CurrentNode,
+		Nodes:       cfg.Nodes,
+	}
+	return tree, b.populateTreeView(tree, prim)
 }

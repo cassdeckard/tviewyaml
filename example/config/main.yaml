@@ -39,6 +39,10 @@ listItems:
     secondaryText: "Hierarchical tree view"
     shortcut: "r"
     onSelected: '{{ switchToPage "treeview" }}'
+  - mainText: "TreeView (standalone page)"
+    secondaryText: "Top-level page with type: treeView"
+    shortcut: "e"
+    onSelected: '{{ switchToPage "treeview-standalone" }}'
   - mainText: "DropDown"
     secondaryText: "Dropdown menu with options"
     shortcut: "d"
