@@ -13,10 +13,10 @@ var (
 	clockDone chan struct{}
 )
 
-// RegisterClockFunctions adds startClock and stopClock as custom template functions
+// RegisterClock adds startClock and stopClock as custom template functions
 // so the clock demo works via {{ startClock }} / {{ stopClock }} in YAML.
 // All clock logic lives in the example, not in the core library.
-func RegisterClockFunctions(b *tviewyaml.AppBuilder) *tviewyaml.AppBuilder {
+func RegisterClock(b *tviewyaml.AppBuilder) *tviewyaml.AppBuilder {
 	maxZero := 0
 	b.WithTemplateFunction("startClock", 0, &maxZero, nil, startClock)
 	b.WithTemplateFunction("stopClock", 0, &maxZero, nil, stopClock)

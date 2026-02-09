@@ -35,9 +35,9 @@ func (b *AppBuilder) WithTemplateFunction(name string, minArgs int, maxArgs *int
 	return b
 }
 
-// RegisterTemplateFunctions calls fn with the builder so the app can register custom
-// template functions (e.g. clock). Returns fn(b) for chaining.
-func (b *AppBuilder) RegisterTemplateFunctions(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
+// With calls fn with the builder so the app can perform custom
+// registration with the AppBuilder. Returns fn(b) for chaining.
+func (b *AppBuilder) With(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
 	return fn(b)
 }
 

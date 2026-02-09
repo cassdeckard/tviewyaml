@@ -8,7 +8,7 @@ import (
 
 func main() {
 	app, pageErrors, err := tviewyaml.NewAppBuilder("./config").
-		RegisterTemplateFunctions(RegisterClockFunctions).
+		With(RegisterClock).
 		Build()
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)
