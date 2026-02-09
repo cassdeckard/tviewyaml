@@ -8,16 +8,17 @@ items:
       text: |
         Dynamic Page Lifecycle Demo
         
-        Demonstrates creating and removing pages at runtime.
+        Demonstrates the removePage function for dynamic page
+        lifecycle management.
         
-        removePage function allows dynamic UI workflows:
+        removePage allows pages to be removed from the container:
         - Wizards with temporary steps
         - Detail views that can close themselves
         - Modal-like pages that clean up after use
         
-        Note: showSimpleModal already uses this pattern
-        internally - it creates a unique page and removes
-        it when you click OK.
+        Note: showSimpleModal uses this pattern internally -
+        it creates a unique temporary page and removes it when
+        you click OK.
     fixedSize: 11
     proportion: 1
     focus: false
@@ -32,17 +33,17 @@ items:
             text: |
               [yellow]Built-in Functions:[white]
               
-              • switchToPage(name) - Navigate to existing page
-              • removePage(name) - Delete page from container
+              • switchToPage(name) - Navigate to page
+              • removePage(name) - Remove page from container
               
               [yellow]Use Cases:[white]
               
               • Temporary detail pages
-              • Multi-step wizards
-              • Dynamic content that should clean up
+              • Wizard steps that clean up after themselves
+              • Dynamic content that should be removed
               • Custom modal-like interfaces
               
-              [yellow]Try the buttons below:[white]
+              [yellow]Try the demo below:[white]
             dynamicColors: true
             textAlign: left
           fixedSize: 0
@@ -54,10 +55,7 @@ items:
             title: "Test Dynamic Page Lifecycle"
             formItems:
               - type: button
-                label: "Create Temporary Detail Page"
-                onSelected: '{{ showSimpleModal "Temporary Page Created!" "The page \"temp-detail\" has been added to the page container." "Click below to navigate to it." "Go to Detail Page" "switchToPage \"temp-detail\"" }}'
-              - type: button
-                label: "Navigate to Detail Page (if exists)"
+                label: "Navigate to Temporary Detail Page"
                 onSelected: '{{ switchToPage "temp-detail" }}'
               - type: button
                 label: "Show Modal (auto-cleanup demo)"
@@ -76,10 +74,11 @@ items:
       textAlign: center
       textColor: gray
       text: |
-        Navigation Pattern:
-        1. Create temp page (via modal in this demo)
-        2. Navigate to it with switchToPage
-        3. Detail page removes itself with removePage
+        Demo Flow:
+        1. Navigate to the temp-detail page
+        2. The page has a "Remove This Page" button
+        3. After removal, the page cannot be accessed
+        4. Use ESC to return to main menu
         
         ESC: Return to main menu
     fixedSize: 8

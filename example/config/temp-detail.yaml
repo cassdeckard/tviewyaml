@@ -1,34 +1,27 @@
 type: flex
-direction: column
-border: true
-title: "Temporary Detail Page"
+direction: row
 items:
   - primitive:
       type: textView
       textAlign: center
-      textColor: green
+      textColor: yellow
       text: |
-        [yellow]✓[white] You've navigated to a temporary page!
+        Temporary Detail Page
         
         This page demonstrates the removePage function.
         
-        Try the "Remove This Page" button below.
-        After removal, you won't be able to navigate back
-        to this page without recreating it.
+        Try the "Remove This Page" button to delete
+        this page from the container.
         
-        This pattern is useful for:
-        • Detail views in list-detail interfaces
-        • Wizard steps that should be cleaned up
-        • Temporary content pages
-        • Dynamic UI workflows
-      dynamicColors: true
-    fixedSize: 0
+        After removal, attempting to navigate here
+        will fail until the page is recreated.
+    fixedSize: 6
     proportion: 1
     focus: false
   - primitive:
       type: form
       border: true
-      title: "Actions"
+      title: "Temporary Detail Page - Actions"
       formItems:
         - type: button
           label: "Remove This Page"
@@ -40,16 +33,20 @@ items:
           label: "Go to Main Menu"
           onSelected: '{{ switchToPage "main" }}'
     fixedSize: 0
-    proportion: 0
-    focus: false
+    proportion: 2
+    focus: true
   - primitive:
       type: textView
       textAlign: center
       textColor: gray
       text: |
-        Note: The "Remove This Page" button will delete this
-        page from the container. After removal, navigation
-        attempts will fail until the page is recreated.
-    fixedSize: 4
-    proportion: 0
+        Note: The "Remove This Page" button will
+        delete this page from the container.
+        
+        After removal, navigation attempts will
+        fail until the page is recreated.
+        
+        ESC: Return to main menu
+    fixedSize: 8
+    proportion: 1
     focus: false
