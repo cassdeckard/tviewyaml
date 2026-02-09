@@ -22,26 +22,7 @@ Items are prioritized based on:
 
 ## Medium Priority Gaps
 
-### 1. Table Fixed Columns
-
-**Description**: Lock leftmost columns when scrolling horizontally
-
-**Why It Matters**: Critical for wide tables where first column provides context (like row headers or IDs).
-
-**Current Status**: `fixedColumns` field exists but example only shows `fixedRows`.
-
-**Suggested Example**: Update or duplicate `table.yaml`:
-- Wide table (8+ columns) with data
-- `fixedRows: 1` and `fixedColumns: 1` 
-- Comment explaining behavior
-
-**Related Files**:
-- `config/types.go` - `FixedColumns` field
-- `builder/builder.go` - `SetFixed` call
-
----
-
-### 2. InputField onChange Callback
+### 1. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -60,7 +41,7 @@ Items are prioritized based on:
 
 ---
 
-### 3. Nested Pages Container
+### 2. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -79,7 +60,7 @@ Items are prioritized based on:
 
 ---
 
-### 4. Extended Special Keys
+### 3. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -99,7 +80,7 @@ Items are prioritized based on:
 
 ---
 
-### 5. TreeView Selection Mode Differences
+### 4. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -264,7 +245,7 @@ The following features are adequately covered in existing examples:
 - **Grid** - grid.yaml (rows, columns, spans, borders)
 - **InputField** - inputfield.yaml (validation, password mode, placeholder)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
-- **Table** - table.yaml (headers, rows, selection, fixed rows, column colors)
+- **Table** - table.yaml (headers, rows, selection, fixed rows, fixed columns, column colors)
 - **TextView** - textview.yaml (colors, regions, formatting)
 - **TextArea** - form.yaml (multi-line input, placeholder)
 - **TreeView** - treeview.yaml, treeview-standalone.yaml (hierarchy, colors)
@@ -359,10 +340,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 12 gaps
+- **Total Features Identified**: 11 gaps
 - **High Priority**: 0 items
-- **Medium Priority**: 5 items  
+- **Medium Priority**: 4 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 75% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 76% of package functionality, with most common use cases well covered.

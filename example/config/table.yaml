@@ -8,32 +8,37 @@ items:
       text: |
         Table Demo
         
-        Navigable table with borders, colors, selection, and fixed rows/columns.
+        Wide table demonstrating fixed rows and columns.
         
-        Column colors provide visual differentiation and semantic meaning.
-    fixedSize: 5
+        fixedRows: 1 - Header row stays at top
+        fixedColumns: 1 - ID column stays on left when scrolling
+        
+        Use arrow keys to scroll horizontally and see the first column
+        (ID) remain visible while other columns scroll.
+    fixedSize: 8
     proportion: 1
     focus: false
   - primitive:
       type: table
       border: true
-      title: "Task Status Table (arrow keys to navigate, Enter to select)"
+      title: "Project Tasks - Wide Table (arrow keys to scroll, Enter to select)"
       borders: true
       fixedRows: 1
-      columnColors: ["cyan", "green", "yellow", "magenta"]  # Name, Status, Count, Priority
+      fixedColumns: 1
+      columnColors: ["cyan", "green", "yellow", "magenta", "lime", "orange", "pink", "teal"]
       onCellSelected: '{{ showSelectedCellModal }}'
-      columns: ["Task Name", "Status", "Count", "Priority"]
+      columns: ["ID", "Task Name", "Status", "Priority", "Assignee", "Days Left", "Progress %", "Department"]
       rows:
-        - ["API Development", "Complete", "24", "High"]
-        - ["UI Refinement", "In Progress", "12", "High"]
-        - ["Testing", "In Progress", "8", "Medium"]
-        - ["Documentation", "Pending", "15", "Medium"]
-        - ["Code Review", "Complete", "31", "High"]
-        - ["Bug Fixes", "In Progress", "5", "Critical"]
-        - ["Performance", "Pending", "7", "Low"]
-        - ["Security Audit", "Complete", "19", "Critical"]
-        - ["Deployment", "Pending", "3", "High"]
-        - ["Monitoring", "In Progress", "11", "Medium"]
+        - ["T001", "API Development", "Complete", "High", "Alice", "0", "100%", "Backend"]
+        - ["T002", "UI Refinement", "In Progress", "High", "Bob", "5", "75%", "Frontend"]
+        - ["T003", "Testing", "In Progress", "Medium", "Charlie", "8", "60%", "QA"]
+        - ["T004", "Documentation", "Pending", "Medium", "Diana", "12", "20%", "Docs"]
+        - ["T005", "Code Review", "Complete", "High", "Eve", "0", "100%", "Backend"]
+        - ["T006", "Bug Fixes", "In Progress", "Critical", "Frank", "2", "85%", "Backend"]
+        - ["T007", "Performance", "Pending", "Low", "Grace", "15", "10%", "Ops"]
+        - ["T008", "Security Audit", "Complete", "Critical", "Henry", "0", "100%", "Security"]
+        - ["T009", "Deployment", "Pending", "High", "Ivy", "7", "30%", "Ops"]
+        - ["T010", "Monitoring", "In Progress", "Medium", "Jack", "10", "50%", "Ops"]
     fixedSize: 0
     proportion: 1
     focus: true
@@ -41,7 +46,13 @@ items:
       type: textView
       textAlign: center
       textColor: gray
-      text: "Use arrow keys to navigate, Enter to select cell. Colors cycle through columnColors array. ESC to return to menu"
-    fixedSize: 2
+      text: |
+        Arrow keys to navigate/scroll | Enter to select cell
+        
+        fixedRows keeps header at top | fixedColumns keeps ID on left
+        Column colors cycle through columnColors array
+        
+        ESC to return to menu
+    fixedSize: 6
     proportion: 1
     focus: false
