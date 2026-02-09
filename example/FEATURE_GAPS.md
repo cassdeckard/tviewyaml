@@ -20,30 +20,9 @@ Items are prioritized based on:
 
 ---
 
-## High Priority Gaps
-
-### 1. removePage Function
-
-**Description**: Built-in template function to dynamically remove pages from the page container
-
-**Why It Matters**: Enables dynamic UI workflows where temporary pages (wizards, modals, detail views) can be created and removed.
-
-**Current Status**: Function exists but isn't demonstrated. Only `switchToPage` is shown.
-
-**Suggested Example**: Add `dynamic-pages.yaml`:
-- Button to create a temporary detail page
-- Button on detail page to remove itself and return to main
-- Demonstrates page lifecycle management
-
-**Related Files**:
-- `builder/callbacks.go` - `removePage` implementation
-- Template function registered in builder
-
----
-
 ## Medium Priority Gaps
 
-### 2. Table Fixed Columns
+### 1. Table Fixed Columns
 
 **Description**: Lock leftmost columns when scrolling horizontally
 
@@ -62,7 +41,7 @@ Items are prioritized based on:
 
 ---
 
-### 3. InputField onChange Callback
+### 2. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -81,7 +60,7 @@ Items are prioritized based on:
 
 ---
 
-### 4. Nested Pages Container
+### 3. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -100,7 +79,7 @@ Items are prioritized based on:
 
 ---
 
-### 5. Extended Special Keys
+### 4. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -120,7 +99,7 @@ Items are prioritized based on:
 
 ---
 
-### 6. TreeView Selection Mode Differences
+### 5. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -141,7 +120,7 @@ Items are prioritized based on:
 
 ## Lower Priority / Advanced Gaps
 
-### 7. OnStateChange Subscriptions
+### 6. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -160,7 +139,7 @@ Items are prioritized based on:
 
 ---
 
-### 8. YAML-Configured Modals
+### 7. YAML-Configured Modals
 
 **Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
 
@@ -179,7 +158,7 @@ Items are prioritized based on:
 
 ---
 
-### 9. Nested Form Submission Pattern
+### 8. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -198,7 +177,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. Grid Size Constraints
+### 9. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -217,7 +196,7 @@ Items are prioritized based on:
 
 ---
 
-### 11. Dynamic Page Lifecycle Management
+### 10. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -238,7 +217,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 12. noop Function
+### 11. noop Function
 
 **Description**: No-operation template function
 
@@ -252,7 +231,7 @@ Items are prioritized based on:
 
 ---
 
-### 13. Complex State Binding Patterns
+### 12. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -298,6 +277,7 @@ The following features are adequately covered in existing examples:
 
 ### Navigation & Layout
 - **Page switching** - Demonstrated throughout via `{{ switchToPage }}`
+- **Page removal** - dynamic-pages.yaml, temp-detail.yaml (removePage function, dynamic page lifecycle)
 - **Global key bindings** - app.yaml (Escape, Ctrl+C/Q, Alt+1-9, Shift+F1, Meta+H/M - all modifiers)
 - **Page container** - app.yaml (root pages structure)
 - **Responsive layouts** - grid.yaml, flex.yaml (flexible sizing)
@@ -379,10 +359,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 13 gaps
-- **High Priority**: 1 item
+- **Total Features Identified**: 12 gaps
+- **High Priority**: 0 items
 - **Medium Priority**: 5 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 74% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 75% of package functionality, with most common use cases well covered.

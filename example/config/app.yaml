@@ -79,3 +79,7 @@ application:
         ref: treeview.yaml
       - name: treeview-standalone
         ref: treeview-standalone.yaml
+      - name: dynamic-pages
+        ref: dynamic-pages.yaml
+      - name: temp-detail
+        ref: temp-detail.yaml

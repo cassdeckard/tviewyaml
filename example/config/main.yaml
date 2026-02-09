@@ -55,6 +55,10 @@ listItems:
     secondaryText: "Modal dialogs with buttons"
     shortcut: "m"
     onSelected: '{{ switchToPage "modal" }}'
+  - mainText: "Dynamic Pages"
+    secondaryText: "Page lifecycle: create, navigate, remove"
+    shortcut: "y"
+    onSelected: '{{ switchToPage "dynamic-pages" }}'
   - mainText: "Flex"
     secondaryText: "Flexbox layout (horizontal and vertical)"
     shortcut: "x"

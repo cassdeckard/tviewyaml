@@ -1,0 +1,66 @@
+type: flex
+direction: column
+border: true
+title: "Temporary Detail Page"
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: green
+      text: |
+        [yellow]✓[white] You've navigated to a temporary page!
+        
+        This page demonstrates the removePage function.
+        
+        Try the "Remove This Page" button below.
+        After removal, you won't be able to navigate back
+        to this page without recreating it.
+        
+        This pattern is useful for:
+        • Detail views in list-detail interfaces
+        • Wizard steps that should be cleaned up
+        • Temporary content pages
+        • Dynamic UI workflows
+      dynamicColors: true
+    fixedSize: 0
+    proportion: 1
+    focus: false
+  - primitive:
+      type: flex
+      direction: row
+      items:
+        - primitive:
+            type: button
+            label: "Remove This Page"
+            onSelected: '{{ removePage "temp-detail" }}'
+          fixedSize: 0
+          proportion: 1
+          focus: true
+        - primitive:
+            type: button
+            label: "Go Back to Dynamic Pages Demo"
+            onSelected: '{{ switchToPage "dynamic-pages" }}'
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        - primitive:
+            type: button
+            label: "Go to Main Menu"
+            onSelected: '{{ switchToPage "main" }}'
+          fixedSize: 0
+          proportion: 1
+          focus: false
+    fixedSize: 3
+    proportion: 0
+    focus: false
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: |
+        Note: The "Remove This Page" button will delete this
+        page from the container. After removal, navigation
+        attempts will fail until the page is recreated.
+    fixedSize: 4
+    proportion: 0
+    focus: false

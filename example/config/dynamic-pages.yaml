@@ -1,0 +1,95 @@
+type: flex
+direction: row
+items:
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: yellow
+      text: |
+        Dynamic Page Lifecycle Demo
+        
+        Demonstrates creating and removing pages at runtime.
+        
+        removePage function allows dynamic UI workflows:
+        - Wizards with temporary steps
+        - Detail views that can close themselves
+        - Modal-like pages that clean up after use
+        
+        Note: showSimpleModal already uses this pattern
+        internally - it creates a unique page and removes
+        it when you click OK.
+    fixedSize: 11
+    proportion: 1
+    focus: false
+  - primitive:
+      type: flex
+      direction: column
+      border: true
+      title: "Page Lifecycle Control"
+      items:
+        - primitive:
+            type: textView
+            text: |
+              [yellow]Built-in Functions:[white]
+              
+              • switchToPage(name) - Navigate to existing page
+              • removePage(name) - Delete page from container
+              
+              [yellow]Use Cases:[white]
+              
+              • Temporary detail pages
+              • Multi-step wizards
+              • Dynamic content that should clean up
+              • Custom modal-like interfaces
+              
+              [yellow]Try it out below:[white]
+            dynamicColors: true
+            textAlign: left
+          fixedSize: 0
+          proportion: 1
+          focus: false
+        - primitive:
+            type: button
+            label: "Create Temporary Detail Page"
+            onSelected: '{{ showSimpleModal "Temporary Page Created!" "The page \"temp-detail\" has been added to the page container." "Click below to navigate to it." "Go to Detail Page" "switchToPage \"temp-detail\"" }}'
+          fixedSize: 3
+          proportion: 0
+          focus: true
+        - primitive:
+            type: button
+            label: "Navigate to Detail Page (if exists)"
+            onSelected: '{{ switchToPage "temp-detail" }}'
+          fixedSize: 3
+          proportion: 0
+          focus: false
+        - primitive:
+            type: button
+            label: "Show Modal (auto-cleanup demo)"
+            onSelected: '{{ showSimpleModal "This is a Modal" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
+          fixedSize: 3
+          proportion: 0
+          focus: false
+        - primitive:
+            type: button
+            label: "Return to Main Menu"
+            onSelected: '{{ switchToPage "main" }}'
+          fixedSize: 3
+          proportion: 0
+          focus: false
+    fixedSize: 0
+    proportion: 2
+    focus: true
+  - primitive:
+      type: textView
+      textAlign: center
+      textColor: gray
+      text: |
+        Navigation Pattern:
+        1. Create temp page (via modal in this demo)
+        2. Navigate to it with switchToPage
+        3. Detail page removes itself with removePage
+        
+        ESC: Return to main menu
+    fixedSize: 8
+    proportion: 1
+    focus: false
