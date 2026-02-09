@@ -138,7 +138,7 @@ type ListItem struct {
 
 // FormItem represents an item in a form
 type FormItem struct {
-	Type           string   `yaml:"type"` // "inputfield", "button", "checkbox", "dropdown"
+	Type           string   `yaml:"type"` // "inputfield", "button", "checkbox", "dropdown", "textarea"
 	Label          string   `yaml:"label"`
 	Value          string   `yaml:"value,omitempty"`
 	Options        []string `yaml:"options,omitempty"`

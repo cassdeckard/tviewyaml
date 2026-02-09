@@ -22,26 +22,7 @@ Items are prioritized based on:
 
 ## High Priority Gaps
 
-### 1. TextArea Primitive
-
-**Description**: Multi-line text input area for user text entry
-
-**Why It Matters**: Essential for forms requiring multi-line input (comments, descriptions, notes). Different from TextView which is read-only.
-
-**Current Status**: Package supports `textArea` as a primitive type, but no example demonstrates it.
-
-**Suggested Example**: Add `textarea.yaml` showing:
-- Basic configuration with label and initial value
-- Multi-line text editing
-- Integration in a form for a "feedback" or "notes" use case
-
-**Related Files**: 
-- `builder/builder.go` - Factory creates TextArea
-- `config/types.go` - Primitive type definition
-
----
-
-### 2. removePage Function
+### 1. removePage Function
 
 **Description**: Built-in template function to dynamically remove pages from the page container
 
@@ -62,7 +43,7 @@ Items are prioritized based on:
 
 ## Medium Priority Gaps
 
-### 3. Table Fixed Columns
+### 2. Table Fixed Columns
 
 **Description**: Lock leftmost columns when scrolling horizontally
 
@@ -81,7 +62,7 @@ Items are prioritized based on:
 
 ---
 
-### 4. InputField onChange Callback
+### 3. InputField onChange Callback
 
 **Description**: Callback fired on every keystroke in an input field
 
@@ -100,7 +81,7 @@ Items are prioritized based on:
 
 ---
 
-### 5. Nested Pages Container
+### 4. Nested Pages Container
 
 **Description**: Pages primitive used within flex/grid layouts (not just as root)
 
@@ -119,7 +100,7 @@ Items are prioritized based on:
 
 ---
 
-### 6. Extended Special Keys
+### 5. Extended Special Keys
 
 **Description**: Special keys beyond the basics: Insert, Delete, PgUp, PgDn, Home, End, F2-F11
 
@@ -139,7 +120,7 @@ Items are prioritized based on:
 
 ---
 
-### 7. TreeView Selection Mode Differences
+### 6. TreeView Selection Mode Differences
 
 **Description**: Three distinct selection modes: `auto`, `true`, `false` with different behaviors
 
@@ -160,7 +141,7 @@ Items are prioritized based on:
 
 ## Lower Priority / Advanced Gaps
 
-### 8. OnStateChange Subscriptions
+### 7. OnStateChange Subscriptions
 
 **Description**: Subscribe to state changes with callback functions (reactive pattern)
 
@@ -179,7 +160,7 @@ Items are prioritized based on:
 
 ---
 
-### 9. YAML-Configured Modals
+### 8. YAML-Configured Modals
 
 **Description**: Modal primitive defined in YAML configuration (not just via `showSimpleModal`)
 
@@ -198,7 +179,7 @@ Items are prioritized based on:
 
 ---
 
-### 10. Nested Form Submission Pattern
+### 9. Nested Form Submission Pattern
 
 **Description**: Form as a nested primitive with its own `onSubmit`, triggered via `runFormSubmit`
 
@@ -217,7 +198,7 @@ Items are prioritized based on:
 
 ---
 
-### 11. Grid Size Constraints
+### 10. Grid Size Constraints
 
 **Description**: `minHeight` and `minWidth` constraints on grid items
 
@@ -236,7 +217,7 @@ Items are prioritized based on:
 
 ---
 
-### 12. Dynamic Page Lifecycle Management
+### 11. Dynamic Page Lifecycle Management
 
 **Description**: Programmatic page creation, removal, and navigation patterns
 
@@ -257,7 +238,7 @@ Items are prioritized based on:
 
 ## Additional Missing Features
 
-### 13. noop Function
+### 12. noop Function
 
 **Description**: No-operation template function
 
@@ -271,7 +252,7 @@ Items are prioritized based on:
 
 ---
 
-### 14. Complex State Binding Patterns
+### 13. Complex State Binding Patterns
 
 **Description**: Multiple bound views updating from single state key
 
@@ -300,12 +281,13 @@ The following features are adequately covered in existing examples:
 - **Checkbox** - checkbox.yaml (checked state, labels)
 - **Dropdown** - dropdown.yaml (options, multiple dropdowns)
 - **Flex** - flex.yaml, box.yaml (direction, sizing, nesting)
-- **Form** - form.yaml (all item types, submission, cancellation, onSubmit/onCancel callbacks, runFormSubmit/runFormCancel)
+- **Form** - form.yaml (all item types including textarea, submission, cancellation, onSubmit/onCancel callbacks, runFormSubmit/runFormCancel)
 - **Grid** - grid.yaml (rows, columns, spans, borders)
 - **InputField** - inputfield.yaml (validation, password mode, placeholder)
 - **List** - list.yaml, main.yaml (items, shortcuts, selection)
 - **Table** - table.yaml (headers, rows, selection, fixed rows, column colors)
 - **TextView** - textview.yaml (colors, regions, formatting)
+- **TextArea** - form.yaml (multi-line input, placeholder)
 - **TreeView** - treeview.yaml, treeview-standalone.yaml (hierarchy, colors)
 
 ### Template Features
@@ -397,10 +379,10 @@ When adding examples for these gaps:
 
 ## Summary Statistics
 
-- **Total Features Identified**: 14 gaps
-- **High Priority**: 2 items
+- **Total Features Identified**: 13 gaps
+- **High Priority**: 1 item
 - **Medium Priority**: 5 items  
 - **Low Priority**: 7 items
 - **Well Demonstrated**: 35+ features
 
-**Coverage Estimate**: The example app demonstrates approximately 73% of package functionality, with most common use cases well covered.
+**Coverage Estimate**: The example app demonstrates approximately 74% of package functionality, with most common use cases well covered.

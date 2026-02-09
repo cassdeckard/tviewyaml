@@ -8,16 +8,18 @@ items:
       text: |
         Form Demo
         
-        Forms with various input types.
+        Forms with various input types including multi-line TextArea.
         Use Tab to navigate between fields.
         Press Enter on buttons to activate.
+        
+        TextArea: Multi-line text input (Comments field)
         
         Submit vs Cancel demonstrates form lifecycle:
         - Submit button calls runFormSubmit
         - Cancel button calls runFormCancel
         - ESC key triggers the form's onCancel
         All show different modals to clarify behavior.
-    fixedSize: 6
+    fixedSize: 8
     proportion: 1
     focus: false
   - primitive:
@@ -41,6 +43,10 @@ items:
           label: "Email:"
           value: ""
           fieldWidth: 30
+        - type: textarea
+          label: "Comments:"
+          value: ""
+          placeholder: "Optional: Tell us about yourself (multi-line)"
         - type: checkbox
           label: "Subscribe to newsletter"
           checked: false

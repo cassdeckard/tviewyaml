@@ -277,6 +277,24 @@ func (b *Builder) addFormItems(form *tview.Form, formItems []config.FormItem, bc
 				selectedFunc = func(text string, index int) { cb() }
 			}
 			form.AddDropDown(item.Label, item.Options, 0, selectedFunc)
+		case "textarea":
+			textarea := tview.NewTextArea().
+				SetLabel(item.Label)
+			if item.Value != "" {
+				textarea.SetText(item.Value, true)
+			}
+			if item.Placeholder != "" {
+				textarea.SetPlaceholder(item.Placeholder)
+			}
+			if item.OnChanged != "" {
+				cb, err := b.executor.ExecuteCallback(item.OnChanged)
+				if err != nil {
+					bc.Pop()
+					return nil, bc.Errorf("failed to execute callback for textarea %q: %w", item.Label, err)
+				}
+				textarea.SetChangedFunc(func() { cb() })
+			}
+			form.AddFormItem(textarea)
 		}
 		bc.Pop()
 	}
