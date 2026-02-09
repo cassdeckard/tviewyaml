@@ -24,11 +24,11 @@ items:
   - primitive:
       type: flex
       direction: column
-      border: true
-      title: "Page Lifecycle Control"
       items:
         - primitive:
             type: textView
+            border: true
+            title: "Page Lifecycle Control"
             text: |
               [yellow]Built-in Functions:[white]
               
@@ -42,40 +42,32 @@ items:
               • Dynamic content that should clean up
               • Custom modal-like interfaces
               
-              [yellow]Try it out below:[white]
+              [yellow]Try the buttons below:[white]
             dynamicColors: true
             textAlign: left
           fixedSize: 0
           proportion: 1
           focus: false
         - primitive:
-            type: button
-            label: "Create Temporary Detail Page"
-            onSelected: '{{ showSimpleModal "Temporary Page Created!" "The page \"temp-detail\" has been added to the page container." "Click below to navigate to it." "Go to Detail Page" "switchToPage \"temp-detail\"" }}'
-          fixedSize: 3
+            type: form
+            border: true
+            title: "Test Dynamic Page Lifecycle"
+            formItems:
+              - type: button
+                label: "Create Temporary Detail Page"
+                onSelected: '{{ showSimpleModal "Temporary Page Created!" "The page \"temp-detail\" has been added to the page container." "Click below to navigate to it." "Go to Detail Page" "switchToPage \"temp-detail\"" }}'
+              - type: button
+                label: "Navigate to Detail Page (if exists)"
+                onSelected: '{{ switchToPage "temp-detail" }}'
+              - type: button
+                label: "Show Modal (auto-cleanup demo)"
+                onSelected: '{{ showSimpleModal "This is a Modal" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
+              - type: button
+                label: "Return to Main Menu"
+                onSelected: '{{ switchToPage "main" }}'
+          fixedSize: 0
           proportion: 1
           focus: true
-        - primitive:
-            type: button
-            label: "Navigate to Detail Page (if exists)"
-            onSelected: '{{ switchToPage "temp-detail" }}'
-          fixedSize: 3
-          proportion: 1
-          focus: false
-        - primitive:
-            type: button
-            label: "Show Modal (auto-cleanup demo)"
-            onSelected: '{{ showSimpleModal "This is a Modal" "Modals are temporary pages." "They use removePage internally." "When you click OK, the page is removed." "OK" }}'
-          fixedSize: 3
-          proportion: 1
-          focus: false
-        - primitive:
-            type: button
-            label: "Return to Main Menu"
-            onSelected: '{{ switchToPage "main" }}'
-          fixedSize: 3
-          proportion: 1
-          focus: false
     fixedSize: 0
     proportion: 2
     focus: true
