@@ -19,23 +19,25 @@ type Context struct {
 	Pages  *tview.Pages
 	Colors *ColorHelper
 
-	state       map[string]interface{}
-	subscribers map[string][]func(interface{})
-	boundViews  map[string][]BoundView // key -> views to refresh when key changes
-	dirtyKeys   map[string]bool
-	mu          sync.RWMutex
+	state              map[string]interface{}
+	subscribers        map[string][]func(interface{})
+	boundViews         map[string][]BoundView // key -> views to refresh when key changes
+	dirtyKeys          map[string]bool
+	formSubmitCallbacks map[string]func() // form name -> callback (e.g. onSubmit)
+	mu                 sync.RWMutex
 }
 
 // NewContext creates a new template context
 func NewContext(app *tview.Application, pages *tview.Pages) *Context {
 	return &Context{
-		App:         app,
-		Pages:       pages,
-		Colors:      &ColorHelper{},
-		state:       make(map[string]interface{}),
-		subscribers: make(map[string][]func(interface{})),
-		boundViews:  make(map[string][]BoundView),
-		dirtyKeys:   make(map[string]bool),
+		App:                 app,
+		Pages:               pages,
+		Colors:              &ColorHelper{},
+		state:               make(map[string]interface{}),
+		subscribers:         make(map[string][]func(interface{})),
+		boundViews:          make(map[string][]BoundView),
+		dirtyKeys:           make(map[string]bool),
+		formSubmitCallbacks: make(map[string]func()),
 	}
 }
 
@@ -131,6 +133,26 @@ func (c *Context) OnStateChange(key string, fn func(interface{})) {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 	c.subscribers[key] = append(c.subscribers[key], fn)
+}
+
+// RegisterFormSubmit registers a form's submit callback by name so runFormSubmit(formName) can invoke it (e.g. from a button).
+func (c *Context) RegisterFormSubmit(name string, callback func()) {
+	if name == "" {
+		return
+	}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	c.formSubmitCallbacks[name] = callback
+}
+
+// RunFormSubmit runs the submit callback registered for the given form name. No-op if name is unknown.
+func (c *Context) RunFormSubmit(name string) {
+	c.mu.RLock()
+	cb := c.formSubmitCallbacks[name]
+	c.mu.RUnlock()
+	if cb != nil {
+		cb()
+	}
 }
 
 // ColorHelper provides color parsing utilities

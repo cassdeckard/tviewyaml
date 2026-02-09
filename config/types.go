@@ -34,6 +34,7 @@ type PageRef struct {
 // PageConfig represents a single page/screen configuration
 type PageConfig struct {
 	Type       string                 `yaml:"type"` // "list", "flex", "form", etc.
+	Name       string                 `yaml:"name,omitempty"` // optional name (e.g. for form runFormSubmit)
 	Direction  string                 `yaml:"direction,omitempty"`
 	Border     bool                   `yaml:"border,omitempty"`
 	Title      string                 `yaml:"title,omitempty"`

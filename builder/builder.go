@@ -113,6 +113,9 @@ func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Pri
 			return nil, fmt.Errorf("failed to execute onSubmit callback: %w", err)
 		}
 		form.SetCancelFunc(cb)
+		if cfg.Name != "" {
+			b.context.RegisterFormSubmit(cfg.Name, cb)
+		}
 	}
 	return form, nil
 }
@@ -330,6 +333,9 @@ func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) er
 			return fmt.Errorf("failed to execute onSubmit callback: %w", err)
 		}
 		form.SetCancelFunc(cb)
+		if prim.Name != "" {
+			b.context.RegisterFormSubmit(prim.Name, cb)
+		}
 	}
 	return nil
 }

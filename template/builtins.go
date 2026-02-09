@@ -63,6 +63,11 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.Pages.AddPage(pageName, modal, false, true)
 	})
 
+	// runFormSubmit: runs the submit callback registered for the form name (e.g. from a Submit button).
+	registry.Register("runFormSubmit", 1, intPtr(1), nil, func(ctx *Context, formName string) {
+		ctx.RunFormSubmit(formName)
+	})
+
 	// noop: does nothing (useful for testing or placeholder actions)
 	registry.Register("noop", 0, intPtr(0), nil, func(ctx *Context) {
 		// Do nothing
