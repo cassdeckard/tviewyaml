@@ -103,7 +103,18 @@ func (b *Builder) buildFlex(flex *tview.Flex, cfg *config.PageConfig) (tview.Pri
 
 // buildForm populates a form with items
 func (b *Builder) buildForm(form *tview.Form, cfg *config.PageConfig) (tview.Primitive, error) {
-	return b.addFormItems(form, cfg.FormItems)
+	_, err := b.addFormItems(form, cfg.FormItems)
+	if err != nil {
+		return nil, err
+	}
+	if cfg.OnSubmit != "" {
+		cb, err := b.executor.ExecuteCallback(cfg.OnSubmit)
+		if err != nil {
+			return nil, fmt.Errorf("failed to execute onSubmit callback: %w", err)
+		}
+		form.SetCancelFunc(cb)
+	}
+	return form, nil
 }
 
 // addFormItems adds form items to a form (shared logic for both page-level and nested forms)
@@ -310,7 +321,17 @@ func (b *Builder) populateListItems(list *tview.List, prim *config.Primitive) er
 // populateFormItems adds items to a form (delegates to shared logic)
 func (b *Builder) populateFormItems(form *tview.Form, prim *config.Primitive) error {
 	_, err := b.addFormItems(form, prim.FormItems)
-	return err
+	if err != nil {
+		return err
+	}
+	if prim.OnSubmit != "" {
+		cb, err := b.executor.ExecuteCallback(prim.OnSubmit)
+		if err != nil {
+			return fmt.Errorf("failed to execute onSubmit callback: %w", err)
+		}
+		form.SetCancelFunc(cb)
+	}
+	return nil
 }
 
 // populateTableData populates table with data from primitive config

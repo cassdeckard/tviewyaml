@@ -41,6 +41,7 @@ type PageConfig struct {
 	Items      []FlexItem             `yaml:"items,omitempty"`
 	ListItems  []ListItem             `yaml:"listItems,omitempty"`
 	FormItems  []FormItem             `yaml:"formItems,omitempty"`
+	OnSubmit   string                 `yaml:"onSubmit,omitempty"` // Template expression when form is cancelled (Escape)
 	TableData  *TableData             `yaml:"tableData,omitempty"`
 	// TreeView-specific (for page-level type: treeView)
 	RootNode    string     `yaml:"rootNode,omitempty"`
@@ -81,6 +82,7 @@ type Primitive struct {
 	Rows          [][]string `yaml:"rows,omitempty"`
 	Options       []string   `yaml:"options,omitempty"`
 	FormItems     []FormItem `yaml:"formItems,omitempty"`
+	OnSubmit      string     `yaml:"onSubmit,omitempty"` // Template expression when form is cancelled (Escape, nested form)
 	// Table-specific properties
 	Borders      bool `yaml:"borders,omitempty"`      // Show borders between cells
 	FixedRows    int  `yaml:"fixedRows,omitempty"`    // Number of fixed rows
