@@ -28,7 +28,7 @@ items:
         
         [green::b]Limitation:[::-]
         Currently, navigation between nested pages requires custom implementation.
-        The built-in {{ switchToPage }} function only works for root-level pages.
+        The built-in switchToPage function only works for root-level pages.
         
         [green::b]YAML Structure:[::-]
         
