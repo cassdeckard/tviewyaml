@@ -45,6 +45,8 @@ jobs:
     - name: Run tests with coverage and generate JUnit report
       run: |
         gotestsum --junitfile junit.xml -- -race -coverprofile=coverage.out -covermode=atomic ./...
+        # Ensure file is fully written
+        sync
 
     - name: Generate coverage report
       run: go tool cover -html=coverage.out -o coverage.html
@@ -61,11 +63,13 @@ jobs:
       uses: EnricoMi/publish-unit-test-result-action/linux@v2
       if: always()
       with:
-        files: junit.xml
+        files: ${{ github.workspace }}/junit.xml
         check_name: Test Results
         comment_mode: always
         report_individual_runs: false
         check_run_annotations: none
+        large_files: false
+        ignore_runs: true
 
     - name: Upload coverage reports
       uses: actions/upload-artifact@v4
