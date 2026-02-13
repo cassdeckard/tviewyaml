@@ -160,6 +160,21 @@ func (h *acceptanceHarness) waitForDraws(n int) bool {
 	return true
 }
 
+// waitForContent waits until the screen contains substr or the timeout is reached.
+// Use after injecting input when the expected page content is known.
+func (h *acceptanceHarness) waitForContent(substr string) bool {
+	deadline := time.Now().Add(drawTimeout)
+	for time.Now().Before(deadline) {
+		if h.screenContains(substr) {
+			return true
+		}
+		if !h.waitForDraw() {
+			return false
+		}
+	}
+	return h.screenContains(substr)
+}
+
 func (h *acceptanceHarness) getContent() string {
 	h.contentMu.Lock()
 	defer h.contentMu.Unlock()
