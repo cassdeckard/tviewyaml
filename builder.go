@@ -34,6 +34,7 @@ type AppBuilder struct {
 	configDir string
 	registry  *template.FunctionRegistry
 	errors    []error
+	screen    tcell.Screen // optional; if set, used for testing (caller must Init() and set size)
 }
 
 // NewAppBuilder creates a new application builder
@@ -59,6 +60,15 @@ func (b *AppBuilder) With(fn func(*AppBuilder) *AppBuilder) *AppBuilder {
 	return fn(b)
 }
 
+// WithScreen sets the screen to use instead of the default (e.g. tcell.SimulationScreen for tests).
+// Caller must call screen.Init() and set size before Build(). Typically used only in tests.
+func (b *AppBuilder) WithScreen(screen tcell.Screen) *AppBuilder {
+	if screen != nil {
+		b.screen = screen
+	}
+	return b
+}
+
 // Build creates and configures a tview application from YAML configuration files.
 // Returns (app, pageErrors, err) where err is fatal (app config load/validate failure),
 // and pageErrors are non-fatal per-page failures (missing/invalid pages are skipped).
@@ -70,6 +80,9 @@ func (b *AppBuilder) Build() (*Application, []error, error) {
 
 	// Initialize tview application
 	tvApp := tview.NewApplication()
+	if b.screen != nil {
+		tvApp.SetScreen(b.screen)
+	}
 	pages := tview.NewPages()
 
 	// Create template context

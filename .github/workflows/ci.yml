@@ -48,6 +48,9 @@ jobs:
         # Ensure file is fully written
         sync
 
+    - name: Run example acceptance tests
+      run: cd example && go test -v -count=1 ./...
+
     - name: Generate coverage report
       run: go tool cover -html=coverage.out -o coverage.html
 
