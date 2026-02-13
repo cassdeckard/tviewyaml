@@ -4,16 +4,74 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"sync"
 	"testing"
 	"time"
 
 	"example/app"
+
 	"github.com/cassdeckard/tviewyaml"
 	"github.com/cassdeckard/tviewyaml/keys"
 	"github.com/gdamore/tcell/v2"
 )
+
+const csi = "\x1b["
+
+// styleToSGR converts tcell Style to ANSI SGR escape sequence for cat-compatible terminal output.
+// Uses 24-bit true color (38;2;r;g;b) for both RGB and named palette colors—tcell's RGB() returns
+// the display color for both, while Hex()&0xff incorrectly gives 0 for colors like Yellow/Green.
+func styleToSGR(st tcell.Style) string {
+	fg, bg, attr := st.Decompose()
+	var codes []string
+	// Foreground: use RGB() for all valid colors (named palette colors have RGB values too)
+	if fg.Valid() && fg != tcell.ColorDefault {
+		if r, g, b := fg.RGB(); r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255 {
+			codes = append(codes, "38", "2", strconv.Itoa(int(r)), strconv.Itoa(int(g)), strconv.Itoa(int(b)))
+		} else {
+			codes = append(codes, "39")
+		}
+	} else {
+		codes = append(codes, "39")
+	}
+	// Background
+	if bg.Valid() && bg != tcell.ColorDefault {
+		if r, g, b := bg.RGB(); r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255 {
+			codes = append(codes, "48", "2", strconv.Itoa(int(r)), strconv.Itoa(int(g)), strconv.Itoa(int(b)))
+		} else {
+			codes = append(codes, "49")
+		}
+	} else {
+		codes = append(codes, "49")
+	}
+	// Attributes (AttrMask: Bold=1, Dim=2, Italic=4, Underline=8, Blink=16, Reverse=64, StrikeThrough=128)
+	if attr&tcell.AttrBold != 0 {
+		codes = append(codes, "1")
+	}
+	if attr&tcell.AttrDim != 0 {
+		codes = append(codes, "2")
+	}
+	if attr&tcell.AttrItalic != 0 {
+		codes = append(codes, "3")
+	}
+	if attr&tcell.AttrUnderline != 0 {
+		codes = append(codes, "4")
+	}
+	if attr&tcell.AttrBlink != 0 {
+		codes = append(codes, "5")
+	}
+	if attr&tcell.AttrReverse != 0 {
+		codes = append(codes, "7")
+	}
+	if attr&tcell.AttrStrikeThrough != 0 {
+		codes = append(codes, "9")
+	}
+	if len(codes) == 2 && codes[0] == "39" && codes[1] == "49" {
+		return csi + "0m"
+	}
+	return csi + strings.Join(codes, ";") + "m"
+}
 
 const drawTimeout = 3 * time.Second
 
@@ -47,8 +105,8 @@ func runAtSizes(t *testing.T, fn func(t *testing.T, h *acceptanceHarness)) {
 // Content is newline-separated lines; String() returns Content so it can be echoed or logged.
 type TerminalSnapshot struct {
 	Content string
-	Cols   int
-	Rows   int
+	Cols    int
+	Rows    int
 }
 
 // String returns the terminal content so that t.Log(snap) or echo displays the terminal.
@@ -101,9 +159,16 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 	application.SetAfterDrawFunc(func(screen tcell.Screen) {
 		w, hi := screen.Size()
 		var b strings.Builder
+		var prevStyle tcell.Style
+		firstCell := true
 		for y := 0; y < hi; y++ {
 			for x := 0; x < w; x++ {
-				mainc, _, _, _ := screen.GetContent(x, y)
+				mainc, _, style, _ := screen.GetContent(x, y)
+				if firstCell || style != prevStyle {
+					b.WriteString(styleToSGR(style))
+					prevStyle = style
+					firstCell = false
+				}
 				if mainc != 0 {
 					b.WriteRune(mainc)
 				} else {
@@ -113,6 +178,8 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 			if y < hi-1 {
 				b.WriteByte('\n')
 			}
+			firstCell = true
+			prevStyle = tcell.Style{}
 		}
 		h.contentMu.Lock()
 		h.content = b.String()
