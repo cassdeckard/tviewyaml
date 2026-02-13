@@ -174,15 +174,25 @@ func (h *acceptanceHarness) TakeSnapshot() TerminalSnapshot {
 	return TerminalSnapshot{Content: h.content, Cols: h.lastCols, Rows: h.lastRows}
 }
 
-// snapshotGoldenPath returns the path to the golden file for the given name.
-// Name is sanitized for use as a filename (e.g. subtest "80x24" -> "TestName_80x24.terminal" when name is derived from t.Name()).
-func snapshotGoldenPath(name string) string {
+// snapshotGoldenPath returns the path to the golden file.
+// Uses structure: testdata/snapshots/{size}/TestAcceptance/{test}_{state}.terminal
+// (e.g. testdata/snapshots/40x10/TestAcceptance/KeyNavigation_BackToMain.terminal).
+// Size comes from cols/rows (set by runAtSizes via sz.name); name is t.Name() with "/" replaced by "_".
+func snapshotGoldenPath(name string, cols, rows int) string {
 	safe := strings.ReplaceAll(name, "/", "_")
 	safe = strings.TrimSpace(safe)
 	if safe == "" {
 		safe = "default"
 	}
-	return filepath.Join("testdata", "snapshots", safe+".terminal")
+	sizeStr := fmt.Sprintf("%dx%d", cols, rows)
+	// Remove size from name to build filename: "TestAcceptance_KeyNavigation_80x24_MainMenu" -> "KeyNavigation_MainMenu"
+	withoutSize := strings.ReplaceAll(safe, "_"+sizeStr, "")
+	withoutSize = strings.Trim(withoutSize, "_")
+	withoutSize = strings.TrimPrefix(withoutSize, "TestAcceptance_")
+	if withoutSize == "" {
+		withoutSize = "default"
+	}
+	return filepath.Join("testdata", "snapshots", sizeStr, "TestAcceptance", withoutSize+".terminal")
 }
 
 // AssertSnapshot compares the current terminal state to the golden snapshot at testdata/snapshots/<name>.terminal.
@@ -191,10 +201,10 @@ func snapshotGoldenPath(name string) string {
 func (h *acceptanceHarness) AssertSnapshot(t *testing.T, name string) {
 	t.Helper()
 	if name == "" {
-		name = strings.ReplaceAll(t.Name(), "/", "_")
+		name = t.Name()
 	}
 	snap := h.TakeSnapshot()
-	path := snapshotGoldenPath(name)
+	path := snapshotGoldenPath(name, snap.Cols, snap.Rows)
 
 	if os.Getenv(snapshotEnvUpdate) != "" {
 		dir := filepath.Dir(path)
