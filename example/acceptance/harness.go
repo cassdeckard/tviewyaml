@@ -19,6 +19,30 @@ const drawTimeout = 3 * time.Second
 
 const snapshotEnvUpdate = "UPDATE_TERMINAL_SNAPSHOTS"
 
+// terminalSizes are common sizes used for multi-size snapshot tests.
+var terminalSizes = []struct {
+	name       string
+	cols, rows int
+}{
+	{"80x24", 80, 24},
+	{"120x30", 120, 30},
+	{"40x10", 40, 10},
+}
+
+// runAtSizes runs fn as a subtest for each terminal size. Each subtest gets its own harness.
+func runAtSizes(t *testing.T, fn func(t *testing.T, h *acceptanceHarness)) {
+	t.Helper()
+	for _, sz := range terminalSizes {
+		sz := sz
+		t.Run(sz.name, func(t *testing.T) {
+			t.Helper()
+			h := newAcceptanceHarness(t, sz.cols, sz.rows)
+			defer h.stop()
+			fn(t, h)
+		})
+	}
+}
+
 // TerminalSnapshot is a point-in-time capture of the simulated terminal (character grid and dimensions).
 // Content is newline-separated lines; String() returns Content so it can be echoed or logged.
 type TerminalSnapshot struct {
