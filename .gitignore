@@ -14,6 +14,9 @@ example/example
 # Output of the go coverage tool
 *.out
 
+# Acceptance test snapshots
+example/acceptance/testdata/snapshots/
+
 # Dependency directories
 vendor/
 

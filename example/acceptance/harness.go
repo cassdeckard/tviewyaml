@@ -1,6 +1,9 @@
 package acceptance_test
 
 import (
+	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -14,6 +17,28 @@ import (
 
 const drawTimeout = 3 * time.Second
 
+const snapshotEnvUpdate = "UPDATE_TERMINAL_SNAPSHOTS"
+
+// TerminalSnapshot is a point-in-time capture of the simulated terminal (character grid and dimensions).
+// Content is newline-separated lines; String() returns Content so it can be echoed or logged.
+type TerminalSnapshot struct {
+	Content string
+	Cols   int
+	Rows   int
+}
+
+// String returns the terminal content so that t.Log(snap) or echo displays the terminal.
+// In a narrower real terminal, long lines wrap naturally.
+func (s TerminalSnapshot) String() string {
+	return s.Content
+}
+
+// DelimitedString returns the snapshot with a header and footer for extraction from test output.
+func (s TerminalSnapshot) DelimitedString() string {
+	return "--- terminal snapshot " + fmt.Sprintf("%dx%d", s.Cols, s.Rows) + " ---\n" +
+		s.Content + "\n--- end snapshot ---"
+}
+
 // acceptanceHarness runs the example app with a SimulationScreen and provides
 // helpers to wait for draws, inject input, and assert on content.
 type acceptanceHarness struct {
@@ -21,6 +46,8 @@ type acceptanceHarness struct {
 	drawDone  chan struct{}
 	contentMu sync.Mutex
 	content   string
+	lastCols  int
+	lastRows  int
 	runDone   chan struct{}
 }
 
@@ -32,8 +59,6 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 	if err := sim.Init(); err != nil {
 		t.Fatalf("SimulationScreen Init: %v", err)
 	}
-	// SimulationScreen does not expose SetSize in the public interface; we inject EventResize after start.
-
 	application, pageErrors, err := app.BuildWithScreen("../config", sim)
 	if err != nil {
 		sim.Fini()
@@ -42,6 +67,9 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 	if len(pageErrors) > 0 {
 		t.Logf("Build had %d page errors (non-fatal): %v", len(pageErrors), pageErrors)
 	}
+
+	// Set simulation screen size so the first draw uses the correct dimensions.
+	sim.SetSize(cols, rows)
 
 	drawDone := make(chan struct{}, 1)
 	h := &acceptanceHarness{app: application, drawDone: drawDone, runDone: make(chan struct{})}
@@ -64,6 +92,8 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 		}
 		h.contentMu.Lock()
 		h.content = b.String()
+		h.lastCols = w
+		h.lastRows = hi
 		h.contentMu.Unlock()
 		select {
 		case h.drawDone <- struct{}{}:
@@ -77,12 +107,11 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 		_ = application.Run()
 	}()
 
-	// Trigger initial resize so layout runs at desired size
+	// Queue resize so the app's layout runs at desired size; screen is already SetSize'd above.
 	h.resize(cols, rows)
 	if !h.waitForDraw() {
 		application.Stop()
 		<-h.runDone
-		sim.Fini()
 		t.Fatal("timeout waiting for initial draw")
 	}
 	return h
@@ -111,6 +140,63 @@ func (h *acceptanceHarness) getContent() string {
 	h.contentMu.Lock()
 	defer h.contentMu.Unlock()
 	return h.content
+}
+
+// TakeSnapshot returns the current terminal content and dimensions.
+// Call waitForDraw() first if a fresh frame is needed.
+func (h *acceptanceHarness) TakeSnapshot() TerminalSnapshot {
+	h.contentMu.Lock()
+	defer h.contentMu.Unlock()
+	return TerminalSnapshot{Content: h.content, Cols: h.lastCols, Rows: h.lastRows}
+}
+
+// snapshotGoldenPath returns the path to the golden file for the given name.
+// Name is sanitized for use as a filename (e.g. subtest "80x24" -> "TestName_80x24.terminal" when name is derived from t.Name()).
+func snapshotGoldenPath(name string) string {
+	safe := strings.ReplaceAll(name, "/", "_")
+	safe = strings.TrimSpace(safe)
+	if safe == "" {
+		safe = "default"
+	}
+	return filepath.Join("testdata", "snapshots", safe+".terminal")
+}
+
+// AssertSnapshot compares the current terminal state to the golden snapshot at testdata/snapshots/<name>.terminal.
+// If name is empty, the name is derived from t.Name() (e.g. TestAcceptance_Layout/80x24 -> TestAcceptance_Layout_80x24.terminal).
+// When UPDATE_TERMINAL_SNAPSHOTS=1 is set, the golden file is overwritten with the current state and the assertion passes.
+func (h *acceptanceHarness) AssertSnapshot(t *testing.T, name string) {
+	t.Helper()
+	if name == "" {
+		name = strings.ReplaceAll(t.Name(), "/", "_")
+	}
+	snap := h.TakeSnapshot()
+	path := snapshotGoldenPath(name)
+
+	if os.Getenv(snapshotEnvUpdate) != "" {
+		dir := filepath.Dir(path)
+		if err := os.MkdirAll(dir, 0755); err != nil {
+			t.Fatalf("create snapshot dir: %v", err)
+		}
+		if err := os.WriteFile(path, []byte(snap.Content), 0644); err != nil {
+			t.Fatalf("write snapshot: %v", err)
+		}
+		return
+	}
+
+	expected, err := os.ReadFile(path)
+	if err != nil {
+		if os.IsNotExist(err) {
+			t.Logf("current terminal:\n%s", snap)
+			t.Fatalf("no golden snapshot at %s; run with UPDATE_TERMINAL_SNAPSHOTS=1 to create it", path)
+		}
+		t.Fatalf("read golden snapshot: %v", err)
+	}
+	expectedStr := string(expected)
+	if snap.Content != expectedStr {
+		t.Errorf("snapshot mismatch for %s", name)
+		t.Logf("current terminal:\n%s", snap)
+		t.Logf("expected (golden):\n%s", expectedStr)
+	}
 }
 
 func (h *acceptanceHarness) screenContains(substr string) bool {

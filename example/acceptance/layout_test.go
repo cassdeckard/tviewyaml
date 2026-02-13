@@ -17,9 +17,10 @@ func TestAcceptance_LayoutAtMultipleSizes(t *testing.T) {
 		t.Run(sz.name, func(t *testing.T) {
 			h := newAcceptanceHarness(t, sz.cols, sz.rows)
 			defer h.stop()
-			if !h.screenContains("Tview Feature Demos") {
-				t.Errorf("screen should contain main title %q; content snippet: %s",
-					"Tview Feature Demos", truncate(h.getContent(), 500))
+			// At 40 cols the full title is truncated; at 80+ "Tview Feature Demos" is visible.
+			if !h.screenContains("Feature Demos") {
+				t.Errorf("screen should contain main title (e.g. Feature Demos); content snippet: %s",
+					truncate(h.getContent(), 500))
 			}
 			if !h.screenContains("Box") {
 				t.Errorf("screen should contain %q", "Box")
@@ -27,6 +28,8 @@ func TestAcceptance_LayoutAtMultipleSizes(t *testing.T) {
 			if !h.screenContains("Button") {
 				t.Errorf("screen should contain %q", "Button")
 			}
+			// Snapshot comparison (name derived from t.Name() -> e.g. TestAcceptance_LayoutAtMultipleSizes_80x24.terminal)
+			h.AssertSnapshot(t, "")
 		})
 	}
 }
