@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -17,7 +17,7 @@ var (
 		"Lemon", "Lime", "Mango", "Orange", "Peach",
 		"Pear", "Pineapple", "Plum", "Raspberry", "Strawberry",
 	}
-	
+
 	// Email validation regex
 	emailRegex = regexp.MustCompile(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`)
 )
@@ -38,11 +38,11 @@ func updateCharCount(ctx *template.Context) {
 	if !ok {
 		textStr = ""
 	}
-	
+
 	// Calculate character count
 	count := len(textStr)
 	maxCount := 50
-	
+
 	// Create status message with color coding
 	var status string
 	if count == 0 {
@@ -54,7 +54,7 @@ func updateCharCount(ctx *template.Context) {
 	} else {
 		status = fmt.Sprintf("[red]%d / %d characters (at limit!)[::-]", count, maxCount)
 	}
-	
+
 	// Update state
 	ctx.SetStateDirect("charCount", status)
 }
@@ -66,7 +66,7 @@ func validateEmail(ctx *template.Context) {
 	if !ok {
 		textStr = ""
 	}
-	
+
 	// Validate email format
 	var status string
 	if textStr == "" {
@@ -76,7 +76,7 @@ func validateEmail(ctx *template.Context) {
 	} else {
 		status = "[red]✗ Invalid email format[::-]"
 	}
-	
+
 	// Update state
 	ctx.SetStateDirect("emailStatus", status)
 }
@@ -88,7 +88,7 @@ func searchFilter(ctx *template.Context) {
 	if !ok {
 		searchQuery = ""
 	}
-	
+
 	// Filter fruits based on search query
 	var results []string
 	if searchQuery == "" {
@@ -103,7 +103,7 @@ func searchFilter(ctx *template.Context) {
 			}
 		}
 	}
-	
+
 	// Format results
 	var status string
 	if len(results) == 0 {
@@ -116,21 +116,21 @@ func searchFilter(ctx *template.Context) {
 		if len(results) < displayCount {
 			displayCount = len(results)
 		}
-		
+
 		resultList := make([]string, displayCount)
 		for i := 0; i < displayCount; i++ {
 			resultList[i] = results[i]
 		}
-		
+
 		moreText := ""
 		if len(results) > displayCount {
 			moreText = fmt.Sprintf(" (+%d more)", len(results)-displayCount)
 		}
-		
-		status = fmt.Sprintf("[green]%d matches:%s[::-]\n%s", 
+
+		status = fmt.Sprintf("[green]%d matches:%s[::-]\n%s",
 			len(results), moreText, strings.Join(resultList, ", "))
 	}
-	
+
 	// Update state
 	ctx.SetStateDirect("searchResults", status)
 }

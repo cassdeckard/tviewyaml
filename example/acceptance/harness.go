@@ -1,4 +1,4 @@
-package main
+package acceptance_test
 
 import (
 	"strings"
@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	"example/app"
 	"github.com/cassdeckard/tviewyaml"
 	"github.com/cassdeckard/tviewyaml/keys"
 	"github.com/gdamore/tcell/v2"
@@ -33,13 +34,7 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 	}
 	// SimulationScreen does not expose SetSize in the public interface; we inject EventResize after start.
 
-	app, pageErrors, err := tviewyaml.NewAppBuilder("./config").
-		WithScreen(sim).
-		With(RegisterClock).
-		With(RegisterStateBinding).
-		With(RegisterInputFieldLive).
-		With(RegisterDynamicPages).
-		Build()
+	application, pageErrors, err := app.BuildWithScreen("../config", sim)
 	if err != nil {
 		sim.Fini()
 		t.Fatalf("Build: %v", err)
@@ -49,9 +44,9 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 	}
 
 	drawDone := make(chan struct{}, 1)
-	h := &acceptanceHarness{app: app, drawDone: drawDone, runDone: make(chan struct{})}
+	h := &acceptanceHarness{app: application, drawDone: drawDone, runDone: make(chan struct{})}
 
-	app.SetAfterDrawFunc(func(screen tcell.Screen) {
+	application.SetAfterDrawFunc(func(screen tcell.Screen) {
 		w, hi := screen.Size()
 		var b strings.Builder
 		for y := 0; y < hi; y++ {
@@ -79,13 +74,13 @@ func newAcceptanceHarness(t *testing.T, cols, rows int) *acceptanceHarness {
 
 	go func() {
 		defer close(h.runDone)
-		_ = app.Run()
+		_ = application.Run()
 	}()
 
 	// Trigger initial resize so layout runs at desired size
 	h.resize(cols, rows)
 	if !h.waitForDraw() {
-		app.Stop()
+		application.Stop()
 		<-h.runDone
 		sim.Fini()
 		t.Fatal("timeout waiting for initial draw")
@@ -139,66 +134,9 @@ func (h *acceptanceHarness) stop() {
 	<-h.runDone
 }
 
-func TestAcceptance_LayoutAtMultipleSizes(t *testing.T) {
-	sizes := []struct {
-		name       string
-		cols, rows int
-	}{
-		{"80x24", 80, 24},
-		{"120x30", 120, 30},
-		{"40x10", 40, 10},
-	}
-	for _, sz := range sizes {
-		t.Run(sz.name, func(t *testing.T) {
-			h := newAcceptanceHarness(t, sz.cols, sz.rows)
-			defer h.stop()
-			if !h.screenContains("Tview Feature Demos") {
-				t.Errorf("screen should contain main title %q; content snippet: %s",
-					"Tview Feature Demos", truncate(h.getContent(), 500))
-			}
-			if !h.screenContains("Box") {
-				t.Errorf("screen should contain %q", "Box")
-			}
-			if !h.screenContains("Button") {
-				t.Errorf("screen should contain %q", "Button")
-			}
-		})
-	}
-}
-
 func truncate(s string, max int) string {
 	if len(s) <= max {
 		return s
 	}
 	return s[:max] + "..."
-}
-
-func TestAcceptance_KeyNavigation(t *testing.T) {
-	h := newAcceptanceHarness(t, 80, 24)
-	defer h.stop()
-
-	// Shortcut 'b' goes to Box page (from main.yaml). Wait for 2 draws so we see the new page.
-	h.typeKey("b")
-	if !h.waitForDraws(2) {
-		t.Fatal("timeout waiting for draws after pressing b")
-	}
-	if !h.screenContains("Box") {
-		t.Errorf("after pressing b, screen should show Box page; content snippet: %s",
-			truncate(h.getContent(), 500))
-	}
-	// Box page title from example/config/box.yaml
-	if !h.screenContains("Box Demo") {
-		t.Errorf("screen should contain Box page title; content snippet: %s",
-			truncate(h.getContent(), 500))
-	}
-
-	// Escape returns to main (global keybinding).
-	h.typeKey("Escape")
-	if !h.waitForDraw() {
-		t.Fatal("timeout waiting for draw after Escape")
-	}
-	if !h.screenContains("Tview Feature Demos") {
-		t.Errorf("after Escape, screen should show main menu; content snippet: %s",
-			truncate(h.getContent(), 500))
-	}
 }

@@ -3,22 +3,17 @@ package main
 import (
 	"log"
 
-	"github.com/cassdeckard/tviewyaml"
+	"example/app"
 )
 
 func main() {
-	app, pageErrors, err := tviewyaml.NewAppBuilder("./config").
-		With(RegisterClock).
-		With(RegisterStateBinding).
-		With(RegisterInputFieldLive).
-		With(RegisterDynamicPages).
-		Build()
+	appObj, pageErrors, err := app.Build("./config")
 	if err != nil {
 		log.Fatalf("Failed to create app: %v", err)
 	}
 
 	// Ensure cleanup of background goroutines
-	defer app.Stop()
+	defer appObj.Stop()
 
 	if len(pageErrors) > 0 {
 		log.Printf("Warning: %d page(s) failed to load/build:", len(pageErrors))
@@ -27,7 +22,7 @@ func main() {
 		}
 	}
 
-	if err := app.Run(); err != nil {
+	if err := appObj.Run(); err != nil {
 		log.Fatalf("Application error: %v", err)
 	}
 }

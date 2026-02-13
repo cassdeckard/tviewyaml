@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"fmt"
@@ -9,9 +9,9 @@ import (
 )
 
 var (
-	counter       int32
-	messageIndex  int32
-	messages      = []string{
+	counter      int32
+	messageIndex int32
+	messages     = []string{
 		"Hello, World!",
 		"State binding is powerful!",
 		"All views update together!",
@@ -33,7 +33,7 @@ func RegisterStateBinding(b *tviewyaml.AppBuilder) *tviewyaml.AppBuilder {
 func incrementCounter(ctx *template.Context) {
 	// Increment counter atomically
 	newValue := atomic.AddInt32(&counter, 1)
-	
+
 	// Update state - this will trigger all bound views to refresh
 	ctx.SetStateDirect("counter", fmt.Sprintf("Count: %d", newValue))
 }
@@ -41,7 +41,7 @@ func incrementCounter(ctx *template.Context) {
 func resetCounter(ctx *template.Context) {
 	// Reset counter to 0
 	atomic.StoreInt32(&counter, 0)
-	
+
 	// Update state - this will trigger all bound views to refresh
 	ctx.SetStateDirect("counter", "Count: 0")
 }
@@ -49,7 +49,7 @@ func resetCounter(ctx *template.Context) {
 func updateMessage(ctx *template.Context) {
 	// Get next message index (cycle through messages)
 	idx := atomic.AddInt32(&messageIndex, 1) % int32(len(messages))
-	
+
 	// Update state with new message
 	ctx.SetStateDirect("message", messages[idx])
 }
