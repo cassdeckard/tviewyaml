@@ -1,5 +1,5 @@
 type: flex
-direction: column
+direction: row
 items:
   # Header explaining the two approaches
   - primitive:
@@ -31,13 +31,13 @@ items:
       dynamicColors: true
       regions: true
       textAlign: left
-    fixedSize: 21
+    fixedSize: 12
     focus: false
   
   # Side-by-side comparison
   - primitive:
       type: flex
-      direction: row
+      direction: column
       items:
         # Left: YAML-configured modal demonstration
         - primitive:

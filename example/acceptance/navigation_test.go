@@ -24,7 +24,7 @@ var navPages = []struct {
 	{"v", "", "TextViewPage", "TextView Demo", ""},
 	{"r", "", "TreeViewPage", "TreeView Demo", ""},
 	{"e", "", "TreeViewStandalonePage", "TreeView as Page", ""},
-	{"s", "", "TreeViewModesPage", "Parent (auto)", ""},
+	{"s", "", "TreeViewModesPage", "Three Selection", ""},
 	{"d", "", "DropDownPage", "DropDown Demo", ""},
 	{"m", "", "ModalPage", "YAML-Configured", ""},
 	{"y", "", "DynamicPagesPage", "Dynamic Page", ""},

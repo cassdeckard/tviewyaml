@@ -1,5 +1,5 @@
 type: flex
-direction: column
+direction: row
 items:
   # Header with explanation
   - primitive:
@@ -28,13 +28,13 @@ items:
       dynamicColors: true
       regions: true
       textAlign: left
-    fixedSize: 15
+    fixedSize: 6
     focus: false
   
   # Three tree views side-by-side demonstrating each mode
   - primitive:
       type: flex
-      direction: row
+      direction: column
       items:
         # Tree 1: All "auto" mode
         - primitive:
@@ -137,5 +137,5 @@ items:
       dynamicColors: true
       regions: true
       textAlign: center
-    fixedSize: 5
+    fixedSize: 2
     focus: false

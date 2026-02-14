@@ -1,5 +1,5 @@
 type: flex
-direction: column
+direction: row
 items:
   - primitive:
       type: textView
@@ -48,8 +48,7 @@ items:
       dynamicColors: true
       regions: true
       textAlign: left
-    fixedSize: 0
-    proportion: 1
+    fixedSize: 14
     focus: false
   
   - primitive:
