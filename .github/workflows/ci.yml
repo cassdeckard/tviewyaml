@@ -123,11 +123,11 @@ jobs:
         echo "{\"schemaVersion\":1,\"label\":\"coverage\",\"message\":\"${COVERAGE}%\",\"color\":\"${COLOR}\"}" > coverage.json
         cat coverage.json
 
-    - name: Commit coverage badge
+    - name: Push coverage to coverage branch
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
-        git add coverage.json || true
+        git add -f coverage.json
         git diff --staged --quiet || git commit -m "ci: update coverage badge [skip ci]"
-        git push || true
+        git push --force origin HEAD:coverage
