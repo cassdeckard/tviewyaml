@@ -1,7 +1,7 @@
 # tviewyaml
 
 [![CI](https://github.com/cassdeckard/tviewyaml/actions/workflows/ci.yml/badge.svg)](https://github.com/cassdeckard/tviewyaml/actions/workflows/ci.yml)
-[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cassdeckard/tviewyaml/coverage/coverage.json)](https://github.com/cassdeckard/tviewyaml/actions/workflows/ci.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/cassdeckard/tviewyaml/coverage/coverage.json&cacheSeconds=3600)](https://github.com/cassdeckard/tviewyaml/actions/workflows/ci.yml)
 
 A Go package for building [tview](https://github.com/rivo/tview) terminal UI applications from YAML configuration files.
 
