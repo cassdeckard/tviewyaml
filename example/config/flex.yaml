@@ -12,6 +12,9 @@ items:
     fixedSize: 4
     proportion: 1
     focus: false
+  - primitive: null   # spacer - consumes remaining width, floats content right
+    proportion: 1
+    focus: false
   - primitive:
       type: flex
       direction: column

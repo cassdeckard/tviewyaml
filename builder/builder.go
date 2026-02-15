@@ -185,7 +185,9 @@ func (b *Builder) buildList(list *tview.List, cfg *config.PageConfig, bc *BuildC
 // buildFlex populates a flex container with items
 func (b *Builder) buildFlex(flex *tview.Flex, cfg *config.PageConfig, bc *BuildContext) (tview.Primitive, error) {
 	for i, item := range cfg.Items {
-		if item.Primitive == nil {
+		isSpacer := item.Primitive == nil || item.Spacer
+		if isSpacer {
+			flex.AddItem(nil, item.FixedSize, item.Proportion, item.Focus)
 			continue
 		}
 
@@ -457,7 +459,9 @@ func (b *Builder) buildPrimitive(prim *config.Primitive, bc *BuildContext) (tvie
 // populateFlexItems adds items to a flex container
 func (b *Builder) populateFlexItems(flex *tview.Flex, prim *config.Primitive, bc *BuildContext) error {
 	for i, item := range prim.Items {
-		if item.Primitive == nil {
+		isSpacer := item.Primitive == nil || item.Spacer
+		if isSpacer {
+			flex.AddItem(nil, item.FixedSize, item.Proportion, item.Focus)
 			continue
 		}
 

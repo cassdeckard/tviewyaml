@@ -60,6 +60,7 @@ type PageConfig struct {
 // FlexItem represents an item in a flex container
 type FlexItem struct {
 	Primitive  *Primitive `yaml:"primitive"`
+	Spacer     bool       `yaml:"spacer,omitempty"` // if true, treat as spacer (nil primitive)
 	FixedSize  int        `yaml:"fixedSize,omitempty"`
 	Proportion int        `yaml:"proportion,omitempty"`
 	Focus      bool       `yaml:"focus,omitempty"`
