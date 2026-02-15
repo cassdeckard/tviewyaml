@@ -20,6 +20,10 @@ items:
     fixedSize: 5
     focus: false
   
+  - primitive: null   # spacer - consumes remaining width on the left
+    proportion: 1
+    focus: false
+  
   - primitive:
       type: form
       border: true
@@ -34,6 +38,5 @@ items:
         - type: button
           label: "Return to Main Menu"
           onSelected: '{{ switchToPage "main" }}'
-    fixedSize: 0
-    proportion: 1
+    fixedSize: 55
     focus: true
