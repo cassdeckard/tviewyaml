@@ -28,6 +28,17 @@ func registerBuiltinFunctions(registry *FunctionRegistry) {
 		ctx.SetStateDirect("notification", msg)
 	})
 
+	// showHighlightedNotification: sets notification to "Region X selected" using __highlightedRegion.
+	// For use in onHighlighted callbacks to show which region was selected.
+	registry.Register("showHighlightedNotification", 0, intPtr(0), nil, func(ctx *Context) {
+		region, ok := ctx.GetState("__highlightedRegion")
+		msg := "Region selected"
+		if ok && fmt.Sprint(region) != "" {
+			msg = fmt.Sprintf("Region %s selected", region)
+		}
+		ctx.SetStateDirect("notification", msg)
+	})
+
 	// switchToPage: switches to a different page
 	registry.Register("switchToPage", 1, intPtr(1), nil, func(ctx *Context, pageName string) {
 		if ctx.Pages != nil {

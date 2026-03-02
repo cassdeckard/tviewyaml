@@ -95,6 +95,8 @@ type Primitive struct {
 	OnCancel      string     `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
 	// onDone: Template expression when user presses Enter/Escape (TextView, InputField, Table)
 	OnDone string `yaml:"onDone,omitempty"`
+	// onHighlighted: Template expression when highlighted region changes (TextView with regions; state: __highlightedRegion)
+	OnHighlighted string `yaml:"onHighlighted,omitempty"`
 	// Table-specific properties
 	OnCellSelected string   `yaml:"onCellSelected,omitempty"` // Template expression when a cell is selected (state: __selectedCellText, __selectedRow, __selectedCol)
 	Borders        bool     `yaml:"borders,omitempty"`        // Show borders between cells

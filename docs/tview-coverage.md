@@ -19,7 +19,7 @@ This table maps [tview](https://pkg.go.dev/github.com/rivo/tview) primitives and
 | **Pages** | Yes | Yes (root) | Yes | [app.yaml](../example/config/app.yaml), [nested-pages.yaml](../example/config/nested-pages.yaml) | Tab-like page switching; `ref` to YAML files |
 | **Table** | Yes | Yes | Yes | [table.yaml](../example/config/table.yaml) | Headers, rows, borders, fixed rows/columns; `onDone` for Enter/Escape |
 | **TextArea** | Yes | No | Yes (Form item) | [form.yaml](../example/config/form.yaml) | Form item type `textarea`; multi-line input |
-| **TextView** | Yes | No | Yes | [textview.yaml](../example/config/textview.yaml) | Dynamic colors, regions, scrollable; `onDone` for Enter/Escape |
+| **TextView** | Yes | No | Yes | [textview.yaml](../example/config/textview.yaml) | Dynamic colors, regions, scrollable; `onDone` for Enter/Escape; `onHighlighted` for region clicks |
 | **TreeView** | Yes | Yes | Yes | [treeview.yaml](../example/config/treeview.yaml), [treeview-standalone.yaml](../example/config/treeview-standalone.yaml), [treeview-modes.yaml](../example/config/treeview-modes.yaml) | Nodes with children; selectable modes |
 
 ## Form Item Types
@@ -47,6 +47,10 @@ Form items supported in `formItems`:
 TextView, InputField (standalone), and Table support `onDone`—a template expression that runs when the user presses Enter or Escape. State `__doneKey` is set to `"Enter"` or `"Escape"` before the callback runs, enabling template branching. See [ondone-demo.yaml](../example/config/ondone-demo.yaml).
 
 Note: tview's Table does not call SetDoneFunc for Enter when rows are selectable—Enter is used for selection. Escape still triggers onDone on selectable tables.
+
+## Callback Support: onHighlighted (TextView)
+
+TextView with `regions: true` supports `onHighlighted`—a template expression that runs when the highlighted region changes (from clicks or Tab/Enter navigation). State `__highlightedRegion` is set to the first newly highlighted region ID before the callback runs. Use `switchToPage "{{ bindState __highlightedRegion }}"` for presentation-style info bar navigation. See [textview.yaml](../example/config/textview.yaml).
 
 ## Additional Example Configs (Feature Demos)
 
