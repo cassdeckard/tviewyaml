@@ -18,7 +18,7 @@ items:
       title: "TextView with Colors and Regions"
       dynamicColors: true
       regions: true
-      onHighlighted: '{{ showNotification "Region selected" }}'
+      onHighlighted: '{{ showHighlightedNotification }}'
       text: |
         [yellow]TextView Features:[white]
         
