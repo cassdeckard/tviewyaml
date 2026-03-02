@@ -23,6 +23,10 @@ listItems:
     secondaryText: "Text input with validation"
     shortcut: "i"
     onSelected: '{{ switchToPage "inputfield" }}'
+  - mainText: "onDone Demo"
+    secondaryText: "TextView, InputField, Table with Enter/Escape callbacks"
+    shortcut: "o"
+    onSelected: '{{ switchToPage "ondone-demo" }}'
   - mainText: "Form"
     secondaryText: "Complete form with all input types"
     shortcut: "f"

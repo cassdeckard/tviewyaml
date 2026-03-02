@@ -45,6 +45,7 @@ type PageConfig struct {
 	FormItems  []FormItem             `yaml:"formItems,omitempty"`
 	OnSubmit   string                 `yaml:"onSubmit,omitempty"` // Template expression for runFormSubmit (e.g. Submit button)
 	OnCancel   string                 `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
+	OnDone     string                 `yaml:"onDone,omitempty"`   // Template expression when user presses Enter/Escape (e.g. page-level table)
 	TableData  *TableData             `yaml:"tableData,omitempty"`
 	// TreeView-specific (for page-level type: treeView)
 	OnNodeSelected string     `yaml:"onNodeSelected,omitempty"` // Template expression when a node is selected (state: __selectedNodeText)
@@ -92,6 +93,8 @@ type Primitive struct {
 	FormItems     []FormItem `yaml:"formItems,omitempty"`
 	OnSubmit      string     `yaml:"onSubmit,omitempty"` // Template expression for runFormSubmit (nested form)
 	OnCancel      string     `yaml:"onCancel,omitempty"` // Template expression when form is cancelled (Escape); if unset and OnSubmit set, Escape runs OnSubmit
+	// onDone: Template expression when user presses Enter/Escape (TextView, InputField, Table)
+	OnDone string `yaml:"onDone,omitempty"`
 	// Table-specific properties
 	OnCellSelected string   `yaml:"onCellSelected,omitempty"` // Template expression when a cell is selected (state: __selectedCellText, __selectedRow, __selectedCol)
 	Borders        bool     `yaml:"borders,omitempty"`        // Show borders between cells

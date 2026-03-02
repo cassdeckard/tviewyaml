@@ -18,6 +18,7 @@ var navPages = []struct {
 	{"u", "", "ButtonPage", "Button Demo", ""},
 	{"c", "", "CheckboxPage", "Checkbox Demo", ""},
 	{"i", "", "InputFieldPage", "InputField Demo", ""},
+	{"o", "", "OnDoneDemoPage", "TextView - Enter or Escape", ""},
 	{"f", "", "FormPage", "Form Demo", "Enter"}, // Escape triggers onCancel modal, Enter dismisses
 	{"l", "", "ListPage", "List Demo", ""},
 	{"t", "", "TablePage", "Table Demo", ""},
