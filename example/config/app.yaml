@@ -98,6 +98,8 @@ application:
         ref: clock.yaml
       - name: inputfield
         ref: inputfield.yaml
+      - name: ondone-demo
+        ref: ondone-demo.yaml
       - name: list
         ref: list.yaml
       - name: modal

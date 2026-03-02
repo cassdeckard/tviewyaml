@@ -1,0 +1,39 @@
+type: flex
+direction: row
+border: true
+title: "onDone Demo - Click a panel to focus, then Enter or Escape to return"
+items:
+  - primitive:
+      type: textView
+      border: true
+      title: "TextView - Enter or Escape"
+      text: |
+        This TextView has onDone.
+        Press Enter or Escape to return.
+      textAlign: center
+      onDone: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: inputField
+      border: true
+      title: "InputField - Enter or Escape"
+      label: "Type: "
+      text: ""
+      onDone: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 1
+    focus: true
+  - primitive:
+      type: table
+      border: true
+      title: "Table - Enter or Escape"
+      columns: ["A", "B"]
+      rows:
+        - ["1", "2"]
+        - ["3", "4"]
+      onDone: '{{ switchToPage "main" }}'
+    fixedSize: 0
+    proportion: 1
+    focus: true

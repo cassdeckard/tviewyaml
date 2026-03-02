@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/cassdeckard/tviewyaml/config"
 	"github.com/cassdeckard/tviewyaml/template"
@@ -385,6 +386,24 @@ func (b *Builder) buildTable(table *tview.Table, cfg *config.PageConfig, bc *Bui
 
 	table.SetBorder(true)
 	table.SetSelectable(true, false)
+
+	if cfg.OnDone != "" {
+		onDoneExpr := cfg.OnDone
+		table.SetDoneFunc(func(key tcell.Key) {
+			if key != tcell.KeyEnter && key != tcell.KeyEscape {
+				return
+			}
+			doneKey := "Enter"
+			if key == tcell.KeyEscape {
+				doneKey = "Escape"
+			}
+			b.context.SetStateDirect("__doneKey", doneKey)
+			if cb, err := b.executor.ExecuteCallback(onDoneExpr); err == nil {
+				cb()
+			}
+		})
+	}
+
 	return table, nil
 }
 

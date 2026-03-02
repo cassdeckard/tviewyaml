@@ -105,8 +105,24 @@ func (pm *PropertyMapper) applyTextViewProperties(tv *tview.TextView, prim *conf
 	}
 	if prim.Regions {
 		tv.SetRegions(true)
-		
-		// Add region navigation handlers
+	}
+	if prim.OnDone != "" && pm.executor != nil {
+		onDoneExpr := prim.OnDone
+		tv.SetDoneFunc(func(key tcell.Key) {
+			if key != tcell.KeyEnter && key != tcell.KeyEscape {
+				return
+			}
+			doneKey := "Enter"
+			if key == tcell.KeyEscape {
+				doneKey = "Escape"
+			}
+			pm.context.SetStateDirect("__doneKey", doneKey)
+			if cb, err := pm.executor.ExecuteCallback(onDoneExpr); err == nil {
+				cb()
+			}
+		})
+	} else if prim.Regions {
+		// Add region navigation handlers (only when onDone is not set)
 		tv.SetDoneFunc(func(key tcell.Key) {
 			currentSelection := tv.GetHighlights()
 			if key == tcell.KeyEnter {
@@ -144,6 +160,22 @@ func (pm *PropertyMapper) applyInputFieldProperties(input *tview.InputField, pri
 	if prim.Text != "" {
 		input.SetText(prim.Text)
 	}
+	if prim.OnDone != "" && pm.executor != nil {
+		onDoneExpr := prim.OnDone
+		input.SetDoneFunc(func(key tcell.Key) {
+			if key != tcell.KeyEnter && key != tcell.KeyEscape {
+				return
+			}
+			doneKey := "Enter"
+			if key == tcell.KeyEscape {
+				doneKey = "Escape"
+			}
+			pm.context.SetStateDirect("__doneKey", doneKey)
+			if cb, err := pm.executor.ExecuteCallback(onDoneExpr); err == nil {
+				cb()
+			}
+		})
+	}
 	return nil
 }
 
@@ -175,6 +207,22 @@ func (pm *PropertyMapper) applyDropDownProperties(dd *tview.DropDown, prim *conf
 
 func (pm *PropertyMapper) applyTableProperties(table *tview.Table, prim *config.Primitive) error {
 	// Table borders, fixed rows/columns, and data are all handled in populateTableData
+	if prim.OnDone != "" && pm.executor != nil {
+		onDoneExpr := prim.OnDone
+		table.SetDoneFunc(func(key tcell.Key) {
+			if key != tcell.KeyEnter && key != tcell.KeyEscape {
+				return
+			}
+			doneKey := "Enter"
+			if key == tcell.KeyEscape {
+				doneKey = "Escape"
+			}
+			pm.context.SetStateDirect("__doneKey", doneKey)
+			if cb, err := pm.executor.ExecuteCallback(onDoneExpr); err == nil {
+				cb()
+			}
+		})
+	}
 	return nil
 }
 
