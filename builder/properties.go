@@ -145,6 +145,18 @@ func (pm *PropertyMapper) applyTextViewProperties(tv *tview.TextView, prim *conf
 			}
 		})
 	}
+	if prim.Regions && prim.OnHighlighted != "" && pm.executor != nil {
+		onHighlightedExpr := prim.OnHighlighted
+		tv.SetHighlightedFunc(func(added, removed, remaining []string) {
+			if len(added) == 0 {
+				return
+			}
+			pm.context.SetStateDirect("__highlightedRegion", added[0])
+			if cb, err := pm.executor.ExecuteCallback(onHighlightedExpr); err == nil {
+				cb()
+			}
+		})
+	}
 	return nil
 }
 
